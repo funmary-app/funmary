@@ -18,7 +18,7 @@ jobs:
   mirror:
     name: otnc/funmary-mirror へ push
     # フォークでは動かさない
-    if: github.repository == 'oto-lab/funmary'
+    if: github.repository == 'funmary-app/funmary'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:

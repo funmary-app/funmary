@@ -1,5 +1,5 @@
 blank_issues_enabled: false
 contact_links:
   - name: セキュリティ上の問題の報告
-    url: https://github.com/oto-lab/funmary/security/advisories/new
+    url: https://github.com/funmary-app/funmary/security/advisories/new
     about: 脆弱性は公開の Issue にせず、こちらから非公開で知らせてください

@@ -3,7 +3,7 @@ import { buildReleaseNotes, parseChange } from './release-notes.js';
 
 /** @type {import('./release-notes.js').ReleaseNotesInput} */
 const BASE = {
-	repo: 'oto-lab/funmary',
+	repo: 'funmary-app/funmary',
 	version: 'build-54ffc9b',
 	sha: '54ffc9b1111111111111111111111111111111aa',
 	previousVersion: 'build-0de56d8',
@@ -55,7 +55,7 @@ describe('buildReleaseNotes', () => {
 		});
 		expect(notes).toContain('## 機能');
 		expect(notes).toContain(
-			'- ログインの画面を足す (auth) ([#66](https://github.com/oto-lab/funmary/pull/66))',
+			'- ログインの画面を足す (auth) ([#66](https://github.com/funmary-app/funmary/pull/66))',
 		);
 		expect(notes).toContain('## 不具合の修正');
 		expect(notes).toContain('## その他');
@@ -106,7 +106,7 @@ describe('buildReleaseNotes', () => {
 	it('前回のリリースとの差分へのリンクを付ける', () => {
 		const notes = buildReleaseNotes({ ...BASE, subjects: ['feat: 足す (#1)'] });
 		expect(notes).toContain(
-			'https://github.com/oto-lab/funmary/compare/0de56d81111111111111111111111111111111bb...54ffc9b1111111111111111111111111111111aa',
+			'https://github.com/funmary-app/funmary/compare/0de56d81111111111111111111111111111111bb...54ffc9b1111111111111111111111111111111aa',
 		);
 		expect(notes).toContain('build-0de56d8');
 	});

@@ -6,7 +6,7 @@
 	"license": "(BSD-3-Clause OR Apache-2.0)",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/oto-lab/funmary.git"
+		"url": "git+https://github.com/funmary-app/funmary.git"
 	},
 	"packageManager": "pnpm@11.22.0",
 	"engines": {

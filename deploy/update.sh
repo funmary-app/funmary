@@ -7,7 +7,7 @@
 # 本番では、どれも設定しない (sudo が環境変数を捨てるので、SSH の鍵を持つ人が設定することもできない)。
 set -euo pipefail
 
-REPO="${FUNMARY_REPO:-oto-lab/funmary}"
+REPO="${FUNMARY_REPO:-funmary-app/funmary}"
 DOWNLOAD_BASE="${FUNMARY_DOWNLOAD_BASE:-https://github.com/$REPO/releases/download}"
 BASE="${FUNMARY_BASE:-/opt/funmary}"
 ENV_FILE="${FUNMARY_ENV_FILE:-/etc/funmary/funmary.env}"

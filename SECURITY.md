@@ -1,6 +1,6 @@
 # セキュリティ上の問題の報告
 
-Funmary の脆弱性を見つけたときは、公開の Issue や PR にしないでください。GitHub の [非公開の報告 (Report a vulnerability)](https://github.com/oto-lab/funmary/security/advisories/new) から知らせてください。
+Funmary の脆弱性を見つけたときは、公開の Issue や PR にしないでください。GitHub の [非公開の報告 (Report a vulnerability)](https://github.com/funmary-app/funmary/security/advisories/new) から知らせてください。
 
 報告には、次のことを書いてもらえると助かります。
 

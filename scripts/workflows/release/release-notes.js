@@ -32,7 +32,7 @@ export function parseChange(subject) {
 
 /**
  * @typedef {object} ReleaseNotesInput
- * @property {string} repo oto-lab/funmary の形
+ * @property {string} repo funmary-app/funmary の形
  * @property {string} version
  * @property {string} sha
  * @property {string | null} previousVersion

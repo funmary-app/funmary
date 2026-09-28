@@ -13,7 +13,7 @@ Funmary の開発に参加する人に向けた決まりと手順です。文書
 ### 初回の手順
 
 ```sh
-git clone https://github.com/oto-lab/funmary.git
+git clone https://github.com/funmary-app/funmary.git
 cd funmary
 fnm install
 fnm use

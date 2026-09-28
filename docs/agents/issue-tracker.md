@@ -1,6 +1,6 @@
 # Issue の扱い方
 
-AI エージェント向けの、Issue と PR の扱い方です。Issue は GitHub の [oto-lab/funmary](https://github.com/oto-lab/funmary/issues) で管理し、`gh` コマンドで操作します。
+AI エージェント向けの、Issue と PR の扱い方です。Issue は GitHub の [funmary-app/funmary](https://github.com/funmary-app/funmary/issues) で管理し、`gh` コマンドで操作します。
 
 ## 読む
 
