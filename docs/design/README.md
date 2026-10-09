@@ -30,4 +30,5 @@ Funmary の設計の考え方と、その理由をまとめた文書です。開
 
 - 自分のサーバーで動かす手順は [セルフホストの手順](../self-hosting.md) にあります。手順はそちらに、手順の理由はこの設計書に書いています
 - 手元での開発の始め方と、開発の決まりは [CONTRIBUTING.md](../../CONTRIBUTING.md) にあります (この設計書には、重ねて書いていません)
+- 画面を作る人と AI エージェント向けの要約は、[PRODUCT.md](../PRODUCT.md) と [DESIGN.md](../DESIGN.md) にあります
 - 用語は [CONTEXT.md](../../CONTEXT.md) にまとめています
