@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import desktopUserAgents from 'top-user-agents/desktop';
 import { describe, expect, it } from 'vitest';
 import { fetchPortalPage } from './client.ts';
 import type { PortalFetch } from './http.ts';
@@ -114,6 +115,7 @@ describe('ポータルの一覧の取得', () => {
 			lastAttemptAt: null,
 			now: NOW,
 		});
+		expect(portal.calls[0]!.userAgent).toBe(desktopUserAgents[0]);
 		expect(portal.calls[0]!.userAgent).toMatch(/^Mozilla\/5\.0 .*Chrome\//);
 	});
 
