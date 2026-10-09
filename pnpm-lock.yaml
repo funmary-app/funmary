@@ -538,6 +538,9 @@ importers:
       pdfjs-dist:
         specifier: ^6.3.289
         version: 6.3.289
+      top-user-agents:
+        specifier: ^2.1.139
+        version: 2.1.139
       tough-cookie:
         specifier: ^6.0.2
         version: 6.0.2
@@ -3678,6 +3681,9 @@ packages:
     resolution: {integrity: sha512-o5sSPKEkg/DIQNmH43V0/uerLrpzVedkUh8tGNvaeXpfpuwjKenlSox/2O/BTlZUtEe+JG7s5YhEz608PlAHRA==}
     engines: {node: '>=0.6'}
 
+  top-user-agents@2.1.139:
+    resolution: {integrity: sha512-3HMaQdpfrLRD4gLWVd+5E/k+gnJUTy4K4PIyjnPIcT6JKcEp7vhE+j9ihHOKDy4nBbDhV6hzfoM/tjElPUtzRQ==}
+
   totalist@3.0.1:
     resolution: {integrity: sha512-sf4i37nQ2LBx4m3wB74y+ubopq6W/dIzXg0FDGjsYnZHVa1Da8FH853wlL2gtUhg+xJXjfk3kUZS3BRoQeoQBQ==}
     engines: {node: '>=6'}
@@ -6715,6 +6721,8 @@ snapshots:
       tldts-core: 7.4.16
 
   toidentifier@1.0.1: {}
+
+  top-user-agents@2.1.139: {}
 
   totalist@3.0.1: {}
 
