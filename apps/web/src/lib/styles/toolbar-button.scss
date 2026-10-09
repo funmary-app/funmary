@@ -1,0 +1,21 @@
+// 時間割のボタンと、ラベル付きスイッチの外枠を同じ見た目にする。
+@mixin base {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 48px;
+	height: 48px;
+	box-sizing: border-box;
+	border: 1px solid var(--fm-divider);
+	border-radius: 0.5rem;
+	background: var(--fm-surface);
+	color: var(--fm-text);
+	font: inherit;
+	text-decoration: none;
+	cursor: pointer;
+	transition: background-color 150ms ease-out;
+
+	&:hover {
+		background: var(--fm-surface-muted);
+	}
+}

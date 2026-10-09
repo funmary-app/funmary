@@ -543,3 +543,185 @@ test.describe('自分の予定', () => {
 		await expect(page).toHaveURL('/login');
 	});
 });
+
+test.describe('時間割だけの略称表示', () => {
+	for (const viewport of [
+		{ width: 1440, height: 900 },
+		{ width: 390, height: 844 },
+	]) {
+		test(`${viewport.width}pxで略称を保存し、切り替えと空欄保存ができる`, async ({
+			page,
+		}, testInfo) => {
+			await page.setViewportSize(viewport);
+			const email = `e2e-abbreviation-${viewport.width}-${Date.now()}@fun.ac.jp`;
+			oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
+			await signIn(page);
+			await expect(page).toHaveURL('/app');
+			seedSubjects((database, subjectId) => {
+				const user = database.sqlite.prepare('SELECT id FROM users WHERE email = ?').get(email) as {
+					id: string;
+				};
+				const courses = createCourseStore(database);
+				courses.register(user.id, subjectId, new Date());
+				courses.addSharedSlots(
+					[{ subjectId, weekday: 2, period: 3, room: '363' }],
+					{ source: 'manual', createdBy: user.id },
+					new Date(),
+				);
+			});
+			await page.goto('/app/subjects/2026/900001');
+			await page.getByText('略称を編集する', { exact: true }).click();
+			await expect(page.getByLabel('略称名', { exact: true })).toHaveValue('');
+			await page.getByLabel('略称名', { exact: true }).fill('架空演習');
+			if (process.env['FUNMARY_CAPTURE_UI'] === 'true') {
+				await page.screenshot({
+					path: testInfo.outputPath('subject-editor.png'),
+					fullPage: true,
+					animations: 'disabled',
+				});
+			}
+			await page.getByRole('button', { name: '保存する', exact: true }).click();
+			await expect(page.getByRole('status')).toContainText('略称を保存しました');
+			await expect(page.getByRole('heading', { level: 1 })).toHaveText('架空の演習Ⅱ1-AB');
+			await page.reload();
+			await page.getByText('略称を編集する', { exact: true }).click();
+			await expect(page.getByLabel('略称名', { exact: true })).toHaveValue('架空演習');
+			await page.goto('/app/week?date=2026-10-05');
+			const toggle = page.getByRole('switch', { name: '略称表示' });
+			const table = page.getByRole('table');
+			await expect(toggle).not.toBeChecked();
+			await expect(table.getByRole('link', { name: '架空の演習Ⅱ1-AB', exact: true })).toHaveCount(
+				1,
+			);
+			await toggle.click();
+			await expect(toggle).toBeChecked();
+			await expect(table.getByRole('link', { name: '架空演習', exact: true })).toHaveCount(1);
+			if (process.env['FUNMARY_CAPTURE_UI'] === 'true') {
+				await page.getByRole('button', { name: '週', exact: true }).click();
+				await expect(table.getByRole('link', { name: '架空演習', exact: true })).toBeVisible();
+				await page.screenshot({
+					path: testInfo.outputPath('timetable-light.png'),
+					fullPage: true,
+					animations: 'disabled',
+				});
+				await page
+					.context()
+					.addCookies([{ name: 'fm-theme', value: 'dark', url: 'http://localhost:4173' }]);
+				await page.reload();
+				await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+				await page.screenshot({
+					path: testInfo.outputPath('timetable-dark.png'),
+					fullPage: true,
+					animations: 'disabled',
+				});
+			}
+			await page.reload();
+			await expect(toggle).toBeChecked();
+			await expect(table.getByRole('link', { name: '架空演習', exact: true })).toHaveCount(1);
+			await page.goto('/app/courses');
+			await expect(page.getByRole('link', { name: '架空の演習Ⅱ1-AB', exact: true })).toBeVisible();
+			await expect(page.getByRole('link', { name: '架空演習', exact: true })).toHaveCount(0);
+			await page.goto('/app/week?date=2026-10-05');
+			await toggle.focus();
+			await page.keyboard.press('Space');
+			await expect(toggle).not.toBeChecked();
+			if (process.env['FUNMARY_CAPTURE_UI'] === 'true') {
+				await page.screenshot({
+					path: testInfo.outputPath('timetable-off.png'),
+					fullPage: true,
+					animations: 'disabled',
+				});
+			}
+			await expect(table.getByRole('link', { name: '架空の演習Ⅱ1-AB', exact: true })).toHaveCount(
+				1,
+			);
+			await page.goto('/app/subjects/2026/900001');
+			await page.getByText('略称を編集する', { exact: true }).click();
+			await page.getByLabel('略称名', { exact: true }).fill('');
+			await page.getByRole('button', { name: '保存する', exact: true }).click();
+			await expect(page.getByRole('status')).toContainText('略称を保存しました');
+			await page.goto('/app/week?date=2026-10-05');
+			await toggle.click();
+			await expect(toggle).toBeChecked();
+			await expect(table.getByRole('link', { name: '架空の演習Ⅱ1-AB', exact: true })).toHaveCount(
+				1,
+			);
+		});
+	}
+
+	for (const width of [320, 360]) {
+		test(`${width}pxでも略称表示の操作部が画面内に収まる`, async ({ page }, testInfo) => {
+			await page.setViewportSize({ width, height: 844 });
+			const email = `e2e-abbreviation-narrow-${width}-${Date.now()}@fun.ac.jp`;
+			oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
+			await signIn(page);
+			await page.goto('/app/week?date=2026-10-05');
+			await expect(page.getByRole('switch', { name: '略称表示' })).toBeVisible();
+			await expect
+				.poll(() =>
+					page
+						.getByRole('group', { name: '時間割の見せ方' })
+						.evaluate((element) => element.scrollWidth),
+				)
+				.toBeLessThanOrEqual(width - 32);
+			await page.getByRole('switch', { name: '略称表示' }).click();
+			await expect(page.getByRole('switch', { name: '略称表示' })).toBeChecked();
+			if (process.env['FUNMARY_CAPTURE_UI'] === 'true') {
+				await page.screenshot({
+					path: testInfo.outputPath('narrow-toolbar.png'),
+					fullPage: true,
+					animations: 'disabled',
+				});
+			}
+		});
+	}
+
+	test('同じ科目の略称は利用者間で共有されず、不正な入力は保存されない', async ({
+		page,
+		browser,
+	}) => {
+		const stamp = Date.now();
+		const login = async (target: import('@playwright/test').Page, suffix: string) => {
+			const email = `e2e-abbreviation-${stamp}-${suffix}@fun.ac.jp`;
+			oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
+			await signIn(target);
+			await expect(target).toHaveURL('/app');
+			seedSubjects((database, subjectId) => {
+				const user = database.sqlite.prepare('SELECT id FROM users WHERE email = ?').get(email) as {
+					id: string;
+				};
+				createCourseStore(database).register(user.id, subjectId, new Date());
+			});
+		};
+		const otherContext = await browser.newContext();
+		try {
+			const other = await otherContext.newPage();
+			await login(page, 'a');
+			await login(other, 'b');
+			await page.goto('/app/subjects/2026/900001');
+			await page.getByText('略称を編集する', { exact: true }).click();
+			await page.getByLabel('略称名', { exact: true }).fill('自分だけの演習');
+			await page.getByRole('button', { name: '保存する', exact: true }).click();
+			await expect(page.getByRole('status')).toContainText('略称を保存しました');
+			await other.goto('/app/subjects/2026/900001');
+			await other.getByText('略称を編集する', { exact: true }).click();
+			await expect(other.getByLabel('略称名', { exact: true })).toHaveValue('');
+			await other.goto('/app/week?date=2026-10-05');
+			await other.getByRole('switch', { name: '略称表示' }).click();
+			await expect(
+				other.getByRole('table').getByRole('link', { name: '架空の演習Ⅱ1-AB', exact: true }),
+			).toHaveCount(1);
+			await expect(other.getByText('自分だけの演習', { exact: true })).toHaveCount(0);
+			const invalid = await page.request.post('/app/subjects/2026/900001?/saveAbbreviation', {
+				headers: { origin: 'http://localhost:4173' },
+				form: { abbreviation: 'あ'.repeat(101) },
+			});
+			expect(invalid.status()).toBe(400);
+			await page.reload();
+			await page.getByText('略称を編集する', { exact: true }).click();
+			await expect(page.getByLabel('略称名', { exact: true })).toHaveValue('自分だけの演習');
+		} finally {
+			await otherContext.close();
+		}
+	});
+});

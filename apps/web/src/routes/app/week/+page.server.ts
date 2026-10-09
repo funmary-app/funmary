@@ -14,6 +14,8 @@ import { eventViewsByDate } from '#lib/server/event-view.ts';
 import { toLessonView, type LessonView } from '#lib/server/lesson-view.ts';
 import { getServices } from '#lib/server/services.ts';
 import { parseWeekView, WEEK_VIEW_COOKIE } from '#lib/week-view.ts';
+import { ABBREVIATION_DISPLAY_COOKIE } from '#lib/abbreviation-display.ts';
+import { resolveSubjectAbbreviation } from '#lib/server/subject-abbreviation.ts';
 import { requireSignedIn } from '#lib/server/admin.ts';
 
 export const load: ServerLoad = ({ cookies, locals, url }) => {
@@ -29,6 +31,13 @@ export const load: ServerLoad = ({ cookies, locals, url }) => {
 	const range = { start: sunday, end: addDays(sunday, 6) };
 	const timetable = buildUserTimetable(getServices(), locals.user.id, range);
 	const lessons = timetable.lessons.map(toLessonView);
+	const personalAbbreviations = getServices().subjectAbbreviations.list(locals.user.id);
+	const abbreviations = new Map(
+		lessons.map((lesson) => [
+			lesson.subjectId,
+			resolveSubjectAbbreviation(lesson.subjectName, personalAbbreviations.get(lesson.subjectId)),
+		]),
+	);
 	// 自分の予定 (日付ごと)。土日は、授業か予定のあるときだけ列を出す
 	const { userEvents } = getServices();
 	const addedEvents = userEvents.listSubscribed(locals.user);
@@ -63,6 +72,8 @@ export const load: ServerLoad = ({ cookies, locals, url }) => {
 		isThisWeek: sunday === startOfWeek(today),
 		today,
 		view: parseWeekView(cookies.get(WEEK_VIEW_COOKIE)),
+		showAbbreviations: cookies.get(ABBREVIATION_DISPLAY_COOKIE) === 'on',
+		abbreviations,
 		days: days.map((day) => ({ date: day, note: timetable.notes.get(day) ?? null })),
 		rows: periods.map((number) => {
 			const period = DEFAULT_PERIODS.find((p) => p.number === number);

@@ -169,6 +169,13 @@
       "when": 1791558179398,
       "tag": "0023_needy_miracleman",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "6",
+      "when": 1791561314505,
+      "tag": "0024_aspiring_vin_gonzales",
+      "breakpoints": true
     }
   ]
 }

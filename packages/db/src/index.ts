@@ -48,6 +48,10 @@ export {
 	type StoredNotification,
 } from './notification-store.ts';
 export * as schema from './schema.ts';
+export {
+	createSubjectAbbreviationStore,
+	type SubjectAbbreviationStore,
+} from './subject-abbreviation-store.ts';
 export { createSourceHealthStore, type SourceHealthStore } from './source-health-store.ts';
 export {
 	createSecretBox,

@@ -7,6 +7,7 @@ import type { SubjectVisibility } from '@funmary/db';
 import { describeClassChange } from '#lib/class-change-label.ts';
 import { parseSlotFields } from '#lib/server/course-form.ts';
 import { getServices } from '#lib/server/services.ts';
+import { parseAbbreviation, resolveSubjectAbbreviation } from '#lib/server/subject-abbreviation.ts';
 import { alertSlotConflicts, alertSlotSubmission } from '#lib/server/slot-conflicts.ts';
 import { readSlotSharingMode } from '#lib/server/slot-permission.ts';
 import { alertSubjectDeleted, alertSubjectVisibilityChanged } from '#lib/server/subject-notify.ts';
@@ -54,6 +55,10 @@ export const load: ServerLoad = ({ locals, params }) => {
 		.find((r) => r.subjectId === subject.id);
 
 	return {
+		abbreviation: resolveSubjectAbbreviation(
+			subject.name,
+			getServices().subjectAbbreviations.get(locals.user.id, subject.id),
+		),
 		subject: {
 			academicYear: subject.academicYear,
 			name: subject.name,
@@ -92,6 +97,14 @@ export const load: ServerLoad = ({ locals, params }) => {
 };
 
 export const actions: Actions = {
+	saveAbbreviation: async ({ request, locals, params }) => {
+		if (!locals.user) redirect(303, '/login');
+		const { subject } = findSubject(params, locals.user);
+		const parsed = parseAbbreviation((await request.formData()).get('abbreviation'));
+		if (!parsed.ok) return fail(400, { error: parsed.error });
+		getServices().subjectAbbreviations.set(locals.user.id, subject.id, parsed.value, new Date());
+		return { message: '自分だけに使う略称を保存しました。' };
+	},
 	/**
 	 * 曜日と時限を足す。履修登録していない科目でも、ログインしていれば誰でも足せる。
 	 * 曜日と時限は、大学から自動では取れず、利用者どうしで登録して共有するため

@@ -8,6 +8,8 @@
 	import IconSubstitute from '~icons/material-symbols/swap-horiz';
 	import LessonRoom from '#lib/components/LessonRoom.svelte';
 	import StatusBadge from '#lib/components/StatusBadge.svelte';
+	import ToggleButton from '#lib/components/ToggleButton.svelte';
+	import { ABBREVIATION_DISPLAY_COOKIE } from '#lib/abbreviation-display.ts';
 	import type { EventView } from '#lib/server/event-view.ts';
 	import type { LessonView } from '#lib/server/lesson-view.ts';
 	import type { DayNote } from '@funmary/api';
@@ -36,6 +38,8 @@
 			isThisWeek: boolean;
 			today: string;
 			view: WeekView;
+			showAbbreviations: boolean;
+			abbreviations: Map<number, string>;
 			days: { date: string; note: DayNote | null }[];
 			rows: Row[];
 			eventCells: { date: string; events: EventView[] }[];
@@ -54,6 +58,13 @@
 	};
 
 	let view = $derived(data.view);
+	let showAbbreviations = $derived(data.showAbbreviations);
+
+	function selectAbbreviationDisplay(checked: boolean) {
+		showAbbreviations = checked;
+		const secure = location.protocol === 'https:' ? '; secure' : '';
+		document.cookie = `${ABBREVIATION_DISPLAY_COOKIE}=${checked ? 'on' : 'off'}; path=/; max-age=31536000; samesite=lax${secure}`;
+	}
 	let scroller: HTMLDivElement | undefined = $state();
 
 	function selectView(next: WeekView) {
@@ -177,6 +188,11 @@
 		</div>
 		<a class="text-button" href={resolve('app/events')}>自分の予定</a>
 		<div class="views" role="group" aria-label="時間割の見せ方">
+			<ToggleButton
+				label="略称表示"
+				checked={showAbbreviations}
+				onchange={selectAbbreviationDisplay}
+			/>
 			{#each WEEK_VIEWS as option (option)}
 				<button
 					type="button"
@@ -248,8 +264,11 @@
 								{/each}
 								{#each cell.lessons as lesson (lesson.key)}
 									<div class={['lesson', { cancelled: lesson.status === 'cancelled' }]}>
-										<a href={resolve('/app/subjects/[year]/[code]', lesson.subjectPath)}
-											>{lesson.subjectName}</a
+										<a
+											href={resolve('/app/subjects/[year]/[code]', lesson.subjectPath)}
+											title={lesson.subjectName}
+											>{(showAbbreviations && data.abbreviations.get(lesson.subjectId)) ||
+												lesson.subjectName}</a
 										>
 										<StatusBadge status={lesson.status} />
 										<span class="room">
@@ -274,6 +293,7 @@
 
 <style lang="scss">
 	@use 'breakpoints';
+	@use 'toolbar-button';
 
 	.toolbar {
 		display: flex;
@@ -289,24 +309,7 @@
 	}
 	.icon-button,
 	.text-button {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		min-width: 48px;
-		height: 48px;
-		box-sizing: border-box;
-		border: 1px solid var(--fm-divider);
-		border-radius: 0.5rem;
-		background: var(--fm-surface);
-		color: var(--fm-text);
-		font: inherit;
-		text-decoration: none;
-		cursor: pointer;
-		transition: background-color 150ms ease-out;
-	}
-	.icon-button:hover,
-	.text-button:hover {
-		background: var(--fm-surface-muted);
+		@include toolbar-button.base;
 	}
 	.icon-button :global(svg) {
 		width: 1.5rem;
@@ -327,6 +330,9 @@
 	}
 	.views {
 		display: flex;
+		flex-wrap: wrap;
+		justify-content: flex-end;
+		max-width: 100%;
 		gap: 0.25rem;
 		margin-left: auto;
 	}

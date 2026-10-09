@@ -243,6 +243,23 @@ export const personalTimetableSlots = sqliteTable(
 	],
 );
 
+/** 利用者ごとの科目の略称。共有の科目名やほかの利用者の表示には影響しない */
+export const subjectAbbreviations = sqliteTable(
+	'subject_abbreviations',
+	{
+		userId: text('user_id')
+			.notNull()
+			.references(() => users.id, { onDelete: 'cascade' }),
+		subjectId: integer('subject_id')
+			.notNull()
+			.references(() => subjects.id, { onDelete: 'cascade' }),
+		/** 空欄は正式名称を使う指定。未保存とは区別する */
+		abbreviation: text('abbreviation').notNull(),
+		updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull(),
+	},
+	(table) => [primaryKey({ columns: [table.userId, table.subjectId] })],
+);
+
 /**
  * 共有の枠を「モデレーターが確認してから登録する」設定のときに、確認を待つ提出。
  * 承認すると timetable_slots に入り、この記録は結果として残る (消さない)

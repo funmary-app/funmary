@@ -41,6 +41,7 @@
 	}: {
 		form: { error?: string; message?: string } | null;
 		data: {
+			abbreviation: string;
 			canEdit: boolean;
 			subject: SubjectView;
 			slots: Slot[];
@@ -122,6 +123,26 @@
 			</ul>
 		</section>
 	{/if}
+
+	<details>
+		<summary>略称を編集する</summary>
+		<form method="POST" action="?/saveAbbreviation" use:enhance class="edit">
+			<label>
+				略称名
+				<input
+					name="abbreviation"
+					value={data.abbreviation}
+					maxlength="100"
+					autocomplete="off"
+					aria-describedby="abbreviation-help"
+				/>
+			</label>
+			<Button type="submit" variant="unelevated"><Label>保存する</Label></Button>
+		</form>
+		<p class="note" id="abbreviation-help">
+			自分の時間割で略称表示をオンにしたときだけ使われます。ほかの利用者には共有されません。空欄で保存すると正式名称を表示します。
+		</p>
+	</details>
 
 	{#if data.slotSharingMode !== 'closed'}
 		<details>
