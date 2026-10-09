@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { subjectAbbreviations } from './schema.ts';
 import { createAccessTokenStore } from './access-token-store.ts';
 import { createAccountStore } from './account-store.ts';
 import { createAuthStore } from './auth-store.ts';
@@ -51,6 +52,10 @@ function setup() {
 		},
 		T0,
 	);
+	database.db
+		.insert(subjectAbbreviations)
+		.values({ userId, subjectId, abbreviation: '代数', updatedAt: T0 })
+		.run();
 	const token = createAccessTokenStore(database).issue(
 		userId,
 		{ name: 'test', scopes: ['read:lessons'] },
@@ -71,6 +76,7 @@ describe('exportData', () => {
 			termsAcceptances: [{ version: '2026-10-03' }],
 			courseRegistrations: [{ syllabusId: '100001', subjectName: '架空の代数' }],
 			events: [{ title: '架空のサークル' }],
+			subjectAbbreviations: [{ syllabusId: '100001', abbreviation: '代数' }],
 			accessTokens: [{ name: 'test', scopes: ['read:lessons'], revoked: false }],
 		});
 		const text = JSON.stringify(data);
