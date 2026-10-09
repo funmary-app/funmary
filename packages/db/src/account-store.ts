@@ -13,6 +13,7 @@ import {
 	feedTokens,
 	notifications,
 	personalTimetableSlots,
+	subjectAbbreviations,
 	subjects,
 	termsAcceptances,
 	userEvents,
@@ -43,6 +44,7 @@ export interface AccountExport {
 	}[];
 	readonly events: readonly Record<string, unknown>[];
 	readonly eventSubscriptions: readonly { eventId: number }[];
+	readonly subjectAbbreviations: readonly { syllabusId: string; abbreviation: string }[];
 	readonly absences: readonly { syllabusId: string; date: string; period: number }[];
 	readonly notifications: readonly Record<string, unknown>[];
 	readonly accessTokens: readonly Record<string, unknown>[];
@@ -140,6 +142,15 @@ export function createAccountStore(database: Database): AccountStore {
 					.where(eq(eventSubscriptions.userId, userId))
 					.all()
 					.map((row) => ({ eventId: row.eventId })),
+				subjectAbbreviations: db
+					.select()
+					.from(subjectAbbreviations)
+					.where(eq(subjectAbbreviations.userId, userId))
+					.all()
+					.map((row) => ({
+						syllabusId: subjectOf(row.subjectId)?.syllabusId ?? '',
+						abbreviation: row.abbreviation,
+					})),
 				absences: db
 					.select()
 					.from(absences)
