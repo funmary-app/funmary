@@ -4,12 +4,12 @@
 // 応答の大きさに上限を設ける、HTML 以外は捨てる。
 import type { ReadableStreamReadResult } from 'node:stream/web';
 import { CookieJar } from 'tough-cookie';
+import desktopUserAgents from 'top-user-agents/desktop';
 
 export const PORTAL_ORIGIN = 'https://students.fun.ac.jp';
 
-/** 作者の判断で、一般的なブラウザ (デスクトップの Chrome) のものに合わせる */
-const USER_AGENT =
-	'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36';
+/** 作者の判断で、一般的なブラウザのものに合わせる。人気順のリストの先頭 (最も多いデスクトップのもの) を使う */
+const USER_AGENT = desktopUserAgents[0]!;
 
 const TIMEOUT_MS = 15_000;
 const MAX_BYTES = 5 * 1024 * 1024;

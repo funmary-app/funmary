@@ -17,6 +17,7 @@
 		"hast-util-to-text": "^4.0.2",
 		"papaparse": "^5.7.0",
 		"pdfjs-dist": "^6.3.289",
+		"top-user-agents": "^2.1.139",
 		"tough-cookie": "^6.0.2",
 		"valibot": "catalog:"
 	},
