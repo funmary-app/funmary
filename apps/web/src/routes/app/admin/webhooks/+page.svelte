@@ -54,7 +54,9 @@
 	</form>
 </div>
 
-<style>
+<style lang="scss">
+	@use 'mixins';
+
 	form {
 		display: flex;
 		flex-direction: column;
@@ -63,9 +65,7 @@
 	}
 
 	.field {
-		display: flex;
-		flex-direction: column;
-		gap: 0.25rem;
+		@include mixins.stack(0.25rem);
 	}
 
 	.field input {

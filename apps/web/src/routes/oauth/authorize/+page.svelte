@@ -57,6 +57,8 @@
 </div>
 
 <style lang="scss">
+	@use 'mixins';
+
 	fieldset {
 		margin: 1.5rem 0;
 		padding: 1rem;
@@ -76,9 +78,7 @@
 	}
 
 	.actions {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.75rem;
+		@include mixins.wrap-row(0.75rem);
 	}
 
 	.hint {

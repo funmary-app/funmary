@@ -336,7 +336,9 @@
 	{/if}
 </div>
 
-<style>
+<style lang="scss">
+	@use 'mixins';
+
 	.meta {
 		color: var(--fm-text-muted);
 		font-size: 0.875rem;
@@ -350,9 +352,7 @@
 	}
 
 	fieldset {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
+		@include mixins.stack(0.5rem);
 		margin: 0;
 		padding: 0.75rem 1rem;
 		border: 1px solid var(--fm-divider);
@@ -369,15 +369,11 @@
 	}
 
 	.thread-actions {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
+		@include mixins.wrap-row(0.5rem);
 	}
 
 	.custom {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem 1.5rem;
+		@include mixins.wrap-row(0.5rem 1.5rem);
 		padding-left: 1.75rem;
 	}
 

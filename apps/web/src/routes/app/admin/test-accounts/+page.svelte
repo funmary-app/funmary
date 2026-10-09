@@ -89,14 +89,14 @@
 </div>
 
 <style lang="scss">
+	@use 'mixins';
+
 	h2 {
 		margin: 2.5rem 0 1rem;
 	}
 
 	.add {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
+		@include mixins.stack(0.5rem);
 		max-width: 28rem;
 	}
 
@@ -104,9 +104,7 @@
 		list-style: none;
 		margin: 0;
 		padding: 0;
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
+		@include mixins.stack(1rem);
 
 		li {
 			padding: 1rem;
@@ -122,9 +120,7 @@
 	}
 
 	.row {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
+		@include mixins.wrap-row(0.5rem);
 		margin-top: 0.5rem;
 	}
 </style>

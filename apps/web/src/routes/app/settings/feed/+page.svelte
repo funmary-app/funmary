@@ -145,7 +145,9 @@
 	{/if}
 </div>
 
-<style>
+<style lang="scss">
+	@use 'mixins';
+
 	section {
 		margin-top: 2rem;
 	}
@@ -168,9 +170,7 @@
 	}
 
 	fieldset {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
+		@include mixins.stack(0.5rem);
 		margin: 0;
 		padding: 0.75rem 1rem;
 		border: 1px solid var(--fm-divider);
@@ -186,9 +186,7 @@
 	}
 
 	.actions {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
+		@include mixins.wrap-row(0.5rem);
 	}
 
 	/* スマホの幅でも日時が折り返さないよう、項目名の下に値を置く */

@@ -176,7 +176,9 @@
 	</section>
 </div>
 
-<style>
+<style lang="scss">
+	@use 'mixins';
+
 	section {
 		margin-top: 2rem;
 	}
@@ -224,9 +226,7 @@
 	}
 
 	.limit {
-		display: flex;
-		flex-direction: column;
-		gap: 0.25rem;
+		@include mixins.stack(0.25rem);
 		font-size: 0.875rem;
 
 		p {

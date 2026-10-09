@@ -19,11 +19,11 @@
 	<!-- eslint-enable svelte/no-navigation-without-resolve -->
 </p>
 
-<style>
+<style lang="scss">
+	@use 'mixins';
+
 	.footer-links {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0 1rem;
+		@include mixins.wrap-row(0 1rem);
 		margin: 0.5rem 0 0;
 		font-size: 0.8125rem;
 	}

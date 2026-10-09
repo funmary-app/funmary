@@ -243,16 +243,16 @@
 	</p>
 </div>
 
-<style>
+<style lang="scss">
+	@use 'mixins';
+
 	h2 {
 		margin-top: 2rem;
 		font-size: 1.125rem;
 	}
 
 	.webhooks {
-		display: flex;
-		flex-direction: column;
-		gap: 1.5rem;
+		@include mixins.stack(1.5rem);
 		margin: 1.5rem 0 0;
 		padding: 0;
 		list-style: none;
@@ -319,16 +319,12 @@
 	}
 
 	.actions {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
+		@include mixins.wrap-row(0.5rem);
 		margin-top: 1rem;
 	}
 
 	.field {
-		display: flex;
-		flex-direction: column;
-		gap: 0.25rem;
+		@include mixins.stack(0.25rem);
 		width: 100%;
 	}
 
@@ -340,9 +336,7 @@
 	}
 
 	fieldset {
-		display: flex;
-		flex-direction: column;
-		gap: 0.25rem;
+		@include mixins.stack(0.25rem);
 		margin: 0;
 		padding: 0.75rem 1rem;
 		border: 1px solid var(--fm-divider);

@@ -50,7 +50,7 @@
 	>
 </p>
 
-<style>
+<style lang="scss">
 	.about {
 		display: flex;
 		flex-wrap: wrap;

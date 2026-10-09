@@ -52,7 +52,7 @@
 	{/if}
 </div>
 
-<style>
+<style lang="scss">
 	.error {
 		max-width: 40rem;
 		margin: 2rem auto;

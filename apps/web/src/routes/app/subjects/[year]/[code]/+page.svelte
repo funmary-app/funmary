@@ -363,7 +363,9 @@
 	</section>
 </div>
 
-<style>
+<style lang="scss">
+	@use 'mixins';
+
 	.note {
 		color: var(--fm-text-muted);
 		font-size: 0.875rem;
@@ -385,9 +387,7 @@
 		background: var(--fm-surface-muted);
 
 		label {
-			display: flex;
-			flex-direction: column;
-			gap: 0.25rem;
+			@include mixins.stack(0.25rem);
 			font-size: 0.875rem;
 		}
 
@@ -404,9 +404,7 @@
 		align-items: flex-start;
 
 		fieldset {
-			display: flex;
-			flex-direction: column;
-			gap: 0.25rem;
+			@include mixins.stack(0.25rem);
 			width: 100%;
 			margin: 0;
 			padding: 0;

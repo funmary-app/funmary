@@ -188,7 +188,9 @@
 	{/if}
 </div>
 
-<style>
+<style lang="scss">
+	@use 'mixins';
+
 	.lessons {
 		padding: 0;
 		list-style: none;
@@ -205,9 +207,7 @@
 		gap: 0.5rem 1rem;
 
 		label {
-			display: flex;
-			flex-direction: column;
-			gap: 0.25rem;
+			@include mixins.stack(0.25rem);
 			font-size: 0.875rem;
 		}
 	}
@@ -225,9 +225,7 @@
 		margin-top: 2rem;
 	}
 	.actions {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
+		@include mixins.wrap-row(0.5rem);
 	}
 	.name {
 		margin: 0;
@@ -239,9 +237,7 @@
 		color: var(--fm-text-muted);
 	}
 	fieldset {
-		display: flex;
-		flex-direction: column;
-		gap: 0.25rem;
+		@include mixins.stack(0.25rem);
 		border: none;
 		padding: 0;
 		margin: 0.5rem 0;

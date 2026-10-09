@@ -23,7 +23,7 @@
 	{/if}
 </div>
 
-<style>
+<style lang="scss">
 	pre {
 		margin-top: 1rem;
 		padding: 0.75rem 1rem;

@@ -332,7 +332,7 @@
 	{/if}
 </div>
 
-<style>
+<style lang="scss">
 	section {
 		margin-top: 2rem;
 	}

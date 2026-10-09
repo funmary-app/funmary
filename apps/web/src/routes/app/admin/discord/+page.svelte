@@ -263,7 +263,9 @@
 	{/if}
 </div>
 
-<style>
+<style lang="scss">
+	@use 'mixins';
+
 	section {
 		margin-top: 2rem;
 	}
@@ -305,9 +307,7 @@
 		gap: 0.5rem 1rem;
 
 		label {
-			display: flex;
-			flex-direction: column;
-			gap: 0.25rem;
+			@include mixins.stack(0.25rem);
 			font-size: 0.875rem;
 		}
 	}
@@ -318,9 +318,7 @@
 		gap: 0.5rem 1rem;
 
 		label {
-			display: flex;
-			flex-direction: column;
-			gap: 0.25rem;
+			@include mixins.stack(0.25rem);
 			font-size: 0.875rem;
 		}
 	}
@@ -332,9 +330,7 @@
 		margin-top: 0.75rem;
 	}
 	.join-role fieldset {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
+		@include mixins.stack(0.5rem);
 		margin: 0;
 		padding: 0.75rem 1rem;
 		border: 1px solid var(--fm-divider);
@@ -347,14 +343,10 @@
 		min-height: 44px;
 	}
 	.join-role > label {
-		display: flex;
-		flex-direction: column;
-		gap: 0.25rem;
+		@include mixins.stack(0.25rem);
 		font-size: 0.875rem;
 	}
 	.actions {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
+		@include mixins.wrap-row(0.5rem);
 	}
 </style>

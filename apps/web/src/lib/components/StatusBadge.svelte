@@ -18,7 +18,7 @@
 	</span>
 {/if}
 
-<style>
+<style lang="scss">
 	.badge {
 		display: inline-flex;
 		align-items: center;

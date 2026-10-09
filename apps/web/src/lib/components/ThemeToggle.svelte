@@ -47,7 +47,7 @@
 	{/if}
 </button>
 
-<style>
+<style lang="scss">
 	.toggle {
 		display: inline-flex;
 		align-items: center;

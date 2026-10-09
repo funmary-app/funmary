@@ -207,6 +207,8 @@
 </div>
 
 <style lang="scss">
+	@use 'mixins';
+
 	@use 'breakpoints';
 
 	.landing {
@@ -291,9 +293,7 @@
 	}
 
 	.invite {
-		display: flex;
-		flex-direction: column;
-		gap: 0.375rem;
+		@include mixins.stack(0.375rem);
 		width: 100%;
 		max-width: 26rem;
 		margin-top: 1.25rem;
@@ -306,9 +306,7 @@
 	}
 
 	.invite-row {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
+		@include mixins.wrap-row(0.5rem);
 
 		input {
 			flex: 1 1 10rem;

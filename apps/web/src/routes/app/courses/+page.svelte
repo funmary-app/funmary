@@ -344,7 +344,9 @@
 	{/if}
 </div>
 
-<style>
+<style lang="scss">
+	@use 'mixins';
+
 	.tabs {
 		display: flex;
 		gap: 0.25rem;
@@ -387,9 +389,7 @@
 		color: var(--fm-text-muted);
 	}
 	.slot-form {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem 1rem;
+		@include mixins.wrap-row(0.5rem 1rem);
 		align-items: end;
 	}
 	.inline {

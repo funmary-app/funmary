@@ -57,7 +57,7 @@
 	</section>
 {/if}
 
-<style>
+<style lang="scss">
 	summary {
 		min-height: 44px;
 		align-content: center;
