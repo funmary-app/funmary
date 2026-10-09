@@ -39,7 +39,7 @@
 	</ul>
 {/if}
 
-<style>
+<style lang="scss">
 	.codes {
 		margin: 0;
 		padding: 0;

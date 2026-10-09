@@ -26,7 +26,7 @@
 	</ol>
 </nav>
 
-<style>
+<style lang="scss">
 	.breadcrumb ol {
 		display: flex;
 		flex-wrap: wrap;

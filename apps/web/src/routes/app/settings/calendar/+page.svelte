@@ -155,7 +155,9 @@
 	{/if}
 </div>
 
-<style>
+<style lang="scss">
+	@use 'mixins';
+
 	section {
 		margin-top: 2rem;
 	}
@@ -187,9 +189,7 @@
 
 	.add-links,
 	.actions {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
+		@include mixins.wrap-row(0.5rem);
 	}
 
 	.qr {

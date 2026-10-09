@@ -60,14 +60,14 @@
 </div>
 
 <style lang="scss">
+	@use 'mixins';
+
 	h2 {
 		margin: 2.5rem 0 1rem;
 	}
 
 	form {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
+		@include mixins.stack(0.5rem);
 		max-width: 28rem;
 	}
 

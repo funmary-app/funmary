@@ -100,10 +100,10 @@
 </div>
 
 <style lang="scss">
+	@use 'mixins';
+
 	.filters {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
+		@include mixins.wrap-row(0.5rem);
 		margin: 1rem 0;
 		padding: 0;
 		list-style: none;
@@ -143,9 +143,7 @@
 	}
 
 	.item {
-		display: flex;
-		flex-direction: column;
-		gap: 0.125rem;
+		@include mixins.stack(0.125rem);
 		width: 100%;
 		min-height: 48px;
 		padding: 0.75rem 0.5rem;

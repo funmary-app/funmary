@@ -371,6 +371,8 @@
 </div>
 
 <style lang="scss">
+	@use 'mixins';
+
 	details {
 		margin-top: 1rem;
 	}
@@ -484,9 +486,7 @@
 		background: var(--fm-surface-muted);
 
 		label {
-			display: flex;
-			flex-direction: column;
-			gap: 0.25rem;
+			@include mixins.stack(0.25rem);
 			font-size: 0.875rem;
 		}
 	}

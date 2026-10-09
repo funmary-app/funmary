@@ -257,7 +257,9 @@
 	{/if}
 </dialog>
 
-<style>
+<style lang="scss">
+	@use 'mixins';
+
 	.months {
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
@@ -269,9 +271,7 @@
 	}
 
 	.legend {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.25rem 1rem;
+		@include mixins.wrap-row(0.25rem 1rem);
 		margin: 0 0 1rem;
 		padding: 0;
 		list-style: none;
@@ -440,9 +440,7 @@
 		gap: 0.5rem 0.75rem;
 
 		label {
-			display: flex;
-			flex-direction: column;
-			gap: 0.25rem;
+			@include mixins.stack(0.25rem);
 			font-size: 0.875rem;
 		}
 

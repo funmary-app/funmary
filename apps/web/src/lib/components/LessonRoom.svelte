@@ -10,7 +10,7 @@
 	<span class="tentative">教室未定</span>
 {/if}
 
-<style>
+<style lang="scss">
 	.tentative {
 		color: var(--fm-text-muted);
 		font-size: 0.875em;

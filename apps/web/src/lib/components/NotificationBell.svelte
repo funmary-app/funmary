@@ -24,7 +24,7 @@
 	{/if}
 </a>
 
-<style>
+<style lang="scss">
 	.bell {
 		display: inline-flex;
 		align-items: center;

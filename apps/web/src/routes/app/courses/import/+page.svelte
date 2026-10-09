@@ -163,16 +163,16 @@
 	{/if}
 </div>
 
-<style>
+<style lang="scss">
+	@use 'mixins';
+
 	.note {
 		padding: 0.75rem 1rem;
 		border-radius: 0.5rem;
 		background: var(--fm-surface-muted);
 	}
 	.methods {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.25rem;
+		@include mixins.wrap-row(0.25rem);
 		margin-bottom: 0.5rem;
 	}
 	.methods button,

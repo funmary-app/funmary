@@ -39,7 +39,7 @@
 	{/if}
 </div>
 
-<style>
+<style lang="scss">
 	.events {
 		padding: 0;
 		list-style: none;

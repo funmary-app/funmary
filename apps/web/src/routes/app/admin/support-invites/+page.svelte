@@ -206,6 +206,8 @@
 {/snippet}
 
 <style lang="scss">
+	@use 'mixins';
+
 	section {
 		margin-top: 2rem;
 	}
@@ -220,9 +222,7 @@
 	}
 
 	.field {
-		display: flex;
-		flex-direction: column;
-		gap: 0.25rem;
+		@include mixins.stack(0.25rem);
 		width: 100%;
 		max-width: 24rem;
 		font-size: 0.875rem;
@@ -292,9 +292,7 @@
 	}
 
 	.row-actions {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
+		@include mixins.wrap-row(0.5rem);
 
 		/* 文言が変わっても、ボタンの幅と位置を変えない */
 		:global(button) {

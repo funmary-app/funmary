@@ -137,7 +137,7 @@
 	</ul>
 </div>
 
-<style>
+<style lang="scss">
 	h2 {
 		margin-top: 2rem;
 	}

@@ -306,17 +306,15 @@
 	<Button type="submit" variant="unelevated"><Label>{submitLabel}</Label></Button>
 </form>
 
-<style>
+<style lang="scss">
+	@use 'mixins';
+
 	.event-form {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
+		@include mixins.stack(1rem);
 		max-width: 40rem;
 	}
 	fieldset {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
+		@include mixins.stack(0.5rem);
 		margin: 0;
 		padding: 0.75rem 1rem;
 		border: 1px solid var(--fm-divider);
@@ -330,23 +328,17 @@
 		font-weight: 500;
 	}
 	.field {
-		display: flex;
-		flex-direction: column;
-		gap: 0.25rem;
+		@include mixins.stack(0.25rem);
 		font-size: 0.875rem;
 	}
 	.field.narrow {
 		max-width: 12rem;
 	}
 	.row {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem 1rem;
+		@include mixins.wrap-row(0.5rem 1rem);
 	}
 	.choices {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.25rem 1rem;
+		@include mixins.wrap-row(0.25rem 1rem);
 	}
 	.choice {
 		display: inline-flex;

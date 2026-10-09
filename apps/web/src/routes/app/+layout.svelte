@@ -131,6 +131,8 @@
 </div>
 
 <style lang="scss">
+	@use 'mixins';
+
 	@use 'breakpoints';
 
 	.shell {
@@ -268,9 +270,7 @@
 		.side {
 			position: sticky;
 			top: 0;
-			display: flex;
-			flex-direction: column;
-			gap: 1.5rem;
+			@include mixins.stack(1.5rem);
 			box-sizing: border-box;
 			height: 100dvh;
 			/* 高さが足りないときは、下の要素を上の要素に重ねず、メニューの中でスクロールする */
@@ -289,9 +289,7 @@
 	}
 
 	.side .side-items {
-		display: flex;
-		flex-direction: column;
-		gap: 0.25rem;
+		@include mixins.stack(0.25rem);
 		margin: 0;
 		padding: 0;
 		list-style: none;

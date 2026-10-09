@@ -13,7 +13,7 @@
 	<img class="dark" src="/brand/logo-dark.svg" alt="Funmary" width="1154" height="239" />
 </span>
 
-<style>
+<style lang="scss">
 	.logo {
 		display: inline-flex;
 	}

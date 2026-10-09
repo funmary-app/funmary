@@ -104,7 +104,9 @@
 	</section>
 </div>
 
-<style>
+<style lang="scss">
+	@use 'mixins';
+
 	.share,
 	.invite,
 	.danger {
@@ -114,9 +116,7 @@
 		font-size: 1.1rem;
 	}
 	.field {
-		display: flex;
-		flex-direction: column;
-		gap: 0.25rem;
+		@include mixins.stack(0.25rem);
 		margin-bottom: 0.75rem;
 		font-size: 0.875rem;
 	}

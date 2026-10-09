@@ -30,7 +30,7 @@
 	>
 </span>
 
-<style>
+<style lang="scss">
 	.masked-email {
 		display: flex;
 		width: 100%;

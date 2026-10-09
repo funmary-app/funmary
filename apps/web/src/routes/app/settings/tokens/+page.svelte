@@ -171,6 +171,8 @@
 </div>
 
 <style lang="scss">
+	@use 'mixins';
+
 	h2 {
 		margin: 2.5rem 0 1rem;
 	}
@@ -183,16 +185,12 @@
 	}
 
 	.entry {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
+		@include mixins.stack(1rem);
 		max-width: 28rem;
 	}
 
 	.field {
-		display: flex;
-		flex-direction: column;
-		gap: 0.25rem;
+		@include mixins.stack(0.25rem);
 		font-size: 0.875rem;
 	}
 
@@ -201,9 +199,7 @@
 	}
 
 	fieldset {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
+		@include mixins.stack(0.5rem);
 		padding: 0.75rem 1rem;
 		border: 1px solid var(--fm-divider);
 		border-radius: 0.5rem;
@@ -228,9 +224,7 @@
 		list-style: none;
 
 		li {
-			display: flex;
-			flex-direction: column;
-			gap: 0.25rem;
+			@include mixins.stack(0.25rem);
 			padding: 1rem 0;
 			border-top: 1px dashed var(--fm-divider);
 		}

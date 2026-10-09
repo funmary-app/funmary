@@ -42,6 +42,8 @@
 </div>
 
 <style lang="scss">
+	@use 'mixins';
+
 	label {
 		display: block;
 		margin-top: 1rem;
@@ -49,9 +51,7 @@
 	}
 
 	.copy-row {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
+		@include mixins.wrap-row(0.5rem);
 		margin-top: 0.25rem;
 
 		input {

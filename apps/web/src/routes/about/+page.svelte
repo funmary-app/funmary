@@ -87,7 +87,7 @@
 	</p>
 </div>
 
-<style>
+<style lang="scss">
 	.links {
 		margin: 1rem 0 0;
 		padding: 0;

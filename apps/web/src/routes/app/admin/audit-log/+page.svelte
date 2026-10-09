@@ -63,7 +63,7 @@
 	{/if}
 </div>
 
-<style>
+<style lang="scss">
 	.scroll {
 		overflow-x: auto;
 	}

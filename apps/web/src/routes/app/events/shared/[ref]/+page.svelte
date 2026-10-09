@@ -65,7 +65,7 @@
 	{/if}
 </div>
 
-<style>
+<style lang="scss">
 	dt {
 		margin-top: 0.75rem;
 		color: var(--fm-text-muted);

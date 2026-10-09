@@ -1,0 +1,15 @@
+// 画面のスタイルで何度も出てくる並べ方。コンポーネントの <style lang="scss"> から @use 'mixins'; で読む。
+
+/// 縦に並べる (間隔は gap)
+@mixin stack($gap: 0.25rem) {
+	display: flex;
+	flex-direction: column;
+	gap: $gap;
+}
+
+/// 横に並べ、入りきらなければ折り返す (間隔は gap)
+@mixin wrap-row($gap: 0.5rem) {
+	display: flex;
+	flex-wrap: wrap;
+	gap: $gap;
+}
