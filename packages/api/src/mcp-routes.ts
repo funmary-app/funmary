@@ -2,6 +2,7 @@
 // 同じ reads/ の関数を呼ぶので、REST と中身が食い違わない。道具はすべて読み取り専用 (readOnlyHint)。
 import { hasAcceptedTerms, jstDateTime } from '@funmary/core';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { SUPPORTED_PROTOCOL_VERSIONS } from '@modelcontextprotocol/sdk/types.js';
 import { StreamableHTTPTransport } from '@hono/mcp';
 import { Hono } from 'hono';
 import { z } from 'zod';
@@ -297,6 +298,21 @@ export function createMcpRoutes(deps: McpRoutesDeps): Hono {
 			return c.json(
 				{ error: 'unauthorized', message: 'Authorization: Bearer <token> が要ります' },
 				401,
+			);
+		}
+		// トランスポートは、対応していない版に 404 の例外を投げる。仕様の 400 で、対応する版を知らせて断る
+		const requested = c.req.header('mcp-protocol-version');
+		if (requested !== undefined && !SUPPORTED_PROTOCOL_VERSIONS.includes(requested)) {
+			return c.json(
+				{
+					jsonrpc: '2.0',
+					error: {
+						code: -32000,
+						message: `Bad Request: Unsupported protocol version (supported versions: ${SUPPORTED_PROTOCOL_VERSIONS.join(', ')})`,
+					},
+					id: null,
+				},
+				400,
 			);
 		}
 		deps.accessTokens.markUsed(found.id, now);
