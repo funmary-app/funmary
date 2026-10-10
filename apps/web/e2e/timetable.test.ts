@@ -133,8 +133,17 @@ test.describe('今日と週の時間割', () => {
 		await expect(page.getByRole('heading', { level: 1 })).toHaveText('10/12 (月) からの週');
 
 		// カレンダーで日付を選ぶと、その日を含む週に移る
-		await page.getByRole('button', { name: 'カレンダーで日付を選んで、その週を出す' }).click();
-		await page.locator('.picker input[type="date"]').fill('2026-11-04');
+		// スマホの Safari は入力欄を直接押さないと日付の選択を開けないので、入力欄がボタンに重なっていることを確かめる
+		const calendarButton = page.getByRole('button', {
+			name: 'カレンダーで日付を選んで、その週を出す',
+		});
+		const dateInput = page.locator('.picker input[type="date"]');
+		expect(await dateInput.boundingBox()).toEqual(await calendarButton.boundingBox());
+		await dateInput.click();
+		// 年を打っている途中の日付 (0001 年など) では移らない
+		await dateInput.fill('0001-11-04');
+		await expect(page).toHaveURL('/app/week?date=2026-10-11');
+		await dateInput.fill('2026-11-04');
 		await expect(page).toHaveURL('/app/week?date=2026-11-04');
 		await expect(page.getByRole('heading', { level: 1 })).toHaveText('11/2 (月) からの週');
 		for (let i = 0; i < 3; i++) await page.getByRole('link', { name: '前の週' }).click();
