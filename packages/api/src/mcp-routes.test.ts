@@ -2,6 +2,7 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { type Database } from '@funmary/db';
 import { describe, expect, it } from 'vitest';
+import { createApi } from './app.ts';
 import { buildMcpServer, buildTermsRequiredMcpServer, createMcpRoutes } from './mcp-routes.ts';
 import { useTestDatabase } from '@funmary/db/testing';
 import { createTestApiDeps } from './testing.ts';
@@ -216,5 +217,77 @@ describe('利用規約への同意を待っている利用者', () => {
 		src.users.acceptTerms(userId, '2026-10-03', NOW);
 		const accepted = await call('initialize');
 		expect(await accepted.text()).not.toContain('https://funmary.example.com/consent');
+	});
+});
+
+describe('対応していないプロトコルの版を名乗るクライアント', () => {
+	it('サーバーの 500 ではなく、400 と対応する版の一覧で断る', async () => {
+		const src = deps();
+		const userId = src.users.createUser(
+			{ googleSub: 'a', email: 'a@fun.ac.jp', name: null, role: 'user' },
+			NOW,
+		);
+		const token = src.accessTokens.issue(
+			userId,
+			{ name: 'test', scopes: ['read:lessons'] },
+			new Date(Date.now() + 24 * 60 * 60 * 1000),
+			NOW,
+		);
+		const errors: unknown[] = [];
+		const api = createApi({
+			checkHealth: () => true,
+			mcp: src,
+			onError: (error) => errors.push(error),
+		});
+
+		const res = await api.request('/mcp', {
+			method: 'POST',
+			headers: {
+				Authorization: `Bearer ${token}`,
+				'Content-Type': 'application/json',
+				Accept: 'application/json, text/event-stream',
+				'mcp-protocol-version': '2099-01-01',
+			},
+			body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/list' }),
+		});
+
+		expect(res.status).toBe(400);
+		expect(JSON.stringify(await res.json())).toContain('2025-06-18');
+		expect(errors).toEqual([]);
+	});
+});
+
+describe('トランスポートが投げるクライアントの誤り', () => {
+	it('Accept が足りないときは、サーバーの 500 ではなく 406 を返し、例外として記録しない', async () => {
+		const src = deps();
+		const userId = src.users.createUser(
+			{ googleSub: 'a', email: 'a@fun.ac.jp', name: null, role: 'user' },
+			NOW,
+		);
+		const token = src.accessTokens.issue(
+			userId,
+			{ name: 'test', scopes: ['read:lessons'] },
+			new Date(Date.now() + 24 * 60 * 60 * 1000),
+			NOW,
+		);
+		const errors: unknown[] = [];
+		const api = createApi({
+			checkHealth: () => true,
+			mcp: src,
+			onError: (error) => errors.push(error),
+		});
+
+		const res = await api.request('/mcp', {
+			method: 'POST',
+			headers: {
+				Authorization: `Bearer ${token}`,
+				'Content-Type': 'application/json',
+				Accept: 'text/html',
+			},
+			body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/list' }),
+		});
+
+		expect(res.status).toBe(406);
+		expect(errors).toEqual([]);
 	});
 });

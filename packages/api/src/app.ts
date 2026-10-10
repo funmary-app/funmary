@@ -1,5 +1,6 @@
 // 機械向けの口。SvelteKit のフックから、決まったパスだけがここに渡される。
 import { Hono } from 'hono';
+import { HTTPException } from 'hono/http-exception';
 import { createAuthRoutes, type AuthRoutesDeps } from './auth-routes.ts';
 import { createCalendarRoutes, type CalendarRoutesDeps } from './calendar-routes.ts';
 import { errorResponse } from './error-page.ts';
@@ -37,6 +38,8 @@ export interface ApiDeps {
 export function createApi(deps: ApiDeps): Hono {
 	const app = new Hono();
 	app.onError((error, c) => {
+		// MCP のトランスポートは、クライアントの誤りを HTTPException で投げる。サーバーの 500 にせず、その応答を返す
+		if (error instanceof HTTPException && error.status < 500) return error.getResponse();
 		deps.onError?.(error, c.req.path);
 		return errorResponse(c, 500);
 	});
