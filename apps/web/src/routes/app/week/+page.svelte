@@ -87,21 +87,23 @@
 
 	let picker: HTMLInputElement | undefined = $state();
 
-	/** カレンダーのボタン。ブラウザの日付の選択を開く (開けないブラウザでは、入力欄に移る) */
+	/**
+	 * ブラウザの日付の選択を開く。Chrome などは入力欄を押しても選択が開かないので showPicker で開く。
+	 * Safari や Firefox は入力欄を直接押せば開くので、開けないときは何もしない
+	 */
 	function openPicker() {
 		if (!picker) return;
 		try {
 			picker.showPicker();
 		} catch {
-			// 古いブラウザなどで開けないときは、入力欄に移って、キーボードで入れられるようにする
 			picker.focus();
 		}
 	}
 
-	/** 日付を選んだら、その日を含む週に移る */
+	/** 日付を選んだら、その日を含む週に移る。年を打っている途中の日付 (0001 年など) では移らない */
 	async function pickDate(event: Event & { currentTarget: HTMLInputElement }) {
 		const date = event.currentTarget.value;
-		if (date) await goto(weekUrl(date));
+		if (/^(19|2\d)\d{2}-\d{2}-\d{2}$/.test(date)) await goto(weekUrl(date));
 	}
 
 	/** 日付の横に出すラベル。祝日と全学の休講日は授業がないので、列も灰色にする */
@@ -176,12 +178,13 @@
 			>
 				<IconCalendar aria-hidden="true" />
 			</button>
-			<!-- 日付の選択はボタンから開く。入力欄そのものは見せず、Tab でも止まらない -->
+			<!-- 見えない入力欄をボタンに重ねる。スマホの Safari は、入力欄を直接押さないと日付の選択を開けない。キーボードはボタンから開く -->
 			<input
 				bind:this={picker}
 				type="date"
 				value={data.monday}
 				onchange={pickDate}
+				onclick={openPicker}
 				tabindex="-1"
 				aria-hidden="true"
 			/>
@@ -340,18 +343,19 @@
 		border-color: var(--fm-primary);
 		background: var(--fm-primary-soft);
 	}
-	/* 日付の選択が、カレンダーのボタンの下に開くよう、入力欄をボタンの下に重ねて隠す */
+	/* 日付の選択が、カレンダーのボタンの位置に開くよう、透明な入力欄をボタンの上に重ねる */
 	.picker input {
 		position: absolute;
-		left: 0;
-		bottom: 0;
-		width: 1px;
-		height: 1px;
+		inset: 0;
+		width: 100%;
+		height: 100%;
 		min-height: 0;
 		padding: 0;
 		border: 0;
+		/* 小さい字だと、iPhone の Safari が拡大する */
+		font-size: 1rem;
 		opacity: 0;
-		pointer-events: none;
+		cursor: pointer;
 	}
 	/* 1 日ずつ見るときは、表を横に送る */
 	@mixin one-day {
