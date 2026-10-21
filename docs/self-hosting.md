@@ -229,7 +229,9 @@ cp .env.ssh.example .env.ssh
 pnpm env:upload
 ```
 
-反映専用の制限された鍵 (`funmary-deploy`) は使わず、自分の SSH 鍵と `sudo` を使います。パスフレーズ付きの鍵なら、接続のたびに端末で聞かれます (`pnpm env:upload` では、読むときと書くときの 2 回)。先に `ssh-add` で `ssh-agent` に登録すれば、聞かれません。`~/.ssh/config` の設定が当たらないときは、`.env.ssh` の `SSH_KEY` に秘密鍵のパスを書きます。
+反映専用の制限された鍵 (`funmary-deploy`) は使わず、自分の SSH 鍵と `sudo` を使います。パスフレーズ付きの鍵なら、接続のたびに端末で聞かれます (`pnpm env:upload` では、読むときと書くときの 2 回)。先に `ssh-add` で `ssh-agent` に登録すれば、聞かれません。
+
+接続は公開鍵認証だけで行い、パスワード認証には切り替えません。鍵が見つからなければ、パスワードを聞かずに止まります。`.env.ssh` の `SSH_HOST` には、`~/.ssh/config` の Host 名も書けます (そのときは `User` と `IdentityFile` をその設定から読みます)。`~/.ssh/config` の設定が当たらないときは、`SSH_KEY` に秘密鍵のパスを書きます。原因が分からないときは、`ssh -v` で同じ宛先に手で接続してみます。VPS の sshd では、パスワード認証を切っておくのがよいです (`PasswordAuthentication no`)。
 
 `pnpm env:upload` で値を上書きしたときは、最後にいま再起動するか聞かれ、`y` と答えると再起動して、動いているかまで確かめます。再起動だけをしたいときや、再起動を後回しにしたときは、`pnpm vps:restart` を使います (VPS の上では `systemctl restart funmary`)。
 

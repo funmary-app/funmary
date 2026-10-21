@@ -38,6 +38,10 @@ export function resolveSshBin({ sshBin, platform, exists }) {
  */
 export function sshArgs(config, remote) {
 	return [
+		// 鍵が見つからなくても、パスワード認証に黙って切り替えず、設定の誤りとして止める。
+		// 鍵のパスフレーズは認証方式の選択とは別なので、これまでどおり端末で聞かれる
+		'-o',
+		'PreferredAuthentications=publickey',
 		// 鍵を書いたときは、その鍵だけを使う (ssh-agent のほかの鍵を順に試して、回数制限で断られないように)
 		...(config.key ? ['-o', 'IdentitiesOnly=yes'] : []),
 		...(config.port ? ['-p', config.port] : []),
@@ -131,7 +135,9 @@ export function runSsh(config, remote) {
 		// ssh 自体の失敗 (接続や認証) は 255 で終わる。VPS のコマンドの失敗は、そのコマンドの終了コードになる
 		if (error instanceof Error && 'status' in error && error.status === 255) {
 			console.error(
-				'VPS に SSH で入れませんでした。パスフレーズ、.env.ssh の SSH_HOST と SSH_KEY を確かめてください ' +
+				'VPS に SSH で入れませんでした。パスワードでは接続せず、公開鍵だけで入ります。' +
+					'.env.ssh の SSH_KEY に秘密鍵のパスを書くか、SSH_HOST に ~/.ssh/config の Host 名を書いてください。' +
+					'原因を調べたいときは、ssh -v で同じ宛先に手で接続してみてください ' +
 					'(毎回のパスフレーズを省きたいときは、先に ssh-add で ssh-agent に鍵を登録します)。',
 			);
 		}

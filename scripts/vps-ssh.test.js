@@ -11,15 +11,24 @@ import {
 describe('sshArgs', () => {
 	it('パスフレーズを聞けるよう、BatchMode は付けない', () => {
 		expect(sshArgs({ host: 'root@funmary.example.com' }, ['true'])).toEqual([
+			'-o',
+			'PreferredAuthentications=publickey',
 			'root@funmary.example.com',
 			'true',
 		]);
+	});
+
+	it('鍵を指定しなくても、公開鍵認証だけを使う', () => {
+		const args = sshArgs({ host: 'funmary-vps' }, ['true']);
+		expect(args[args.indexOf('PreferredAuthentications=publickey') - 1]).toBe('-o');
 	});
 
 	it('ポートと鍵を書いていれば渡し、鍵はその鍵だけを使う', () => {
 		expect(
 			sshArgs({ host: 'root@funmary.example.com', port: '2222', key: 'C:/keys/vps' }, ['true']),
 		).toEqual([
+			'-o',
+			'PreferredAuthentications=publickey',
 			'-o',
 			'IdentitiesOnly=yes',
 			'-p',
