@@ -1,6 +1,6 @@
 // 時間割の取り込みと、履修科目の登録。
 import { expect, test, type Page } from '@playwright/test';
-import { oidc, signIn, useMockOidc, seedSubjects, signInAs } from './support.ts';
+import { oidc, signIn, useMockOidc, seedSubjects, signInAs, answerConfirm } from './support.ts';
 
 // サーバーの状態 (次にログインする人) を共有するので、テストは 1 つずつ動かす
 test.describe.configure({ mode: 'serial' });
@@ -168,8 +168,8 @@ test.describe('履修科目の登録', () => {
 			.first()
 			.click();
 
-		page.once('dialog', (dialog) => dialog.accept());
 		await registered.getByRole('button', { name: '登録を取り消す' }).click();
+		await answerConfirm(page, true);
 		await expect(page.getByRole('status')).toHaveText('架空の演習Ⅱ1-AB の登録を取り消しました。');
 		await expect(page.getByText('まだ登録していません')).toBeVisible();
 	});

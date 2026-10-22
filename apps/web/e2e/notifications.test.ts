@@ -1,6 +1,6 @@
 // 通知欄、カレンダーと RSS の購読、Webhook。
 import { expect, test } from '@playwright/test';
-import { oidc, signIn, useMockOidc, seedSubjects } from './support.ts';
+import { oidc, signIn, useMockOidc, seedSubjects, answerConfirm } from './support.ts';
 
 // サーバーの状態 (次にログインする人) を共有するので、テストは 1 つずつ動かす
 test.describe.configure({ mode: 'serial' });
@@ -137,8 +137,8 @@ test.describe('カレンダーの購読', () => {
 		expect((await page.request.get(first)).status()).toBe(404);
 		expect((await page.request.get(second)).status()).toBe(200);
 
-		page.once('dialog', (dialog) => dialog.accept());
 		await page.getByRole('button', { name: '無効にする' }).click();
+		await answerConfirm(page, true);
 		await expect(page.getByRole('status').first()).toHaveText(/購読の URL を無効にしました/);
 		expect((await page.request.get(second)).status()).toBe(404);
 		await expect(page.getByRole('button', { name: '購読の URL を発行する' })).toBeVisible();
@@ -182,8 +182,8 @@ test.describe('お知らせのフィード', () => {
 		await expect(page.getByLabel('補講')).not.toBeChecked();
 		await expect(page.getByLabel('休講')).toBeChecked();
 
-		page.once('dialog', (dialog) => dialog.accept());
 		await page.getByRole('button', { name: '無効にする' }).click();
+		await answerConfirm(page, true);
 		await expect(page.getByRole('status').first()).toHaveText(/購読の URL を無効にしました/);
 		expect((await page.request.get(rss)).status()).toBe(404);
 		await expect(page.getByRole('button', { name: '購読の URL を発行する' })).toBeVisible();
@@ -236,8 +236,8 @@ test.describe('Webhook', () => {
 		await item.getByRole('button', { name: '有効に戻す' }).click();
 		await expect(item.getByRole('button', { name: 'テスト通知を送る' })).toBeEnabled();
 
-		page.once('dialog', (dialog) => dialog.accept());
 		await item.getByRole('button', { name: '削除する' }).click();
+		await answerConfirm(page, true);
 		await expect(item).toHaveCount(0);
 	});
 
@@ -266,14 +266,14 @@ test.describe('Webhook', () => {
 		await expect(item).toContainText('汎用');
 
 		// 確認でキャンセルすると、鍵は作り直さない
-		page.once('dialog', (dialog) => dialog.dismiss());
 		await item.getByRole('button', { name: '署名の鍵を作り直す' }).click();
+		await answerConfirm(page, false);
 		await page.waitForLoadState('networkidle');
 		await expect(page.getByText('作り直しました', { exact: false })).toHaveCount(0);
 		await expect(page.locator('.key-box code').first()).toHaveText(firstKey ?? '');
 
-		page.once('dialog', (dialog) => dialog.accept());
 		await item.getByRole('button', { name: '署名の鍵を作り直す' }).click();
+		await answerConfirm(page, true);
 		await expect(page.getByText('作り直しました', { exact: false })).toBeVisible();
 		const secondKey = await page.locator('.key-box code').first().textContent();
 		expect(secondKey).toMatch(/^whsec_/);

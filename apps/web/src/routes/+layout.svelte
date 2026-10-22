@@ -14,7 +14,9 @@
 	import { page } from '$app/state';
 	import AboutApp, { type About } from '#lib/components/AboutApp.svelte';
 	import BrandLogo from '#lib/components/BrandLogo.svelte';
+	import ConfirmDialog from '#lib/components/ConfirmDialog.svelte';
 	import FooterLinks from '#lib/components/FooterLinks.svelte';
+	import NotifySnackbar from '#lib/components/NotifySnackbar.svelte';
 	import ThemeToggle from '#lib/components/ThemeToggle.svelte';
 	import type { ThemePreference } from '#lib/theme.ts';
 
@@ -68,6 +70,10 @@
 		</footer>
 	</main>
 {/if}
+
+<!-- どの画面からも使う、確認のダイアログと、うまくいったことの知らせ -->
+<ConfirmDialog />
+<NotifySnackbar />
 
 <style lang="scss">
 	@use 'breakpoints';

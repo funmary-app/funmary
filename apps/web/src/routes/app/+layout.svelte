@@ -33,6 +33,14 @@
 		return () => window.removeEventListener('scroll', onScroll);
 	});
 
+	// 画面の下のタブの高さ (PC では隠すので 0)。下に出す知らせ (NotifySnackbar) を、タブに重ねずその上に出すのに使う
+	let bottomBarHeight = $state(0);
+	$effect(() => {
+		const root = document.documentElement;
+		root.style.setProperty('--fm-bottom-bar-height', `${bottomBarHeight}px`);
+		return () => root.style.removeProperty('--fm-bottom-bar-height');
+	});
+
 	let {
 		data,
 		children,
@@ -137,7 +145,7 @@
 		</footer>
 	</main>
 
-	<nav class="tabs" aria-label="メニュー">
+	<nav class="tabs" aria-label="メニュー" bind:offsetHeight={bottomBarHeight}>
 		{@render navItems('tab-items')}
 	</nav>
 </div>

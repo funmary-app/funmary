@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto';
 import { createServer } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { expect, test } from '@playwright/test';
-import { oidc, seedSubjects, signIn, useMockOidc } from './support.ts';
+import { oidc, seedSubjects, signIn, useMockOidc, answerConfirm } from './support.ts';
 
 // サーバーの状態 (次にログインする人) を共有するので、テストは 1 つずつ動かす
 test.describe.configure({ mode: 'serial' });
@@ -43,8 +43,8 @@ test.describe('公開 API と MCP', () => {
 		expect(noToken.status()).toBe(401);
 
 		// 確認でキャンセルすると、トークンは無効にならない
-		page.once('dialog', (dialog) => dialog.dismiss());
 		await item.getByRole('button', { name: '無効にする' }).click();
+		await answerConfirm(page, false);
 		await page.reload();
 		await expect(item).toHaveCount(1);
 		const afterDismiss = await request.get('/api/v1/lessons?start=2026-10-01&end=2026-10-07', {
@@ -52,8 +52,8 @@ test.describe('公開 API と MCP', () => {
 		});
 		expect(afterDismiss.status()).toBe(200);
 
-		page.once('dialog', (dialog) => dialog.accept());
 		await item.getByRole('button', { name: '無効にする' }).click();
+		await answerConfirm(page, true);
 		await expect(item).toHaveCount(0);
 
 		const afterRevoke = await request.get('/api/v1/lessons?start=2026-10-01&end=2026-10-07', {
@@ -311,8 +311,8 @@ test.describe('公開 API と MCP', () => {
 		await page.goto('/app/settings/tokens');
 		const item = page.getByRole('listitem').filter({ hasText: 'テスト用のクライアント (OAuth)' });
 		await expect(item).toHaveCount(1);
-		page.once('dialog', (dialog) => dialog.accept());
 		await item.getByRole('button', { name: '無効にする' }).click();
+		await answerConfirm(page, true);
 		await expect(item).toHaveCount(0);
 		const afterRevoke = await request.post('/oauth/token', {
 			form: {

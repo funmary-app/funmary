@@ -178,3 +178,13 @@ export function seedBus({
 		database.close();
 	}
 }
+
+/**
+ * 破壊的な操作の前に出る確認のダイアログに答える。ボタンを押したあとに呼ぶ
+ * @param accept 「続ける」なら true、「やめる」なら false
+ */
+export async function answerConfirm(page: Page, accept: boolean) {
+	const dialog = page.getByRole('alertdialog');
+	await dialog.getByRole('button', { name: accept ? '続ける' : 'やめる' }).click();
+	await expect(dialog).toBeHidden();
+}

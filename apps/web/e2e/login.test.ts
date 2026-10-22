@@ -1,7 +1,7 @@
 // Google のログインの通し。Google の代わりに、テスト用の OpenID Connect のサーバーを使う (support.ts)。
 // サーバーは本物の RS256 で署名した ID トークンを返すので、アプリは本番と同じ手順 (PKCE、state、nonce、署名の検証) を通る。
 import { expect, test, type Page } from '@playwright/test';
-import { oidc, signIn, useMockOidc } from './support.ts';
+import { oidc, signIn, useMockOidc, answerConfirm } from './support.ts';
 
 // サーバーの状態 (次にログインする人) を共有するので、テストは 1 つずつ動かす
 test.describe.configure({ mode: 'serial' });
@@ -154,8 +154,8 @@ test('大学のアカウントでログインでき、ログアウトできる',
 	// ログアウトは、メニューではなく、設定の中にある
 	await expect(menu.getByRole('button', { name: 'ログアウト' })).toHaveCount(0);
 	await page.goto('/app/settings');
-	page.once('dialog', (dialog) => dialog.accept());
 	await page.getByRole('button', { name: 'ログアウト' }).click();
+	await answerConfirm(page, true);
 	await expect(page).toHaveURL('/');
 	await expect(page.getByRole('link', { name: '大学のアカウントではじめる' })).toBeVisible();
 	expect((await page.context().cookies()).some((c) => c.name === 'funmary_session')).toBe(false);

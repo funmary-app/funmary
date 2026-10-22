@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { expect, test, type Page } from '@playwright/test';
 import { openDatabase } from '@funmary/db';
 import { E2E_DATA_DIR } from '../e2e-data-dir.ts';
-import { oidc, signIn, useMockOidc, seedSubjects, signInAs } from './support.ts';
+import { oidc, signIn, useMockOidc, seedSubjects, signInAs, answerConfirm } from './support.ts';
 
 // サーバーの状態 (次にログインする人) を共有するので、テストは 1 つずつ動かす
 test.describe.configure({ mode: 'serial' });
@@ -373,15 +373,15 @@ test.describe('学年暦の管理', () => {
 		);
 
 		await page.goto('/app/admin/calendar?year=2026');
-		page.once('dialog', (dialog) => dialog.accept());
 		await noClass.getByRole('button', { name: /^消す/ }).click();
+		await answerConfirm(page, true);
 		await expect(page.getByRole('status')).toHaveText('全学の休講日を消しました。');
 		await expect(noClass.getByText('ありません。')).toBeVisible();
-		page.once('dialog', (dialog) => dialog.accept());
 		await substitute.getByRole('button', { name: /^消す/ }).click();
+		await answerConfirm(page, true);
 		await expect(page.getByRole('status')).toHaveText('振替授業日を消しました。');
-		page.once('dialog', (dialog) => dialog.accept());
 		await terms.getByRole('row', { name: /^後期/ }).getByRole('button', { name: /^消す/ }).click();
+		await answerConfirm(page, true);
 		await expect(page.getByRole('status')).toContainText('学期の期間を消しました。');
 		await expect(terms.getByRole('row', { name: /^後期/ })).toContainText('推定');
 	});
@@ -531,7 +531,9 @@ test.describe('学内のネットワーク', () => {
 		await register.getByLabel('アドレスか範囲').fill('203.0.113.77/24');
 		await register.getByLabel('メモ (任意)').fill('E2E の範囲');
 		await register.getByRole('button', { name: '登録する' }).click();
-		await expect(page.getByRole('status').first()).toContainText('203.0.113.0/24 を登録しました');
+		await expect(
+			page.getByRole('status').filter({ hasText: '203.0.113.0/24 を登録しました' }),
+		).toBeVisible();
 		const item = page
 			.getByRole('region', { name: '登録した範囲' })
 			.getByRole('listitem')
@@ -543,9 +545,9 @@ test.describe('学内のネットワーク', () => {
 		await expect(page.getByRole('alert')).toContainText('すでに登録してあります');
 
 		await item.getByRole('button', { name: '消す' }).click();
-		await expect(page.getByRole('status').first()).toContainText(
-			'203.0.113.0/24 の登録を消しました',
-		);
+		await expect(
+			page.getByRole('status').filter({ hasText: '203.0.113.0/24 の登録を消しました' }),
+		).toBeVisible();
 		await expect(item).toHaveCount(0);
 	});
 
@@ -722,11 +724,11 @@ test.describe('招待コード', () => {
 		// 取り消したコードは、一覧から消える (E2E の DB は実行をまたいで残るので、数で確かめる)
 		const lab = list.getByRole('listitem').filter({ hasText: 'E2E の研究室' });
 		const before = await lab.count();
-		page.once('dialog', (dialog) => dialog.accept());
 		await lab
 			.first()
 			.getByRole('button', { name: /^取り消す/ })
 			.click();
+		await answerConfirm(page, true);
 		await expect(page.getByRole('status').first()).toHaveText('招待コードを取り消しました。');
 		await expect(lab).toHaveCount(before - 1);
 	});
@@ -826,13 +828,13 @@ test.describe('テストアカウント', () => {
 		// ログインしたら、データを写せる
 		await page.reload();
 		await expect(item).toContainText('ログイン済み');
-		page.once('dialog', (dialog) => dialog.accept());
 		await item.getByRole('button', { name: '自分のデータを写す' }).click();
+		await answerConfirm(page, true);
 		await expect(page.getByRole('status')).toContainText('写しました');
 
 		// 消すと、テストアカウントのセッションも使えなくなる
-		page.once('dialog', (dialog) => dialog.accept());
 		await item.getByRole('button', { name: '消す' }).click();
+		await answerConfirm(page, true);
 		await expect(item).toHaveCount(0);
 		await guestPage.goto('/app');
 		await expect(guestPage).toHaveURL('/login');
