@@ -1,0 +1,18 @@
+// どの画面にも出る枠 (ロゴ、フッター)。ログインの前と後の 2 つのレイアウトで同じ見た目にする。
+// レイアウトの <style lang="scss"> から @use 'chrome'; で読む。
+
+/// 文字で書いたロゴ (画像のロゴを出せないところで使う)
+@mixin brand {
+	color: var(--fm-primary);
+	font-weight: 700;
+	font-size: 1.125rem;
+	letter-spacing: 0.02em;
+	text-decoration: none;
+}
+
+/// 本文の下のフッター。本文と点線で分ける
+@mixin footer {
+	margin-top: 3rem;
+	padding-top: 1rem;
+	border-top: 1px dashed var(--fm-divider);
+}

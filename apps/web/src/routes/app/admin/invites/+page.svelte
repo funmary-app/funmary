@@ -178,18 +178,14 @@
 
 <style lang="scss">
 	@use 'mixins';
+	@use 'surfaces';
 
 	section {
 		margin-top: 2rem;
 	}
 
 	.entry {
-		display: grid;
-		gap: 1rem;
-		padding: 1rem;
-		border-radius: 0.75rem;
-		background: var(--fm-surface-muted);
-		justify-items: start;
+		@include surfaces.muted-panel;
 	}
 
 	fieldset {
@@ -249,10 +245,7 @@
 	}
 
 	.actions {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 0.75rem;
+		@include mixins.cluster(0.75rem);
 
 		span {
 			min-height: 1.25rem;
@@ -272,11 +265,8 @@
 		list-style: none;
 
 		li {
-			display: flex;
-			flex-wrap: wrap;
-			align-items: center;
+			@include mixins.cluster;
 			justify-content: space-between;
-			gap: 0.5rem;
 			padding: 0.5rem 0;
 			border-bottom: 1px dashed var(--fm-divider);
 		}

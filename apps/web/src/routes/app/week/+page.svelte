@@ -296,13 +296,11 @@
 
 <style lang="scss">
 	@use 'breakpoints';
+	@use 'mixins';
 	@use 'toolbar-button';
 
 	.toolbar {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 0.5rem;
+		@include mixins.cluster;
 		margin-bottom: 1rem;
 	}
 	.weeks {
@@ -504,13 +502,5 @@
 	.room {
 		display: block;
 		font-size: 0.875rem;
-	}
-	.visually-hidden {
-		position: absolute;
-		width: 1px;
-		height: 1px;
-		overflow: hidden;
-		clip-path: inset(50%);
-		white-space: nowrap;
 	}
 </style>

@@ -151,7 +151,9 @@
 </div>
 
 <style lang="scss">
+	@use 'forms';
 	@use 'mixins';
+	@use 'touch';
 
 	section {
 		margin-top: 2rem;
@@ -192,10 +194,8 @@
 	}
 
 	summary {
-		min-height: 44px;
-		align-content: center;
+		@include touch.summary;
 		font-weight: 700;
-		cursor: pointer;
 	}
 
 	h3 {
@@ -221,17 +221,11 @@
 	}
 
 	.apply {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 0.75rem 1rem;
+		@include mixins.cluster(0.75rem 1rem);
 		margin-top: 1rem;
 	}
 
 	.confirm {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		min-height: 44px;
+		@include forms.choice-row;
 	}
 </style>

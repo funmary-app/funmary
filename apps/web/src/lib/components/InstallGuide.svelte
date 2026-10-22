@@ -58,10 +58,10 @@
 {/if}
 
 <style lang="scss">
+	@use 'touch';
+
 	summary {
-		min-height: 44px;
-		align-content: center;
-		cursor: pointer;
+		@include touch.summary;
 	}
 	summary h2 {
 		display: inline;

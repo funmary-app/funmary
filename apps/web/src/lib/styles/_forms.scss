@@ -1,0 +1,18 @@
+// フォームの部品の並べ方。コンポーネントの <style lang="scss"> から @use 'forms'; で読む。
+
+/// チェックボックスやラジオボタンと、そのラベルを 1 行に並べる。
+/// 行全体を押せるので、高さを指で押せる大きさ (44px 以上) にする
+@mixin choice-row($min-height: 44px) {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	min-height: $min-height;
+}
+
+/// 欄を縦に並べたフォーム。ボタンが横いっぱいに伸びないよう、左に寄せる
+@mixin column($gap: 1rem) {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: $gap;
+}

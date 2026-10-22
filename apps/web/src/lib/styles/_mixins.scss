@@ -13,3 +13,11 @@
 	flex-wrap: wrap;
 	gap: $gap;
 }
+
+/// wrap-row の上下を中央でそろえたもの。大きさの違う文字やボタンを 1 行に並べるときに使う
+@mixin cluster($gap: 0.5rem) {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: $gap;
+}

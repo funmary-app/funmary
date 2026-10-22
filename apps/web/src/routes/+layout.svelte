@@ -63,6 +63,8 @@
 
 <style lang="scss">
 	@use 'breakpoints';
+	@use 'chrome';
+	@use 'text';
 
 	.guest-top {
 		display: flex;
@@ -81,23 +83,15 @@
 	}
 
 	footer {
-		margin-top: 3rem;
-		padding-top: 1rem;
-		border-top: 1px dashed var(--fm-divider);
+		@include chrome.footer;
 	}
 
 	.unofficial {
-		margin: 0;
-		color: var(--fm-text-muted);
-		font-size: 0.8125rem;
+		@include text.muted(0.8125rem);
 	}
 
 	.brand {
-		color: var(--fm-primary);
-		font-weight: 700;
-		font-size: 1.125rem;
-		letter-spacing: 0.02em;
-		text-decoration: none;
+		@include chrome.brand;
 	}
 
 	:global(.icon) {

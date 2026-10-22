@@ -44,11 +44,11 @@
 </div>
 
 <style lang="scss">
+	@use 'touch';
+
 	.back {
-		display: inline-flex;
-		align-items: center;
+		@include touch.target;
 		gap: 0.25rem;
-		min-height: 44px;
 		color: var(--fm-text-muted);
 		text-decoration: none;
 	}

@@ -365,6 +365,7 @@
 
 <style lang="scss">
 	@use 'mixins';
+	@use 'touch';
 
 	.note {
 		color: var(--fm-text-muted);
@@ -461,11 +462,8 @@
 		list-style: none;
 
 		li {
-			display: flex;
-			flex-wrap: wrap;
-			align-items: center;
+			@include mixins.cluster;
 			justify-content: space-between;
-			gap: 0.5rem;
 			padding: 0.5rem 0.75rem;
 			border-radius: 0.5rem;
 			background: var(--fm-surface);
@@ -474,9 +472,7 @@
 	}
 
 	summary {
-		min-height: 44px;
-		align-content: center;
-		cursor: pointer;
+		@include touch.summary;
 	}
 
 	dl {

@@ -143,9 +143,10 @@
 </div>
 
 <style lang="scss">
-	@use 'mixins';
-
 	@use 'breakpoints';
+	@use 'chrome';
+	@use 'mixins';
+	@use 'text';
 
 	.shell {
 		min-height: 100dvh;
@@ -162,23 +163,15 @@
 	}
 
 	footer {
-		margin-top: 3rem;
-		padding-top: 1rem;
-		border-top: 1px dashed var(--fm-divider);
+		@include chrome.footer;
 	}
 
 	.unofficial {
-		margin: 0;
-		color: var(--fm-text-muted);
-		font-size: 0.8125rem;
+		@include text.muted(0.8125rem);
 	}
 
 	.brand {
-		color: var(--fm-primary);
-		font-weight: 700;
-		font-size: 1.125rem;
-		letter-spacing: 0.02em;
-		text-decoration: none;
+		@include chrome.brand;
 	}
 
 	/* 左のメニューでは、画面の色のボタンを、横幅いっぱいの高さにそろえる */

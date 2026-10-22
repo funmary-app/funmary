@@ -1,0 +1,28 @@
+// 枠や背景で区切る入れ物。コンポーネントの <style lang="scss"> から @use 'surfaces'; で読む。
+
+/// 細い線で囲んだ入れ物 (一覧の 1 件、fieldset など)。
+/// 間隔を変えないものは、$margin や $padding に null を渡すと出力しない
+@mixin outlined($margin: 0.75rem 0, $padding: 0.75rem 1rem) {
+	margin: $margin;
+	padding: $padding;
+	border: 1px solid var(--fm-divider);
+	border-radius: 0.5rem;
+}
+
+/// 薄い背景で囲み、中身を縦に並べた入れ物 (発行した招待コードなど、目を留めてほしいもの)
+@mixin muted-panel {
+	display: grid;
+	justify-items: start;
+	gap: 1rem;
+	padding: 1rem;
+	border-radius: 0.75rem;
+	background: var(--fm-surface-muted);
+}
+
+/// 一度だけ見せる秘密の値 (鍵やトークン) を囲む枠。ほかの枠と見分けられるよう、強調の色で囲む
+@mixin secret-box {
+	margin: 1rem 0;
+	padding: 0.75rem 1rem;
+	border: 1px solid var(--fm-accent, currentcolor);
+	border-radius: 0.25rem;
+}

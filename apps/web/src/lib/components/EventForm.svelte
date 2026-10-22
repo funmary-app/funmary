@@ -308,6 +308,9 @@
 
 <style lang="scss">
 	@use 'mixins';
+	@use 'surfaces';
+	@use 'text';
+	@use 'touch';
 
 	.event-form {
 		@include mixins.stack(1rem);
@@ -315,10 +318,7 @@
 	}
 	fieldset {
 		@include mixins.stack(0.5rem);
-		margin: 0;
-		padding: 0.75rem 1rem;
-		border: 1px solid var(--fm-divider);
-		border-radius: 0.5rem;
+		@include surfaces.outlined($margin: 0);
 	}
 	fieldset.inner {
 		margin-top: 0.5rem;
@@ -341,10 +341,8 @@
 		@include mixins.wrap-row(0.25rem 1rem);
 	}
 	.choice {
-		display: inline-flex;
-		align-items: center;
+		@include touch.target;
 		gap: 0.5rem;
-		min-height: 44px;
 	}
 	.excludes {
 		display: grid;
@@ -352,9 +350,7 @@
 		gap: 0 1rem;
 	}
 	.hint {
-		margin: 0;
-		color: var(--fm-text-muted);
-		font-size: 0.875rem;
+		@include text.muted;
 	}
 	/* gap で間隔を取る親の中なので、<p> の既定の margin を消す */
 	.event-form :global(.notice) {

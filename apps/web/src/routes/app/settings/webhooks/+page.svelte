@@ -244,7 +244,9 @@
 </div>
 
 <style lang="scss">
+	@use 'forms';
 	@use 'mixins';
+	@use 'surfaces';
 
 	h2 {
 		margin-top: 2rem;
@@ -259,9 +261,7 @@
 	}
 
 	.webhook {
-		padding: 1rem;
-		border: 1px solid var(--fm-divider);
-		border-radius: 0.5rem;
+		@include surfaces.outlined($margin: null, $padding: 1rem);
 	}
 
 	.webhook h2 {
@@ -296,10 +296,7 @@
 	}
 
 	.key-box {
-		margin: 1rem 0;
-		padding: 0.75rem 1rem;
-		border: 1px solid var(--fm-accent, currentcolor);
-		border-radius: 0.25rem;
+		@include surfaces.secret-box;
 	}
 
 	.key-box code {
@@ -312,10 +309,7 @@
 	}
 
 	.stack {
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 1rem;
+		@include forms.column;
 	}
 
 	.actions {
@@ -337,10 +331,7 @@
 
 	fieldset {
 		@include mixins.stack(0.25rem);
-		margin: 0;
-		padding: 0.75rem 1rem;
-		border: 1px solid var(--fm-divider);
-		border-radius: 0.5rem;
+		@include surfaces.outlined($margin: 0);
 	}
 
 	.kind-choice {
@@ -348,10 +339,7 @@
 	}
 
 	.check {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		min-height: 44px;
+		@include forms.choice-row;
 	}
 
 	.steps {

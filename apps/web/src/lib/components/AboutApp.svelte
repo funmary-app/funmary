@@ -51,11 +51,10 @@
 </p>
 
 <style lang="scss">
+	@use 'mixins';
+
 	.about {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 0 0.75rem;
+		@include mixins.cluster(0 0.75rem);
 		margin: 0.25rem 0 0;
 		color: var(--fm-text-muted);
 		font-size: 0.75rem;

@@ -270,6 +270,10 @@
 </div>
 
 <style lang="scss">
+	@use 'mixins';
+	@use 'tables';
+	@use 'text';
+
 	.sources {
 		margin: 0;
 		padding: 0;
@@ -282,10 +286,7 @@
 	}
 
 	.source-head {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 0.25rem 0.75rem;
+		@include mixins.cluster(0.25rem 0.75rem);
 
 		h3 {
 			margin: 0;
@@ -313,12 +314,7 @@
 	/* 状態は、色だけでなく文字でも示す */
 	.state,
 	.run {
-		display: inline-block;
-		padding: 0 0.5rem;
-		border-radius: 0.375rem;
-		font-size: 0.8125rem;
-		font-weight: 700;
-		white-space: nowrap;
+		@include text.badge;
 	}
 
 	.ok,
@@ -365,27 +361,7 @@
 	}
 
 	table {
-		width: 100%;
-		border-collapse: collapse;
-		font-size: 0.875rem;
-	}
-
-	th,
-	td {
-		padding: 0.5rem;
-		border-bottom: 1px dashed var(--fm-divider);
-		text-align: left;
-		vertical-align: top;
-	}
-
-	thead th {
-		color: var(--fm-text-muted);
-		font-weight: 400;
-		white-space: nowrap;
-	}
-
-	td.numeric {
-		white-space: nowrap;
+		@include tables.data;
 	}
 
 	.jobs {
@@ -394,11 +370,8 @@
 		list-style: none;
 
 		form {
-			display: flex;
-			flex-wrap: wrap;
-			align-items: center;
+			@include mixins.cluster(0.5rem 1rem);
 			justify-content: space-between;
-			gap: 0.5rem 1rem;
 			padding: 0.5rem 0;
 			border-bottom: 1px dashed var(--fm-divider);
 		}

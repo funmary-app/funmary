@@ -337,7 +337,9 @@
 </div>
 
 <style lang="scss">
+	@use 'forms';
 	@use 'mixins';
+	@use 'surfaces';
 
 	.meta {
 		color: var(--fm-text-muted);
@@ -345,18 +347,12 @@
 	}
 
 	.link-form {
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 1rem;
+		@include forms.column;
 	}
 
 	fieldset {
 		@include mixins.stack(0.5rem);
-		margin: 0;
-		padding: 0.75rem 1rem;
-		border: 1px solid var(--fm-divider);
-		border-radius: 0.5rem;
+		@include surfaces.outlined($margin: 0);
 	}
 
 	h2 {
@@ -378,9 +374,6 @@
 	}
 
 	label {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		min-height: 44px;
+		@include forms.choice-row;
 	}
 </style>

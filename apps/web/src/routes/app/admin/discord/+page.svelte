@@ -264,7 +264,11 @@
 </div>
 
 <style lang="scss">
+	@use 'forms';
 	@use 'mixins';
+	@use 'surfaces';
+	@use 'text';
+	@use 'touch';
 
 	section {
 		margin-top: 2rem;
@@ -274,10 +278,7 @@
 		list-style: none;
 	}
 	.entries > li {
-		margin: 0.75rem 0;
-		padding: 0.75rem 1rem;
-		border: 1px solid var(--fm-divider);
-		border-radius: 0.5rem;
+		@include surfaces.outlined;
 	}
 	.name {
 		margin: 0;
@@ -291,14 +292,10 @@
 		font-weight: 400;
 	}
 	.meta {
-		margin: 0;
-		color: var(--fm-text-muted);
-		font-size: 0.875rem;
+		@include text.muted;
 	}
 	summary {
-		min-height: 44px;
-		align-content: center;
-		cursor: pointer;
+		@include touch.summary;
 	}
 	.replace {
 		display: flex;
@@ -323,24 +320,15 @@
 		}
 	}
 	.join-role {
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 1rem;
+		@include forms.column;
 		margin-top: 0.75rem;
 	}
 	.join-role fieldset {
 		@include mixins.stack(0.5rem);
-		margin: 0;
-		padding: 0.75rem 1rem;
-		border: 1px solid var(--fm-divider);
-		border-radius: 0.5rem;
+		@include surfaces.outlined($margin: 0);
 	}
 	.join-role fieldset label {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		min-height: 44px;
+		@include forms.choice-row;
 	}
 	.join-role > label {
 		@include mixins.stack(0.25rem);

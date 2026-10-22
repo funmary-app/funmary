@@ -247,6 +247,8 @@
 </div>
 
 <style lang="scss">
+	@use 'mixins';
+
 	.install {
 		margin-top: 1.5rem;
 	}
@@ -393,10 +395,7 @@
 	}
 
 	.next .next-subject {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 0.25rem 0.5rem;
+		@include mixins.cluster(0.25rem 0.5rem);
 		margin-top: 0.5rem;
 	}
 
@@ -442,10 +441,7 @@
 	}
 
 	.what {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 0.25rem 0.5rem;
+		@include mixins.cluster(0.25rem 0.5rem);
 	}
 
 	.room {

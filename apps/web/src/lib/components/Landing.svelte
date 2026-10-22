@@ -207,9 +207,9 @@
 </div>
 
 <style lang="scss">
-	@use 'mixins';
-
 	@use 'breakpoints';
+	@use 'mixins';
+	@use 'text';
 
 	.landing {
 		max-width: 64rem;
@@ -280,16 +280,12 @@
 	}
 
 	.start {
-		display: flex;
-		flex-direction: column;
+		@include mixins.stack(0.5rem);
 		align-items: flex-start;
-		gap: 0.5rem;
 	}
 
 	.note {
-		margin: 0;
-		color: var(--fm-text-muted);
-		font-size: 0.8125rem;
+		@include text.muted(0.8125rem);
 	}
 
 	.invite {
@@ -359,10 +355,7 @@
 	}
 
 	.next .next-subject {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 0.25rem 0.5rem;
+		@include mixins.cluster(0.25rem 0.5rem);
 		margin-top: 0.25rem;
 		font-size: 0.9375rem;
 	}
@@ -393,10 +386,7 @@
 	}
 
 	.what {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 0.25rem 0.5rem;
+		@include mixins.cluster(0.25rem 0.5rem);
 	}
 
 	.cancelled .what {
@@ -439,9 +429,7 @@
 		}
 
 		p {
-			margin: 0;
-			color: var(--fm-text-muted);
-			font-size: 0.9375rem;
+			@include text.muted(0.9375rem);
 		}
 	}
 

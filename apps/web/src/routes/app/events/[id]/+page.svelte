@@ -141,11 +141,8 @@
 		list-style: none;
 
 		li {
-			display: flex;
-			flex-wrap: wrap;
-			align-items: center;
+			@include mixins.cluster;
 			justify-content: space-between;
-			gap: 0.5rem;
 			padding: 0.5rem 0.75rem;
 			border-radius: 0.5rem;
 			background: var(--fm-surface);
