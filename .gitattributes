@@ -6,3 +6,5 @@
 .agents/skills/** linguist-vendored
 # テストに使う、取得した画面の写しも、コードではないので含めない
 **/fixtures/** linguist-vendored
+# OpenAPI の定義から作る型 (pnpm generate:client)。手で書くコードではないので含めず、差分も畳む
+packages/public/client/src/generated/** linguist-generated
