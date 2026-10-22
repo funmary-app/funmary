@@ -352,10 +352,16 @@ importers:
       '@smui/checkbox':
         specifier: ^9.0.6
         version: 9.0.6
+      '@smui/dialog':
+        specifier: ^9.0.6
+        version: 9.0.6
       '@smui/form-field':
         specifier: ^9.0.6
         version: 9.0.6
       '@smui/radio':
+        specifier: ^9.0.6
+        version: 9.0.6
+      '@smui/snackbar':
         specifier: ^9.0.6
         version: 9.0.6
       better-sqlite3:
@@ -1796,14 +1802,23 @@ packages:
   '@smui/common@9.0.6':
     resolution: {integrity: sha512-wWQ+4ixA0PjlHGlF9rTD8UKOxbyZlMGz0IKIwDqgo2189v9LOJFIHoqXfZO8b0YXcK0pO82M85xsvcUXkTcv1g==}
 
+  '@smui/dialog@9.0.6':
+    resolution: {integrity: sha512-MokL/uGGarO841KEDPA6HhvXpQfMCZFDIyNdaBn7zR1kn4uLp7T5T/hUTerZ7LmBk2Pj8D3n3pfTPc53omKzLw==}
+
   '@smui/form-field@9.0.6':
     resolution: {integrity: sha512-dfVmdDsPBglrqGC+3qKD2GTh3Ef/JTKDeQZFe12IVk7hV21c2daUSdbugjPYjnPYuUNVksmC7CQ1KFovBCYwhg==}
+
+  '@smui/icon-button@9.0.6':
+    resolution: {integrity: sha512-r6KSosdkBzuRW4NOx0ur+UbQLITX6ZFi4UibrAfQgLTyzd9VTFUf0xDF0oSs/l5DTKRZ976bnJiuwlCkJDXomA==}
 
   '@smui/radio@9.0.6':
     resolution: {integrity: sha512-nGzprTNtT7Ni79aRvwp5zNEJWOk6DIAP7DjqSK9ZitcTJm9z4acKtR6k5q4vTCrezySUssl5Mh46BFXrLoM0PA==}
 
   '@smui/ripple@9.0.6':
     resolution: {integrity: sha512-ju3IDWJAor0Lp9N1RPnVS5yStBzuPPEvsEZSlHHWpP4oQkP0xa+pByqKeX+7+Kb1YCzTGYuTcIihDvmavuYLCw==}
+
+  '@smui/snackbar@9.0.6':
+    resolution: {integrity: sha512-Vvbm9J45IEgbkvdK+9tUyu3QS01hG/dyS8uFWOeuswxL0Zzrrq63/VatZPOsrzNmkG0sqgx8TG10On94Ju9bvQ==}
 
   '@smui/touch-target@9.0.6':
     resolution: {integrity: sha512-MF3dc7XRYvVofCURlppNhTQdJjfGRVM9B9YDRUhxloIIMmDFWPJvAqGlAbF2sFizZ67TwjMvoLtEBRVcwvEWaQ==}
@@ -5104,10 +5119,24 @@ snapshots:
     dependencies:
       safevalues: 1.2.0
 
+  '@smui/dialog@9.0.6':
+    dependencies:
+      '@smui/button': 9.0.6
+      '@smui/common': 9.0.6
+      '@smui/icon-button': 9.0.6
+      '@smui/ripple': 9.0.6
+      '@smui/touch-target': 9.0.6
+
   '@smui/form-field@9.0.6':
     dependencies:
       '@smui/common': 9.0.6
       '@smui/ripple': 9.0.6
+
+  '@smui/icon-button@9.0.6':
+    dependencies:
+      '@smui/common': 9.0.6
+      '@smui/ripple': 9.0.6
+      '@smui/touch-target': 9.0.6
 
   '@smui/radio@9.0.6':
     dependencies:
@@ -5118,6 +5147,13 @@ snapshots:
   '@smui/ripple@9.0.6':
     dependencies:
       '@smui/common': 9.0.6
+
+  '@smui/snackbar@9.0.6':
+    dependencies:
+      '@smui/button': 9.0.6
+      '@smui/common': 9.0.6
+      '@smui/icon-button': 9.0.6
+      '@smui/ripple': 9.0.6
 
   '@smui/touch-target@9.0.6':
     dependencies:

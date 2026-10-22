@@ -1,7 +1,7 @@
 // 今日と週の時間割、自分の予定。
 import { expect, test, type Page, type Locator } from '@playwright/test';
 import { createCourseStore, createSubjectStore } from '@funmary/db';
-import { oidc, signIn, useMockOidc, seedSubjects } from './support.ts';
+import { oidc, signIn, useMockOidc, seedSubjects, answerConfirm } from './support.ts';
 
 // サーバーの状態 (次にログインする人) を共有するので、テストは 1 つずつ動かす
 test.describe.configure({ mode: 'serial' });
@@ -405,8 +405,8 @@ test.describe('自分の予定', () => {
 		await expect(otherPage.getByText('まだ予定がありません')).toBeVisible();
 
 		// 消す
-		page.once('dialog', (dialog) => dialog.accept());
 		await page.getByRole('button', { name: 'この予定を消す' }).click();
+		await answerConfirm(page, true);
 		await expect(page.getByRole('status')).toHaveText('予定を消しました。');
 		await expect(page.getByText('まだ予定がありません')).toBeVisible();
 	});

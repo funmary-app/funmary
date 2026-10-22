@@ -57,4 +57,18 @@
 	.mdc-radio .mdc-radio__native-control:enabled + .mdc-radio__background .mdc-radio__inner-circle {
 		border-color: var(--fm-primary);
 	}
+
+	// 確認のダイアログ。SMUI の既定の本文の色 (黒の半透明) はダークで読めないので、テーマの色にする
+	.mdc-dialog .mdc-dialog__surface {
+		background-color: var(--fm-surface);
+	}
+
+	.mdc-dialog .mdc-dialog__content {
+		color: var(--fm-text);
+	}
+
+	// 下に出す知らせは、スマホの画面の下のタブに重ねず、その上に出す (高さはアプリのレイアウトが測る)
+	.mdc-snackbar {
+		bottom: var(--fm-bottom-bar-height, 0px);
+	}
 }

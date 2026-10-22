@@ -1,7 +1,7 @@
 // このアプリについての画面。
 import { expect, test, type Page } from '@playwright/test';
 import { REPOSITORY_URL } from '../src/lib/repository.ts';
-import { useMockOidc, signInAs } from './support.ts';
+import { useMockOidc, signInAs, answerConfirm } from './support.ts';
 
 // サーバーの状態 (次にログインする人) を共有するので、テストは 1 つずつ動かす
 test.describe.configure({ mode: 'serial' });
@@ -151,21 +151,21 @@ test.describe('アカウントの管理', () => {
 
 		// メールアドレスが違えば、消さない
 		await page.getByLabel(/確かめのため/).fill('someone@fun.ac.jp');
-		page.once('dialog', (dialog) => dialog.accept());
 		await page.getByRole('button', { name: '退会する' }).click();
+		await answerConfirm(page, true);
 		await expect(page.getByRole('alert')).toContainText('一致しません');
 
 		// キャンセルすれば、消さない
 		await page.getByLabel(/確かめのため/).fill(email);
-		page.once('dialog', (dialog) => dialog.dismiss());
 		await page.getByRole('button', { name: '退会する' }).click();
+		await answerConfirm(page, false);
 		await page.goto('/app');
 		await expect(page).toHaveURL('/app');
 
 		await page.goto('/app/settings/account');
 		await page.getByLabel(/確かめのため/).fill(email);
-		page.once('dialog', (dialog) => dialog.accept());
 		await page.getByRole('button', { name: '退会する' }).click();
+		await answerConfirm(page, true);
 		await expect(page).toHaveURL('/');
 		await page.goto('/app');
 		await expect(page).toHaveURL('/login');
