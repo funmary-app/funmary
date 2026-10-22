@@ -31,6 +31,47 @@ const PIXEL = Buffer.from(
 	'base64',
 );
 
+test('文字は、端末によらず、Funmary から配る LINE Seed JP で出す', async ({ page }) => {
+	const fontRequests: string[] = [];
+	page.on('request', (request) => {
+		if (request.resourceType() === 'font') fontRequests.push(request.url());
+	});
+	await page.goto('/');
+	await page.evaluate(() => document.fonts.ready);
+
+	const loaded = await page.evaluate(() =>
+		[...document.fonts]
+			.filter((face) => face.status === 'loaded')
+			.map((face) => face.family.replaceAll('"', '')),
+	);
+	expect(loaded).toContain('LINE Seed JP');
+	// 外のサービス (Google Fonts など) からは読まない
+	expect(fontRequests).not.toHaveLength(0);
+	for (const url of fontRequests) expect(new URL(url).origin).toBe(new URL(page.url()).origin);
+});
+
+test('LINE Seed JP にない字 (名字の「﨑」など) は、Funmary から配る Noto Sans JP で補う', async ({
+	page,
+}) => {
+	await page.goto('/');
+	await page.evaluate(() => document.fonts.ready);
+	// 授業や予定の名前に、この字が入ったときと同じにする
+	await page.evaluate(() => {
+		const name = document.createElement('p');
+		name.textContent = '山﨑先生';
+		document.body.append(name);
+	});
+	await expect
+		.poll(() =>
+			page.evaluate(() =>
+				[...document.fonts]
+					.filter((face) => face.status === 'loaded')
+					.map((face) => face.family.replaceAll('"', '')),
+			),
+		)
+		.toContain('Noto Sans JP');
+});
+
 test('ないページは、404 と、番号に合った http.cat の猫の画像を出す', async ({ page }) => {
 	await page.route('https://http.cat/**', (route) =>
 		route.fulfill({ contentType: 'image/png', body: PIXEL }),

@@ -78,6 +78,36 @@ test.describe('スマホの幅で、画面が横にはみ出さない', () => {
 			expect(overflow, `${path} が横にはみ出しています`).toBeLessThanOrEqual(1);
 		}
 	});
+
+	test('長い名前のファイルを選んでも、取り込みの欄がスマホの幅を超えない', async ({ page }) => {
+		await signInAs(page, 'e2e-admin@fun.ac.jp');
+		await page.setViewportSize({ width: 390, height: 844 });
+		await page.goto('/app/admin/calendar');
+		await page.getByLabel('学年暦の PDF').setInputFiles({
+			name: `${'令和8年度学年暦_公立はこだて未来大学_改訂版'.repeat(3)}.pdf`,
+			mimeType: 'application/pdf',
+			buffer: Buffer.from('%PDF-1.4'),
+		});
+
+		const overflow = await page.evaluate(
+			() => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+		);
+		expect(overflow).toBeLessThanOrEqual(1);
+	});
+
+	test('いちばん狭いスマホ (320px) でも、紹介の画面が横にはみ出さない', async ({ page }) => {
+		await page.setViewportSize({ width: 320, height: 700 });
+		await page.goto('/');
+		await page.evaluate(() => document.fonts.ready);
+
+		// 「できること」には、/today などのコマンドの並びのように、折り返せない英数字がある
+		const features = page.getByRole('region', { name: 'できること' });
+		const [list, section] = await Promise.all([
+			features.getByRole('list').evaluate((element) => element.scrollWidth),
+			features.evaluate((element) => element.clientWidth),
+		]);
+		expect(list).toBeLessThanOrEqual(section);
+	});
 });
 
 test.describe('スマホの上部バーと、フッターのリンク', () => {

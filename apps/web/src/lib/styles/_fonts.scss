@@ -1,6 +1,7 @@
 @use 'sass:string';
 
-// 文字は OS の標準フォントにし、Web フォントは読み込まない
-$system: string.unquote(
-	'system-ui, -apple-system, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", Meiryo, sans-serif'
+// 文字は、Funmary から配る LINE Seed JP にし、LINE Seed JP にない字は、同じく配る Noto Sans JP で補う
+// (読み込みは routes/+layout.svelte)。読み込む前は、OS の標準フォントで出す
+$sans: string.unquote(
+	'"LINE Seed JP", "Noto Sans JP", system-ui, -apple-system, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif'
 );

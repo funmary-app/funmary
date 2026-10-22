@@ -49,7 +49,7 @@ SMUI を使うにあたって、次のように決めています。
 - **色は大学の公式サイトとロゴの赤を基調にします。**
 - **テーマは Sass で書き、自前のスクリプトで CSS にします。** ライト用とダーク用のテーマを `apps/web/src/theme/` に置き、`apps/web/scripts/build-theme.js` が、入っている SMUI の部品のスタイルと一緒に 1 つの CSS にします。ダーク用は、色の CSS 変数だけを `@media (prefers-color-scheme: dark)` で囲んで出し、部品のスタイルを 2 回出しません。この変換は `pnpm dev`、`pnpm build`、`pnpm typecheck` の前に動きます。SMUI 公式の `smui-theme` の compile は、pnpm の置き方では入れた部品のスタイルを見つけられないので使いません
 - **パッケージは部品ごとに入れます。** まとめ役の `svelte-material-ui` は入れず、`@smui/button` のように、使う部品だけを入れます。使っていない部品の CSS と JavaScript は入りません
-- **文字は OS の標準フォントにします。** SMUI の既定は Roboto なので、テーマの `$font-family` を OS の標準フォントの並びに書き換えます ([3.2](03-quality.md#32-速さと軽さ))
+- **文字は LINE Seed JP にします。** `@fontsource/line-seed-jp` の 400 と 700 を最上位のレイアウトで読み込み、SMUI の既定の Roboto に代えて、テーマの `$font-family` と本文の `font-family` の先頭に置きます。LINE Seed JP にない字のために、2 番目に `@fontsource/noto-sans-jp` の Noto Sans JP を置き、後ろには OS の標準フォントを並べます ([3.2](03-quality.md#32-速さと軽さ))
 - **アイコンは unplugin-icons と Material Symbols を使います。** ビルド時に、使ったアイコンだけを SVG の Svelte コンポーネントにして埋め込みます。アイコン用の Web フォントは読み込みません
 - **型の検査は `apps/web` だけ少し緩めます。** SMUI は型のために TypeScript のソースを同梱していて、svelte-check がこちらの設定で検査すると失敗します。パッチは当てず、`apps/web` の tsconfig だけ `noUncheckedIndexedAccess` を外します。`packages/*/*` と `scripts/` は、ルートの tsconfig で検査します
 - **容量は、ページごとの JavaScript の上限で守ります。** 上限は [3.1](03-quality.md#31-目標値) のとおりです。`@smui/list` はテーマの CSS が約 300 KB になるので、左のメニューと下のタブの外枠は、標準の要素で作っています。重い部品は、自前の簡単な部品に置き換えます
@@ -60,19 +60,20 @@ SMUI を使うにあたって、次のように決めています。
 
 **画面と API**
 
-| パッケージ                                                    | 用途                             | 採用の理由                                                                                                                                |
-| ------------------------------------------------------------- | -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| `@sveltejs/kit`、`svelte`                                     | 画面の枠組みと UI                | 画面、フォーム処理、SSR を 1 つで書ける。Svelte は実行時のコードが小さい                                                                  |
-| `@sveltejs/adapter-node`                                      | Node.js 向けの出力               | ビルド結果が素の Node.js サーバーになり、systemd でそのまま動かせる。静的ファイルの事前圧縮もできる                                       |
-| `hono`                                                        | 機械向けの API                   | ETag、CSRF 対策などのミドルウェアがそろい、起動せずにテストできる ([2.1](02-architecture.md#21-hono-を採用する理由))                      |
-| `hono-feed`                                                   | 通知のフィード                   | RSS、Atom、JSON Feed と `304` を 1 つの定義で出せる                                                                                       |
-| `hono-rate-limiter`                                           | 回数制限                         | Hono のミドルウェアとして書ける。メモリで数える方式が 1 プロセスの構成に合う                                                              |
-| `hono-openapi`、`@valibot/to-json-schema`、`@hono/swagger-ui` | 公開 API の OpenAPI と文書の画面 | Valibot の型から OpenAPI 3.1 を作る。検証と文書が 1 つの定義から出る                                                                      |
-| `@modelcontextprotocol/sdk`、`@hono/mcp`                      | MCP サーバー                     | MCP の公式の SDK と、Streamable HTTP の口を Hono のルートとして置く部品。SDK は道具の引数の型に zod を使うので、MCP の部分だけ zod が入る |
-| `@hono/standard-validator`、`valibot`                         | 入力、設定、解析結果の検証       | Valibot は小さく、使う関数だけがバンドルに入る                                                                                            |
-| `citty`                                                       | 管理用コマンド                   | サブコマンド、引数、ヘルプを宣言的に書ける                                                                                                |
-| `uqr`                                                         | QR コード                        | 依存がなく、SVG を出せる                                                                                                                  |
-| `bowser`                                                      | 端末の判定                       | ホーム画面への追加の案内を、端末に合わせて出し分ける                                                                                      |
+| パッケージ                                                    | 用途                             | 採用の理由                                                                                                                                                                                       |
+| ------------------------------------------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `@sveltejs/kit`、`svelte`                                     | 画面の枠組みと UI                | 画面、フォーム処理、SSR を 1 つで書ける。Svelte は実行時のコードが小さい                                                                                                                         |
+| `@sveltejs/adapter-node`                                      | Node.js 向けの出力               | ビルド結果が素の Node.js サーバーになり、systemd でそのまま動かせる。静的ファイルの事前圧縮もできる                                                                                              |
+| `hono`                                                        | 機械向けの API                   | ETag、CSRF 対策などのミドルウェアがそろい、起動せずにテストできる ([2.1](02-architecture.md#21-hono-を採用する理由))                                                                             |
+| `hono-feed`                                                   | 通知のフィード                   | RSS、Atom、JSON Feed と `304` を 1 つの定義で出せる                                                                                                                                              |
+| `hono-rate-limiter`                                           | 回数制限                         | Hono のミドルウェアとして書ける。メモリで数える方式が 1 プロセスの構成に合う                                                                                                                     |
+| `hono-openapi`、`@valibot/to-json-schema`、`@hono/swagger-ui` | 公開 API の OpenAPI と文書の画面 | Valibot の型から OpenAPI 3.1 を作る。検証と文書が 1 つの定義から出る                                                                                                                             |
+| `@modelcontextprotocol/sdk`、`@hono/mcp`                      | MCP サーバー                     | MCP の公式の SDK と、Streamable HTTP の口を Hono のルートとして置く部品。SDK は道具の引数の型に zod を使うので、MCP の部分だけ zod が入る                                                        |
+| `@hono/standard-validator`、`valibot`                         | 入力、設定、解析結果の検証       | Valibot は小さく、使う関数だけがバンドルに入る                                                                                                                                                   |
+| `citty`                                                       | 管理用コマンド                   | サブコマンド、引数、ヘルプを宣言的に書ける                                                                                                                                                       |
+| `uqr`                                                         | QR コード                        | 依存がなく、SVG を出せる                                                                                                                                                                         |
+| `bowser`                                                      | 端末の判定                       | ホーム画面への追加の案内を、端末に合わせて出し分ける                                                                                                                                             |
+| `@fontsource/line-seed-jp`、`@fontsource/noto-sans-jp`        | 文字のフォント                   | LINE Seed JP (SIL Open Font License) と、それにない字を補う Noto Sans JP (どちらも SIL Open Font License) を自前で配れる。文字の範囲ごとにファイルが分かれていて、画面にある字の分だけが読まれる |
 
 **データと定期処理**
 

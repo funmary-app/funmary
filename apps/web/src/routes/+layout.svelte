@@ -1,4 +1,11 @@
 <script lang="ts">
+	// 文字は端末によらず LINE Seed JP にし、LINE Seed JP にない字は Noto Sans JP で補う。
+	// 使う太さは本文 (400) と太字 (700) だけ。文字の範囲ごとにファイルが分かれていて、
+	// ブラウザは画面にある字の分だけを読む (Noto Sans JP は、LINE Seed JP にない字が出たときだけ読まれる)
+	import '@fontsource/line-seed-jp/400.css';
+	import '@fontsource/line-seed-jp/700.css';
+	import '@fontsource/noto-sans-jp/400.css';
+	import '@fontsource/noto-sans-jp/700.css';
 	import '#lib/styles/generated/smui.css';
 	import '#lib/styles/base.scss';
 	import type { Snippet } from 'svelte';

@@ -24,9 +24,11 @@ svg {
 
 body {
 	margin: 0;
-	font-family: fonts.$system;
+	font-family: fonts.$sans;
 	font-size: 1rem;
 	line-height: 1.7;
+	// 長い URL やコマンドの並びなど、折り返せない英数字も、入りきらないときは折り返して、枠の外に出さない
+	overflow-wrap: break-word;
 }
 
 h1,
@@ -126,6 +128,8 @@ input:not([type='radio'], [type='checkbox'], [type='hidden']),
 select,
 textarea {
 	box-sizing: border-box;
+	// 選択欄は、いちばん長い選択肢の幅に広がるので、入れ物の幅を超えないようにする
+	max-width: 100%;
 	min-height: 48px;
 	padding: 0 0.75rem;
 	border: 1px solid var(--fm-outline);
@@ -141,6 +145,12 @@ textarea {
 
 textarea {
 	padding: 0.5rem 0.75rem;
+}
+
+// ファイルの欄は、ブラウザが描くボタンと「選択されていません」の文字の幅で広がり、
+// 文字の幅が広いフォントでは、スマホの幅を超える。入れ物の幅に合わせる
+input[type='file'] {
+	width: 100%;
 }
 
 input[type='radio'],
