@@ -112,9 +112,17 @@ export async function signInAs(page: Page, email: string) {
 /**
  * バスの時刻表の写しを DB に入れる。毎日 5 時から 24 時まで 30 分おきに、各停留所の発車を入れる (いつ動かしても次のバスがある)。
  * 函館駅前 (A) は、偶数の発車が未来大 (経由に未来大) を通る赤川行、奇数の発車が反対向きの千代台行。
- * 未来大は、偶数の発車が千代台行 (A を通る)、奇数の発車が赤川行
+ * 未来大は、偶数の発車が千代台行 (A を通る)、奇数の発車が赤川行。
+ * 系統や発車の時刻を差し替えると、開いたままの画面が読み直したかや、最終便のあとの表示を確かめられる
  */
-export function seedBus() {
+export function seedBus({
+	route = '55A',
+	times = Array.from({ length: 38 }, (_, index) => {
+		const minutes = 5 * 60 + index * 30;
+		const hour = String(Math.floor(minutes / 60)).padStart(2, '0');
+		return `${hour}:${String(minutes % 60).padStart(2, '0')}`;
+	}),
+}: { route?: string; times?: string[] } = {}) {
 	const database = openDatabase(join(E2E_DATA_DIR, 'funmary.db'), {
 		backupDir: join(E2E_DATA_DIR, 'backups'),
 	});
@@ -132,11 +140,6 @@ export function seedBus() {
 			null,
 			now,
 		);
-		const times = Array.from({ length: 38 }, (_, index) => {
-			const minutes = 5 * 60 + index * 30;
-			const hour = String(Math.floor(minutes / 60)).padStart(2, '0');
-			return `${hour}:${String(minutes % 60).padStart(2, '0')}`;
-		});
 		const toward = { destination: '赤川', via: '赤川通・はこだて未来大学' };
 		const away = { destination: '千代台', via: '亀田支所前' };
 		const patterns = new Map([
@@ -159,7 +162,7 @@ export function seedBus() {
 						departures: times
 							.map((time, index) => ({
 								time,
-								routes: ['55A'],
+								routes: [route],
 								...pattern(index),
 								marks: [],
 							}))

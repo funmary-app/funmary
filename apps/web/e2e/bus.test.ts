@@ -233,6 +233,23 @@ test.describe('バス', () => {
 		await expect(page.getByRole('heading', { level: 1, name: 'バス' })).toBeVisible();
 	});
 
+	test('ホームを開いたままでも、1 分ごとに次のバスを読み直す', async ({ page }) => {
+		await page.clock.install();
+		await signInAs(page, email);
+		await page.goto('/app');
+		const section = page.getByRole('region', { name: '次のバス' });
+		await expect(section).toContainText('55A');
+
+		// 開いている間に時刻表が変わったことにして、読み直したら新しい系統が出ることで確かめる
+		seedBus({ route: '99Z' });
+		try {
+			await page.clock.runFor('01:00');
+			await expect(section).toContainText('99Z');
+		} finally {
+			seedBus();
+		}
+	});
+
 	test.describe('現在地が許可されているとき', () => {
 		// 未来大の座標 (campus.ts の UNIVERSITY_LOCATION) の近く
 		test.describe('未来大の近く', () => {
