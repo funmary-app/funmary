@@ -319,6 +319,9 @@ importers:
       '@fontsource/line-seed-jp':
         specifier: ^5.3.2
         version: 5.3.2
+      '@fontsource/noto-sans-jp':
+        specifier: ^5.3.1
+        version: 5.3.1
       '@funmary/api':
         specifier: workspace:*
         version: link:../../packages/private/api
@@ -1238,6 +1241,9 @@ packages:
 
   '@fontsource/line-seed-jp@5.3.2':
     resolution: {integrity: sha512-ng/gMt1yI9EAU0TlBcDtBuQAy8fB0FAvjxW3JY9NnYSN3CJgqkciMcEAldt/N0yUC4C4Oai4oeLzU9PYqyeghQ==}
+
+  '@fontsource/noto-sans-jp@5.3.1':
+    resolution: {integrity: sha512-9NNBB/M9PextLYVXGSfIaLZsPnrt5UDw8g2B6T0M775H2yb/oekApSjuS1XKOP7FPcMMEnTavR5rJGDM66qKtA==}
 
   '@holiday-jp/holiday_jp@2.5.2':
     resolution: {integrity: sha512-yW5oc0TFgOWVHMdfnnpKz7daDjuGY2yCR/q8hLc3EvDKxZY/5/oCXxXdOahXH8te8hMvWFmKxkfeWsUKdpa1Ug==}
@@ -4686,6 +4692,8 @@ snapshots:
       levn: 0.4.1
 
   '@fontsource/line-seed-jp@5.3.2': {}
+
+  '@fontsource/noto-sans-jp@5.3.1': {}
 
   '@holiday-jp/holiday_jp@2.5.2': {}
 
