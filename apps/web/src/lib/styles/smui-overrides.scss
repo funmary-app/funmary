@@ -28,4 +28,33 @@
 		background-color: var(--fm-surface-muted);
 		color: var(--fm-text-muted);
 	}
+
+	// チェックボックスとラジオ。選んでいないときの枠は、SMUI の既定 (黒の半透明) だとダークで見えないので、テーマの輪郭の色にする。
+	// 選んだときは、SMUI の既定の第 2 色 (青) ではなく、ほかの操作と同じ主色にする
+	// 押したときの波紋も第 2 色で描くので、この中だけ第 2 色を主色にする
+	.mdc-checkbox,
+	.mdc-radio {
+		--mdc-theme-secondary: var(--fm-primary);
+	}
+
+	.mdc-checkbox {
+		--mdc-checkbox-unchecked-color: var(--fm-outline);
+		--mdc-checkbox-checked-color: var(--fm-primary);
+		--mdc-checkbox-ink-color: var(--fm-on-primary);
+	}
+
+	.mdc-radio
+		.mdc-radio__native-control:enabled:not(:checked)
+		+ .mdc-radio__background
+		.mdc-radio__outer-circle {
+		border-color: var(--fm-outline);
+	}
+
+	.mdc-radio
+		.mdc-radio__native-control:enabled:checked
+		+ .mdc-radio__background
+		.mdc-radio__outer-circle,
+	.mdc-radio .mdc-radio__native-control:enabled + .mdc-radio__background .mdc-radio__inner-circle {
+		border-color: var(--fm-primary);
+	}
 }
