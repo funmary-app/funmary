@@ -4,3 +4,5 @@
 
 # スキルは作業の道具で、このアプリのコードではないので、GitHub の言語の割合に含めない
 .agents/skills/** linguist-vendored
+# テストに使う、取得した画面の写しも、コードではないので含めない
+**/fixtures/** linguist-vendored
