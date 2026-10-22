@@ -9,7 +9,7 @@ import { describeClassChange } from '#lib/class-change-label.ts';
 import { parseSlotFields } from '#lib/server/course-form.ts';
 import { getServices } from '#lib/server/services.ts';
 import { parseAbbreviation, resolveSubjectAbbreviation } from '#lib/server/subject-abbreviation.ts';
-import { alertSlotConflicts, alertSlotSubmission } from '#lib/server/slot-conflicts.ts';
+import { shareSlot } from '#lib/server/shared-slot.ts';
 import { readSlotSharingMode } from '#lib/server/slot-permission.ts';
 import { alertSubjectDeleted, alertSubjectVisibilityChanged } from '#lib/server/subject-notify.ts';
 import { findSameName, parseUserSubjectForm } from '#lib/server/user-subject.ts';
@@ -127,32 +127,13 @@ export const actions: Actions = {
 					'今は共有の枠を登録できません。下の「自分だけに使う曜日と時限」から登録してください。',
 			});
 		}
-		if (mode === 'moderated') {
-			services.slotSubmissions.submit(
-				{ subjectId: subject.id, ...parsed.value },
-				locals.user.id,
-				new Date(),
-			);
-			await alertSlotSubmission(services, subject.name);
-			return {
-				message: '曜日と時限を提出しました。モデレーターか管理者が確かめてから登録されます。',
-			};
-		}
-		const result = services.courses.addSharedSlots(
-			[{ subjectId: subject.id, ...parsed.value }],
-			{ source: 'manual', createdBy: locals.user.id },
-			new Date(),
+		return shareSlot(
+			services,
+			mode,
+			{ subjectId: subject.id, ...parsed.value },
+			subject.name,
+			locals.user.id,
 		);
-		if (result.conflicts.length > 0) {
-			await alertSlotConflicts(services, result.conflicts);
-			return fail(409, {
-				error: 'この曜日と時限は、別の教室で登録されています。上書きはせず、管理者が確かめます。',
-			});
-		}
-		if (result.added === 0 && result.updated === 0) {
-			return { message: 'この曜日と時限は、既に登録されています。' };
-		}
-		return { message: '曜日と時限を登録しました。' };
 	},
 
 	/** 自分だけに使う曜日と時限を登録する。共有の登録の設定に関わらず、いつでも使える */
