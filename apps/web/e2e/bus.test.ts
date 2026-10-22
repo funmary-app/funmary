@@ -192,6 +192,22 @@ test.describe('バス', () => {
 		);
 	});
 
+	test('今日の最終便のあとは、次のバスの欄に翌日の便を出さない', async ({ page }) => {
+		// 0 時の 1 便だけにすると、今日の便は発車し終わり、これからの便は翌日の 0 時だけになる
+		seedBus({ times: ['00:00'] });
+		try {
+			await page.setViewportSize({ width: 1440, height: 900 });
+			await signInAs(page, email);
+			await page.goto('/app/bus');
+
+			const nextBus = page.getByRole('region', { name: '次のバス' });
+			await expect(nextBus).toContainText('今日の発車は、もうありません');
+			await expect(nextBus).not.toContainText('55A');
+		} finally {
+			seedBus();
+		}
+	});
+
 	test('スマホでは、次のバスの欄を出さない', async ({ page }) => {
 		await page.setViewportSize({ width: 390, height: 844 });
 		await signInAs(page, email);

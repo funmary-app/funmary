@@ -58,13 +58,13 @@
 
 	const leg = $derived(data.legs[direction][day]);
 	const isToday = $derived(day === data.todayDay);
-	const nextDeparture = $derived(
-		isToday ? (leg?.upcoming[0] ?? null) : (leg?.departures[0] ?? null),
-	);
-
 	/** 今日の区分のとき、まだ発車していない最初の便 (これに目印を付けて、一覧をその位置に合わせる) */
 	const nextIndex = $derived(
 		isToday && leg ? leg.departures.findIndex((departure) => departure.time >= data.nowTime) : -1,
+	);
+	// 今日の区分では、一覧の目印と同じ便を出す (これからの発車には翌日の便も入るので、最終便のあとに出さないよう使わない)
+	const nextDeparture = $derived(
+		isToday ? (leg?.departures[nextIndex] ?? null) : (leg?.departures[0] ?? null),
 	);
 	const untilNext = $derived(leg?.upcoming[0]?.minutesUntil ?? null);
 
