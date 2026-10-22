@@ -199,6 +199,8 @@ h2 {
 
 .features {
 	display: grid;
+	// 列の幅を、折り返せない英数字 (コマンドの並びなど) の長さに引っ張られないようにする
+	grid-template-columns: minmax(0, 1fr);
 	margin: 0;
 	padding: 0;
 	list-style: none;
@@ -213,6 +215,10 @@ h2 {
 		gap: 1rem;
 		padding: 1.25rem 0;
 		border-top: 1px dashed var(--fm-divider);
+	}
+
+	li > div {
+		min-width: 0;
 	}
 
 	h3 {
