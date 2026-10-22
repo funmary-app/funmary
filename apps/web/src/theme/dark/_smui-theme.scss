@@ -14,7 +14,7 @@
 
 // テーマの色を先に決める (文字の設定も、中でテーマを読むため)
 @use '@smui/common/typography/index' as typography with (
-	$font-family: fonts.$system
+	$font-family: fonts.$sans
 );
 
 // SMUI の部品が読む色の CSS 変数 (--mdc-theme-*) を出す。ダークでは、この変数だけを置き換える

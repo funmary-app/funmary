@@ -31,6 +31,25 @@ const PIXEL = Buffer.from(
 	'base64',
 );
 
+test('文字は、端末によらず、Funmary から配る LINE Seed JP で出す', async ({ page }) => {
+	const fontRequests: string[] = [];
+	page.on('request', (request) => {
+		if (request.resourceType() === 'font') fontRequests.push(request.url());
+	});
+	await page.goto('/');
+	await page.evaluate(() => document.fonts.ready);
+
+	const loaded = await page.evaluate(() =>
+		[...document.fonts]
+			.filter((face) => face.status === 'loaded')
+			.map((face) => face.family.replaceAll('"', '')),
+	);
+	expect(loaded).toContain('LINE Seed JP');
+	// 外のサービス (Google Fonts など) からは読まない
+	expect(fontRequests).not.toHaveLength(0);
+	for (const url of fontRequests) expect(new URL(url).origin).toBe(new URL(page.url()).origin);
+});
+
 test('ないページは、404 と、番号に合った http.cat の猫の画像を出す', async ({ page }) => {
 	await page.route('https://http.cat/**', (route) =>
 		route.fulfill({ contentType: 'image/png', body: PIXEL }),
