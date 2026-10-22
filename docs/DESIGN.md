@@ -35,6 +35,7 @@
   - `_tables.scss`: 管理画面の表 (`data`)
   - `_chrome.scss`、`_header-action.scss`: レイアウトのロゴとフッター、上のバーの操作
 - ページ本文の幅は `.page` (既定 44rem)。広い表だけ `.page-w-<rem>` で広げる
+- SMUI にある部品は SMUI を使う。`@smui/<部品>` を import すれば、その部品の CSS は自動で読まれる。SMUI の見た目を変えるときは `smui-overrides.scss` に書く (CSS のレイヤーで、部品より強くなる)
 - 補助の文字は `.muted`、画面の外に隠す文字は `.visually-hidden`
 - 確認のポップアップを出す操作は `confirmSubmit` のアクション (フォームの `use:enhance` より先に書く)
 
