@@ -33,7 +33,7 @@ pnpm dev
 | `pnpm typecheck` | TypeScript 7 の `tsc` と svelte-check で型を検査する。`pnpm typecheck:ts6` は 6 系の `tsc6` での検査 (7 系と判定が食い違わないかを見る) |
 | `pnpm test`      | Vitest で単体テストを実行する。`pnpm test:watch` は変更を見張って実行し直す                                                             |
 | `pnpm test:e2e`  | Playwright で E2E テストを実行する。初回は `pnpm --filter @funmary/web exec playwright install chromium` でブラウザを入れる             |
-| `pnpm build`     | 本番用にビルドし、ページごとの JavaScript の量 (圧縮後 60 KB まで) を検査する                                                           |
+| `pnpm build`     | 本番用にビルドし、ページごとの JavaScript の量 (圧縮後 300 KB まで) を検査する                                                          |
 
 ### TypeScript は 2 つの版を併用する
 

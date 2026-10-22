@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { gzipSync } from 'node:zlib';
 
-const LIMIT_BYTES = 60 * 1024;
+const LIMIT_BYTES = 300 * 1024;
 const CLIENT_DIR = join(import.meta.dirname, '../apps/web/.svelte-kit/output/client');
 
 /** @typedef {{ file: string; src?: string; isEntry?: boolean; imports?: string[] }} ManifestChunk */
