@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { TERMS_UPDATED_AT } from '#lib/legal-versions.ts';
+	import LegalContact from '#lib/components/LegalContact.svelte';
 	import SettingsBreadcrumb from '#lib/components/SettingsBreadcrumb.svelte';
 	import { REPOSITORY_URL } from '#lib/repository.ts';
 
@@ -92,39 +93,11 @@
 	</p>
 
 	<h2>9. 連絡先</h2>
-	<ul class="links">
-		{#if data.contactEmail}
-			<li>
-				<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- メールの作成画面を開く -->
-				<a href="mailto:{data.contactEmail}">{data.contactEmail}</a>
-			</li>
-		{/if}
-		{#if data.operator}
-			<!-- eslint-disable svelte/no-navigation-without-resolve -- 外部サイトへのリンク -->
-			<li>
-				運営: <a href={data.operator.url} target="_blank" rel="noopener noreferrer"
-					>{data.operator.name}</a
-				>
-			</li>
-			<!-- eslint-enable svelte/no-navigation-without-resolve -->
-		{/if}
-	</ul>
+	<LegalContact contactEmail={data.contactEmail} operator={data.operator} />
 </div>
 
 <style lang="scss">
-	@use 'touch';
-
 	h2 {
 		margin-top: 2rem;
-	}
-
-	.links {
-		margin: 0;
-		padding: 0;
-		list-style: none;
-
-		a {
-			@include touch.target;
-		}
 	}
 </style>

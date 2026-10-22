@@ -17,7 +17,7 @@ const MAX_REDIRECTS = 5;
 
 export type PortalFetch = (url: string, init?: RequestInit) => Promise<Response>;
 
-export class PortalError extends Error {}
+class PortalError extends Error {}
 
 /** 応答の本文を、大きさの上限を守って文字にする。文字コードは Content-Type と meta charset から決める */
 export async function readHtml(response: Response): Promise<string> {

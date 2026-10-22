@@ -2,17 +2,15 @@
 // 繰り返しの選び方は、Google カレンダーと同じ項目にして、RRULE に直す。編集では、保存した予定を、同じ項目に戻す。
 // 検査は、公開 API と同じもの (@funmary/core の parseEventFields) を通る。ical.js は読み込まない (画面側からも読まれるので、大きな依存を持ち込まないため)。
 import {
-	VISIBILITIES,
 	parseEventFields,
 	parseVisibility,
 	rruleToRecurrence,
 	type EventFormResult,
-	type EventInput,
 	type UserEvent,
 	type Visibility,
 } from '@funmary/core';
 
-export { VISIBILITIES, type EventFormResult, type EventInput, type Visibility };
+export { type Visibility };
 
 /** フォームの欄の値。すべて文字列 (入力欄の値のまま) */
 export interface EventFormValues {

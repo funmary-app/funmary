@@ -1,6 +1,6 @@
 // 取得元 (ポータル、公開シラバスなど) の定期処理に共通の部品。
 // 失敗を数えて保存し、不調になった 1 回だけ管理者に知らせて例外にする。成功は、回復したときだけ知らせる。
-import { isUnhealthy, recordFailure, recordSuccess, type SourceHealth } from '@funmary/core';
+import { recordFailure, recordSuccess, type SourceHealth } from '@funmary/core';
 
 const JST_OFFSET_MS = 9 * 60 * 60 * 1000;
 
@@ -79,5 +79,3 @@ export async function succeedSource(
 		});
 	}
 }
-
-export { isUnhealthy };

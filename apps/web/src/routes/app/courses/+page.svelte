@@ -6,9 +6,10 @@
 	import { page } from '$app/state';
 	import { confirmSubmit } from '#lib/actions/confirm-submit.ts';
 	import FormNotice from '#lib/components/FormNotice.svelte';
-	import { DEFAULT_PERIODS, TERMS } from '@funmary/core';
+	import { TERMS } from '@funmary/core';
 	import type { SubjectPathParams } from '#lib/subject-path.ts';
-	import { formatSlot, formatTerm, WEEKDAY_LABELS } from '#lib/term-label.ts';
+	import { formatSlot, formatTerm } from '#lib/term-label.ts';
+	import SlotFields from '#lib/components/SlotFields.svelte';
 
 	interface Slot {
 		weekday: number;
@@ -186,26 +187,7 @@
 									<summary>曜日と時限を登録する</summary>
 									<form method="POST" action="?/addSlot" use:enhance class="slot-form">
 										<input type="hidden" name="subjectId" value={subject.id} />
-										<label>
-											曜日
-											<select name="weekday" required>
-												{#each WEEKDAY_LABELS as day (day.weekday)}
-													<option value={day.weekday}>{day.label}曜</option>
-												{/each}
-											</select>
-										</label>
-										<label>
-											時限
-											<select name="period" required>
-												{#each DEFAULT_PERIODS as period (period.number)}
-													<option value={period.number}>{period.number} 限</option>
-												{/each}
-											</select>
-										</label>
-										<label>
-											教室 (分からなければ空のまま)
-											<input name="room" maxlength="100" autocomplete="off" />
-										</label>
+										<SlotFields />
 										<Button type="submit" variant="unelevated"><Label>登録する</Label></Button>
 									</form>
 									<p class="note">
@@ -222,26 +204,7 @@
 								<summary>自分だけに使う曜日と時限を登録する</summary>
 								<form method="POST" action="?/addPersonalSlot" use:enhance class="slot-form">
 									<input type="hidden" name="subjectId" value={subject.id} />
-									<label>
-										曜日
-										<select name="weekday" required>
-											{#each WEEKDAY_LABELS as day (day.weekday)}
-												<option value={day.weekday}>{day.label}曜</option>
-											{/each}
-										</select>
-									</label>
-									<label>
-										時限
-										<select name="period" required>
-											{#each DEFAULT_PERIODS as period (period.number)}
-												<option value={period.number}>{period.number} 限</option>
-											{/each}
-										</select>
-									</label>
-									<label>
-										教室 (分からなければ空のまま)
-										<input name="room" maxlength="100" autocomplete="off" />
-									</label>
+									<SlotFields />
 									<Button type="submit" variant="unelevated"><Label>登録する</Label></Button>
 								</form>
 								<p class="note">
@@ -393,10 +356,6 @@
 	.inline {
 		display: inline;
 		margin-left: 0.5rem;
-	}
-	.slot-form label {
-		display: flex;
-		flex-direction: column;
 	}
 	.note {
 		padding: 0.5rem 0.75rem;

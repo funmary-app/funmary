@@ -34,7 +34,7 @@ export function readLinkingEnabled(value: unknown): boolean {
 	);
 }
 
-export const CHANNEL_LABELS: Record<AdminChannel, string> = {
+const CHANNEL_LABELS: Record<AdminChannel, string> = {
 	deploy: 'ビルドとデプロイの結果',
 	errors: '予期しないエラー、取得元の不調',
 	sources: '定期処理と取り込みの結果',
@@ -44,7 +44,7 @@ export const CHANNEL_LABELS: Record<AdminChannel, string> = {
 	other: 'そのほか',
 };
 
-export const ROLE_LABELS: Record<AdminRole, string> = {
+const ROLE_LABELS: Record<AdminRole, string> = {
 	deploy: 'デプロイの失敗を知らせる',
 	errors: 'エラーを知らせる',
 	subjects: '曜日と時限の確認待ちを知らせる',
