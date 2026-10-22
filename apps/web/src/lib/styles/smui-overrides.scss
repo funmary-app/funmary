@@ -71,4 +71,51 @@
 	.mdc-snackbar {
 		bottom: var(--fm-bottom-bar-height, 0px);
 	}
+
+	// タブ (科目の画面、バスの平日と休日)。日本語に大文字の変換と広い字間は合わないので外し、本文と同じ大きさにする。
+	// 選んでいるタブは、主色の下線と太字にする (SMUI の既定の主色は、ダークでも明るいときの赤のまま)
+	.mdc-tab {
+		--mdc-theme-primary: var(--fm-primary);
+		height: 48px;
+		font-size: 1rem;
+		letter-spacing: 0.02em;
+		text-transform: none;
+	}
+
+	.mdc-tab .mdc-tab__text-label {
+		color: var(--fm-text);
+	}
+
+	.mdc-tab--active .mdc-tab__text-label {
+		color: var(--fm-primary);
+		font-weight: 700;
+	}
+
+	.mdc-tab-indicator .mdc-tab-indicator__content--underline {
+		border-color: var(--fm-primary);
+		border-top-width: 3px;
+	}
+
+	// 切り替えのボタン (週の時間割の見せ方、取り込みの方法)。押せる高さを 48px にし、
+	// 選んでいるほうは主色の枠と淡い地にする (SMUI の既定の色は、ダークでも明るいときの赤のまま)
+	.mdc-segmented-button {
+		--mdc-segmented-button-outline-color: var(--fm-divider);
+		--mdc-segmented-button-unselected-ink-color: var(--fm-text);
+		--mdc-segmented-button-unselected-container-fill-color: var(--fm-surface);
+		--mdc-segmented-button-selected-ink-color: var(--fm-primary);
+		--mdc-segmented-button-selected-container-fill-color: var(--fm-primary-soft);
+		--mdc-theme-primary: var(--fm-primary);
+	}
+
+	.mdc-segmented-button__segment {
+		height: 48px;
+		padding: 0 1rem;
+		font-size: 1rem;
+		letter-spacing: 0.02em;
+		text-transform: none;
+	}
+
+	.mdc-segmented-button__segment--selected {
+		border-color: var(--fm-primary);
+	}
 }

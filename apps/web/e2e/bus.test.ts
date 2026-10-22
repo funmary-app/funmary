@@ -182,12 +182,12 @@ test.describe('バス', () => {
 		await page.getByRole('button', { name: /向きを入れ替える/ }).click();
 		await expect(nextBus).toContainText('はこだて未来大学 → 函館駅前');
 
-		const today = page.getByRole('button', { name: /\(今日\)/ });
+		const today = page.getByRole('tab', { name: /\(今日\)/ });
 		const otherDayLabel = (
-			await page.getByRole('button', { name: /^(平日|休日)/ }).allTextContents()
+			await page.getByRole('tab', { name: /^(平日|休日)/ }).allTextContents()
 		).find((label) => !label.includes('(今日)'));
 		if (!otherDayLabel) throw new Error('今日以外のダイヤ区分がありません');
-		await page.getByRole('button', { name: otherDayLabel.trim(), exact: true }).click();
+		await page.getByRole('tab', { name: otherDayLabel.trim(), exact: true }).click();
 		await expect(today).toBeVisible();
 		await expect(nextBus).toContainText(
 			`${otherDayLabel.includes('平日') ? '平日' : '休日'}ダイヤ`,
@@ -236,19 +236,13 @@ test.describe('バス', () => {
 	}) => {
 		await signInAs(page, email);
 		await page.goto('/app/bus');
-		await expect(page.getByRole('button', { name: /\(今日\)/ })).toBeVisible();
-		await page.getByRole('button', { name: /^休日/ }).click();
-		await expect(page.getByRole('button', { name: /^休日/ })).toHaveAttribute(
-			'aria-pressed',
-			'true',
-		);
+		await expect(page.getByRole('tab', { name: /\(今日\)/ })).toBeVisible();
+		await page.getByRole('tab', { name: /^休日/ }).click();
+		await expect(page.getByRole('tab', { name: /^休日/ })).toHaveAttribute('aria-selected', 'true');
 		await expect(page).toHaveURL(/\/app\/bus$/);
 
 		await page.reload();
-		await expect(page.getByRole('button', { name: /^休日/ })).toHaveAttribute(
-			'aria-pressed',
-			'true',
-		);
+		await expect(page.getByRole('tab', { name: /^休日/ })).toHaveAttribute('aria-selected', 'true');
 	});
 
 	test('ホームに、次のバスが出る。押すとバスの画面に行く', async ({ page }) => {

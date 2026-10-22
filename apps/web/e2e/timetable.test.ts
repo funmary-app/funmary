@@ -75,7 +75,7 @@ test.describe('今日と週の時間割', () => {
 		registerSubject();
 		await page.setViewportSize({ width: 390, height: 800 });
 		await page.goto('/app/week?date=2026-10-07');
-		await page.getByRole('button', { name: '週', exact: true }).click();
+		await page.getByRole('radio', { name: '週', exact: true }).click();
 
 		const top = async (locator: Locator) => (await locator.boundingBox())?.y ?? Number.NaN;
 		const dates = page.locator('thead .date');
@@ -234,9 +234,9 @@ test.describe('今日と週の時間割', () => {
 		await page.setViewportSize({ width: 390, height: 844 });
 		await page.goto('/app/week?date=2026-09-09');
 		const views = page.getByRole('group', { name: '時間割の見せ方' });
-		const auto = views.getByRole('button', { name: '自動' });
-		const day = views.getByRole('button', { name: '1日' });
-		const week = views.getByRole('button', { name: '週', exact: true });
+		const auto = views.getByRole('radio', { name: '自動' });
+		const day = views.getByRole('radio', { name: '1日' });
+		const week = views.getByRole('radio', { name: '週', exact: true });
 		const headers = page.getByRole('columnheader', { name: /^\d+\/\d+ \(.\)/ });
 		const inView = async (index: number) => {
 			const box = await headers.nth(index).boundingBox();
@@ -244,29 +244,29 @@ test.describe('今日と週の時間割', () => {
 		};
 
 		// 自動は、狭い画面では 1 日ずつ。月曜だけが画面に入る
-		await expect(auto).toHaveAttribute('aria-pressed', 'true');
+		await expect(auto).toHaveAttribute('aria-checked', 'true');
 		expect(await inView(0)).toBe(true);
 		expect(await inView(4)).toBe(false);
 
 		// 週にすると、月曜から金曜が画面に収まる。ボタンの大きさと位置は変わらない
 		const before = await day.boundingBox();
 		await week.click();
-		await expect(week).toHaveAttribute('aria-pressed', 'true');
+		await expect(week).toHaveAttribute('aria-checked', 'true');
 		expect(await day.boundingBox()).toEqual(before);
 		for (let i = 0; i < 5; i++) expect(await inView(i)).toBe(true);
 
 		// 読み込み直しても保たれる。1 日ずつを選べば、広い画面でも 1 日ずつになる
 		await page.reload();
-		await expect(week).toHaveAttribute('aria-pressed', 'true');
+		await expect(week).toHaveAttribute('aria-checked', 'true');
 		await page.setViewportSize({ width: 1280, height: 900 });
 		for (let i = 0; i < 5; i++) expect(await inView(i)).toBe(true);
 		await day.click();
-		await expect(day).toHaveAttribute('aria-pressed', 'true');
+		await expect(day).toHaveAttribute('aria-checked', 'true');
 		await page.setViewportSize({ width: 390, height: 844 });
 		expect(await inView(4)).toBe(false);
 		await auto.click();
 		await page.reload();
-		await expect(auto).toHaveAttribute('aria-pressed', 'true');
+		await expect(auto).toHaveAttribute('aria-checked', 'true');
 	});
 
 	test('今週と選択中の表示方法は、ダークモードでも選択状態が分かる', async ({ page }) => {
@@ -282,9 +282,9 @@ test.describe('今日と週の時間割', () => {
 		await expect(thisWeek).toHaveCSS('color', 'rgb(214, 153, 158)');
 
 		const views = page.getByRole('group', { name: '時間割の見せ方' });
-		const week = views.getByRole('button', { name: '週', exact: true });
+		const week = views.getByRole('radio', { name: '週', exact: true });
 		await week.click();
-		await expect(week).toHaveAttribute('aria-pressed', 'true');
+		await expect(week).toHaveAttribute('aria-checked', 'true');
 		await expect(week).toHaveCSS('border-top-color', 'rgb(214, 153, 158)');
 		await expect(week).toHaveCSS('background-color', 'rgb(58, 26, 28)');
 		await expect(week).toHaveCSS('color', 'rgb(214, 153, 158)');
@@ -312,11 +312,11 @@ test.describe('今日と週の時間割', () => {
 	}) => {
 		await loginAs(page);
 		await page.goto('/app/courses/import');
-		const methods = page.getByRole('group', { name: '取り込みの方法' });
-		const bookmark = methods.getByRole('button', { name: 'ブックマークに登録する' });
-		const console_ = methods.getByRole('button', { name: 'コンソールで実行する' });
+		const methods = page.getByRole('radiogroup', { name: '取り込みの方法' });
+		const bookmark = methods.getByRole('radio', { name: 'ブックマークに登録する' });
+		const console_ = methods.getByRole('radio', { name: 'コンソールで実行する' });
 
-		await expect(bookmark).toHaveAttribute('aria-pressed', 'true');
+		await expect(bookmark).toHaveAttribute('aria-checked', 'true');
 		await expect(page.getByRole('link', { name: 'Funmary に時間割を取り込む' })).toBeVisible();
 		await page.emulateMedia({ colorScheme: 'dark' });
 		await expect(bookmark).toHaveCSS('background-color', 'rgb(58, 26, 28)');
@@ -324,7 +324,7 @@ test.describe('今日と週の時間割', () => {
 
 		const before = await bookmark.boundingBox();
 		await console_.click();
-		await expect(console_).toHaveAttribute('aria-pressed', 'true');
+		await expect(console_).toHaveAttribute('aria-checked', 'true');
 		expect(await bookmark.boundingBox()).toEqual(before);
 		await expect(page.getByRole('textbox', { name: '取り込みのコード' })).toHaveValue(
 			/^\(function\(\)\{[\s\S]*students\.fun\.ac\.jp/,
@@ -630,7 +630,7 @@ test.describe('時間割だけの略称表示', () => {
 			await expect(toggle).toBeChecked();
 			await expect(table.getByRole('link', { name: '架空演習', exact: true })).toHaveCount(1);
 			if (process.env['FUNMARY_CAPTURE_UI'] === 'true') {
-				await page.getByRole('button', { name: '週', exact: true }).click();
+				await page.getByRole('radio', { name: '週', exact: true }).click();
 				await expect(table.getByRole('link', { name: '架空演習', exact: true })).toBeVisible();
 				await page.screenshot({
 					path: testInfo.outputPath('timetable-light.png'),

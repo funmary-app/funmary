@@ -117,7 +117,7 @@ test.describe('スマホの上部バーと、フッターのリンク', () => {
 		await loginAs(page);
 		await page.setViewportSize({ width: 390, height: 700 });
 		await page.goto('/app/week?date=2026-10-07');
-		await page.getByRole('button', { name: '週', exact: true }).click();
+		await page.getByRole('radio', { name: '週', exact: true }).click();
 
 		const header = page.locator('header.top');
 		await expect(header).toBeVisible();

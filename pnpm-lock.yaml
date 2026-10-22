@@ -361,7 +361,16 @@ importers:
       '@smui/radio':
         specifier: ^9.0.6
         version: 9.0.6
+      '@smui/segmented-button':
+        specifier: ^9.0.6
+        version: 9.0.6
       '@smui/snackbar':
+        specifier: ^9.0.6
+        version: 9.0.6
+      '@smui/tab':
+        specifier: ^9.0.6
+        version: 9.0.6
+      '@smui/tab-bar':
         specifier: ^9.0.6
         version: 9.0.6
       better-sqlite3:
@@ -1817,8 +1826,23 @@ packages:
   '@smui/ripple@9.0.6':
     resolution: {integrity: sha512-ju3IDWJAor0Lp9N1RPnVS5yStBzuPPEvsEZSlHHWpP4oQkP0xa+pByqKeX+7+Kb1YCzTGYuTcIihDvmavuYLCw==}
 
+  '@smui/segmented-button@9.0.6':
+    resolution: {integrity: sha512-XwRHsc7X3OB8va2ulIAmg/75C0fw0oSFFOAI2x4esLaH7wtBalTW1nj3N7IL22WPt7owP8wtLdEjAD7dxAwumQ==}
+
   '@smui/snackbar@9.0.6':
     resolution: {integrity: sha512-Vvbm9J45IEgbkvdK+9tUyu3QS01hG/dyS8uFWOeuswxL0Zzrrq63/VatZPOsrzNmkG0sqgx8TG10On94Ju9bvQ==}
+
+  '@smui/tab-bar@9.0.6':
+    resolution: {integrity: sha512-wV+WwOsnVKkKk2wIMlin180lT1MvsluYdJZctMHTeeMI2cblPqDnBwMQ3voy0l7dBrtaU2+LheDmlUvHArPPqQ==}
+
+  '@smui/tab-indicator@9.0.6':
+    resolution: {integrity: sha512-ijVH/J3oR9M8IOwUPEwVy0AWPy0aiSqULfkBZpxJIwaxDEDBIi9l/WurYOXavxXy/IBKzomtn4EoCWDO1JDR9g==}
+
+  '@smui/tab-scroller@9.0.6':
+    resolution: {integrity: sha512-SqJfgw1ae/hN+TwTW/p/NEy3fvhavHy/OrT8Hbr1LG2QD87N+0bd7QbbQnhULv7AI78BhvFTyn6K1nJ85K2IQA==}
+
+  '@smui/tab@9.0.6':
+    resolution: {integrity: sha512-+3LHFTRVRJ2Msclr7wsbuMtQdLwnZ3+GPNq9OgqCdtJpdCx6FaCxEguvyat/lm2tWo2bwvsrn7eQjrtJAdeAkg==}
 
   '@smui/touch-target@9.0.6':
     resolution: {integrity: sha512-MF3dc7XRYvVofCURlppNhTQdJjfGRVM9B9YDRUhxloIIMmDFWPJvAqGlAbF2sFizZ67TwjMvoLtEBRVcwvEWaQ==}
@@ -5148,12 +5172,40 @@ snapshots:
     dependencies:
       '@smui/common': 9.0.6
 
+  '@smui/segmented-button@9.0.6':
+    dependencies:
+      '@smui/common': 9.0.6
+      '@smui/ripple': 9.0.6
+      '@smui/touch-target': 9.0.6
+
   '@smui/snackbar@9.0.6':
     dependencies:
       '@smui/button': 9.0.6
       '@smui/common': 9.0.6
       '@smui/icon-button': 9.0.6
       '@smui/ripple': 9.0.6
+
+  '@smui/tab-bar@9.0.6':
+    dependencies:
+      '@smui/common': 9.0.6
+      '@smui/tab': 9.0.6
+      '@smui/tab-indicator': 9.0.6
+      '@smui/tab-scroller': 9.0.6
+
+  '@smui/tab-indicator@9.0.6':
+    dependencies:
+      '@smui/common': 9.0.6
+
+  '@smui/tab-scroller@9.0.6':
+    dependencies:
+      '@smui/common': 9.0.6
+      '@smui/tab': 9.0.6
+
+  '@smui/tab@9.0.6':
+    dependencies:
+      '@smui/common': 9.0.6
+      '@smui/ripple': 9.0.6
+      '@smui/tab-indicator': 9.0.6
 
   '@smui/touch-target@9.0.6':
     dependencies:
