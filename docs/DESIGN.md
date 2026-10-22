@@ -25,7 +25,8 @@
 
 ## 部品と SCSS
 
-- スタイルは、すべて `<style lang="scss">`。2 つ以上の画面に同じ形で書くものは、`apps/web/src/lib/styles/` の mixin を使う
+- スタイルは、すべて `<style lang="scss">`。150 行を超えるものは、同じ場所の `.scss` (`+page.svelte` なら `page.scss`、部品なら `部品名.scss`) に分け、`<style>` からは `@use './page';` のように読む。スコープは同じように効く
+- 2 つ以上の画面に同じ形で書くものは、`apps/web/src/lib/styles/` の mixin を使う
   - `_mixins.scss`: 並べ方 (`stack()`、`wrap-row()`、`cluster()`)
   - `_forms.scss`: チェックボックスの行 (`choice-row()`)、縦に並べたフォーム (`column()`)
   - `_surfaces.scss`: 線で囲んだ入れ物 (`outlined()`)、薄い背景の入れ物 (`muted-panel`)、秘密の値の枠 (`secret-box`)
