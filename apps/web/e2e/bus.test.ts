@@ -24,6 +24,8 @@ test.describe('バス', () => {
 		const rows = page.getByRole('listitem').filter({ hasText: '55A' });
 		await expect(rows.first()).toContainText('赤川行き');
 		await expect(rows.first()).toContainText('函館駅前 - はこだて未来大学');
+		// のりばがいくつもある停留所で、待つ場所が分かるように
+		await expect(rows.first()).toContainText('1 番のりば');
 		// 到着の時刻 (出発の 15 分後。未来大の発車表の同じ行き先の便) が付く
 		await expect(rows.first()).toContainText('→');
 		// 反対向き (千代台行き) は出ない

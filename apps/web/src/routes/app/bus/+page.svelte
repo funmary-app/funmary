@@ -135,6 +135,7 @@
 		<span class="section">
 			<IconBus aria-hidden="true" />
 			<span>{departure.from.name} - {departure.to.name}</span>
+			{#if departure.platformName}<span class="platform">{departure.platformName}</span>{/if}
 		</span>
 		{#if index === nextIndex && untilNext !== null}
 			<span class="until">{formatMinutesUntil(untilNext)}</span>
@@ -549,6 +550,12 @@
 				height: 1.25rem;
 				color: var(--fm-primary);
 			}
+		}
+
+		.platform {
+			flex: none;
+			color: var(--fm-text-muted);
+			font-size: 0.75rem;
 		}
 
 		.until {
