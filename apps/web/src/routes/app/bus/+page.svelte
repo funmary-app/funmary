@@ -1,4 +1,6 @@
 <script lang="ts">
+	import Tab, { Label as TabLabel } from '@smui/tab';
+	import TabBar from '@smui/tab-bar';
 	import { untrack } from 'svelte';
 	import { invalidateAll } from '$app/navigation';
 	import { resolve } from '$app/paths';
@@ -35,6 +37,7 @@
 	} = $props();
 
 	const DAY_LABELS: Record<DayType, string> = { weekday: '平日', holiday: '休日' };
+	const DAYS: DayType[] = ['weekday', 'holiday'];
 
 	// 「あと N 分」が古くならないよう、1 分ごとに読み直す
 	$effect(() => {
@@ -246,21 +249,20 @@
 
 			<section class="timetable-panel" aria-label="時刻表">
 				{#if leg}
-					<nav aria-label="日の種類">
-						<ul class="days">
-							{#each ['weekday', 'holiday'] as const as option (option)}
-								<li>
-									<button
-										type="button"
-										onclick={() => selectDay(option)}
-										aria-pressed={day === option}
-									>
-										{DAY_LABELS[option]}{option === data.todayDay ? ' (今日)' : ''}
-									</button>
-								</li>
-							{/each}
-						</ul>
-					</nav>
+					<TabBar
+						class="days"
+						tabs={DAYS}
+						active={day}
+						aria-label="日の種類"
+						onSMUITabBarActivated={(event: CustomEvent<{ index: number }>) =>
+							selectDay(DAYS[event.detail.index] ?? day)}
+					>
+						{#snippet tab(option: DayType)}
+							<Tab tab={option}>
+								<TabLabel>{DAY_LABELS[option]}{option === data.todayDay ? ' (今日)' : ''}</TabLabel>
+							</Tab>
+						{/snippet}
+					</TabBar>
 
 					<h2 id="departures-heading" class="visually-hidden">
 						{leg.from.name}から{leg.to.name}への発車

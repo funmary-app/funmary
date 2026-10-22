@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SegmentedButton, { Label as SegmentLabel, Segment } from '@smui/segmented-button';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import IconCalendar from '~icons/material-symbols/calendar-month-outline';
@@ -196,17 +197,22 @@
 				checked={showAbbreviations}
 				onchange={selectAbbreviationDisplay}
 			/>
-			{#each WEEK_VIEWS as option (option)}
-				<button
-					type="button"
-					class="text-button"
-					aria-pressed={view === option}
-					title={VIEW_LABELS[option].title}
-					onclick={() => selectView(option)}
-				>
-					{VIEW_LABELS[option].text}
-				</button>
-			{/each}
+			<SegmentedButton
+				segments={[...WEEK_VIEWS]}
+				singleSelect
+				selected={view}
+				aria-label="表示の範囲"
+			>
+				{#snippet segment(option: WeekView)}
+					<Segment
+						segment={option}
+						title={VIEW_LABELS[option].title}
+						onclick={() => selectView(option)}
+					>
+						<SegmentLabel>{VIEW_LABELS[option].text}</SegmentLabel>
+					</Segment>
+				{/snippet}
+			</SegmentedButton>
 		</div>
 	</div>
 

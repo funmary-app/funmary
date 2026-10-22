@@ -43,14 +43,6 @@
 	gap: 0.25rem;
 	margin-left: auto;
 }
-.views .text-button[aria-pressed='true'] {
-	border-color: var(--fm-primary);
-	background: var(--fm-primary-soft);
-	color: var(--fm-primary);
-	&:hover {
-		background: var(--fm-primary-soft);
-	}
-}
 /* 日付の選択が、カレンダーのボタンの位置に開くよう、透明な入力欄をボタンの上に重ねる */
 .picker input {
 	position: absolute;

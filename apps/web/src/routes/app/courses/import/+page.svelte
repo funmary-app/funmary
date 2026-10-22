@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SegmentedButton, { Label as SegmentLabel, Segment } from '@smui/segmented-button';
 	import Button, { Label } from '@smui/button';
 	import { enhance } from '$app/forms';
 	import { onMount } from 'svelte';
@@ -24,7 +25,13 @@
 	} = $props();
 
 	/** 読み取りのコードを動かす方法。ブックマークに登録するか、ブラウザのコンソールに貼るか */
-	let method: 'bookmark' | 'console' = $state('bookmark');
+	type Method = 'bookmark' | 'console';
+	const METHODS: Method[] = ['bookmark', 'console'];
+	const METHOD_LABELS: Record<Method, string> = {
+		bookmark: 'ブックマークに登録する',
+		console: 'コンソールで実行する',
+	};
+	let method: Method = $state('bookmark');
 	const copyState = createCopyState();
 
 	async function copyScript() {
@@ -105,22 +112,17 @@
 		</form>
 	{:else}
 		<h2>使い方</h2>
-		<div class="methods" role="group" aria-label="取り込みの方法">
-			<button
-				type="button"
-				aria-pressed={method === 'bookmark'}
-				onclick={() => (method = 'bookmark')}
-			>
-				ブックマークに登録する
-			</button>
-			<button
-				type="button"
-				aria-pressed={method === 'console'}
-				onclick={() => (method = 'console')}
-			>
-				コンソールで実行する
-			</button>
-		</div>
+		<SegmentedButton
+			class="methods"
+			segments={METHODS}
+			singleSelect
+			bind:selected={method}
+			aria-label="取り込みの方法"
+		>
+			{#snippet segment(option: Method)}
+				<Segment segment={option}><SegmentLabel>{METHOD_LABELS[option]}</SegmentLabel></Segment>
+			{/snippet}
+		</SegmentedButton>
 		{#if method === 'bookmark'}
 			<ol>
 				<li>
@@ -171,11 +173,21 @@
 		border-radius: 0.5rem;
 		background: var(--fm-surface-muted);
 	}
-	.methods {
-		@include mixins.wrap-row(0.25rem);
+	/* 2 つの方法を同じ幅で横に並べる。名前が長いので、文字を少し小さくし、左右の余白を詰めて、スマホの幅でも 1 行に収める。
+	   さらに狭い画面では、ボタンの中で折り返す */
+	:global(.methods.mdc-segmented-button) {
+		display: flex;
 		margin-bottom: 0.5rem;
 	}
-	.methods button,
+
+	:global(.methods .mdc-segmented-button__segment) {
+		flex: 1;
+		height: auto;
+		min-height: 48px;
+		padding: 0 0.5rem;
+		font-size: 0.875rem;
+		white-space: normal;
+	}
 	.copy button {
 		min-height: 48px;
 		padding: 0 1rem;
@@ -186,14 +198,8 @@
 		font: inherit;
 		cursor: pointer;
 	}
-	.methods button:hover,
 	.copy button:hover {
 		background: var(--fm-surface-muted);
-	}
-	.methods button[aria-pressed='true'] {
-		border-color: var(--fm-primary);
-		background: var(--fm-primary-soft);
-		color: var(--fm-primary);
 	}
 	.script {
 		display: block;

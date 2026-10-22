@@ -1,4 +1,6 @@
 <script lang="ts">
+	import Tab, { Label as TabLabel } from '@smui/tab';
+	import TabBar from '@smui/tab-bar';
 	import Button, { Label } from '@smui/button';
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
@@ -53,8 +55,8 @@
 		form: { error?: string; message?: string } | null;
 	} = $props();
 
-	type Tab = 'registered' | 'search';
-	const TABS: { id: Tab; label: string }[] = [
+	type CourseTab = 'registered' | 'search';
+	const TABS: { id: CourseTab; label: string }[] = [
 		{ id: 'registered', label: '登録した科目' },
 		{ id: 'search', label: '科目を探す' },
 	];
@@ -62,31 +64,15 @@
 	// どちらのタブを開いているかは URL の tab= に持ち、再読み込みや戻る/進むでも保たれるようにする。
 	// tab= がなければ、検索の結果があるとき (q= で来たとき) だけ「科目を探す」を開く
 	const activeTab = $derived(
-		(page.url.searchParams.get('tab') as Tab | null) ??
+		(page.url.searchParams.get('tab') as CourseTab | null) ??
 			(data.query.trim() !== '' ? 'search' : 'registered'),
 	);
 
-	function selectTab(tab: Tab) {
+	function selectTab(tab: CourseTab) {
 		if (tab === activeTab) return;
 		const url = new URL(page.url.href);
 		url.searchParams.set('tab', tab);
 		void goto(url, { replace: true, reset: false });
-	}
-
-	/** 左右矢印キーと Home、End で、タブの間を移動して選ぶ (WAI-ARIA のタブの決まり) */
-	function onTabsKeydown(event: KeyboardEvent) {
-		const index = TABS.findIndex((tab) => tab.id === activeTab);
-		let next = -1;
-		if (event.key === 'ArrowRight') next = (index + 1) % TABS.length;
-		else if (event.key === 'ArrowLeft') next = (index - 1 + TABS.length) % TABS.length;
-		else if (event.key === 'Home') next = 0;
-		else if (event.key === 'End') next = TABS.length - 1;
-		if (next < 0) return;
-		event.preventDefault();
-		selectTab(TABS[next].id);
-		(event.currentTarget as HTMLElement)
-			.querySelector<HTMLButtonElement>(`#${TABS[next].id}-tab`)
-			?.focus();
 	}
 </script>
 
@@ -105,21 +91,20 @@
 	{:else}
 		<p>{data.academicYear} 年度の科目から登録します。</p>
 
-		<div class="tabs" role="tablist" aria-label="科目" tabindex="-1" onkeydown={onTabsKeydown}>
-			{#each TABS as tab (tab.id)}
-				<button
-					type="button"
-					role="tab"
-					id="{tab.id}-tab"
-					aria-selected={activeTab === tab.id}
-					aria-controls="{tab.id}-panel"
-					tabindex={activeTab === tab.id ? 0 : -1}
-					onclick={() => selectTab(tab.id)}
-				>
-					{tab.label}
-				</button>
-			{/each}
-		</div>
+		<TabBar
+			tabs={TABS}
+			key={(tab: (typeof TABS)[number]) => tab.id}
+			active={TABS.find((tab) => tab.id === activeTab)}
+			aria-label="科目"
+			onSMUITabBarActivated={(event: CustomEvent<{ index: number }>) =>
+				selectTab(TABS[event.detail.index]?.id ?? activeTab)}
+		>
+			{#snippet tab(tab: (typeof TABS)[number])}
+				<Tab {tab} id="{tab.id}-tab" aria-controls="{tab.id}-panel">
+					<TabLabel>{tab.label}</TabLabel>
+				</Tab>
+			{/snippet}
+		</TabBar>
 
 		<div
 			id="registered-panel"
@@ -311,29 +296,6 @@
 	@use 'mixins';
 	@use 'surfaces';
 
-	.tabs {
-		display: flex;
-		gap: 0.25rem;
-		margin: 1rem 0;
-		border-bottom: 1px solid var(--fm-divider);
-
-		button {
-			min-height: 44px;
-			padding: 0 1rem;
-			border: none;
-			border-bottom: 2px solid transparent;
-			background: none;
-			color: var(--fm-text-muted);
-			font: inherit;
-			font-weight: 700;
-			cursor: pointer;
-		}
-
-		button[aria-selected='true'] {
-			border-bottom-color: var(--fm-primary);
-			color: var(--fm-text);
-		}
-	}
 	.subjects {
 		padding: 0;
 		list-style: none;

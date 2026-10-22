@@ -147,34 +147,10 @@
 	}
 }
 
-/* 平日と休日。2 つを同じ幅で並べ、選んでいるほうに下線を引く */
-.days {
-	display: grid;
-	grid-template-columns: 1fr 1fr;
+/* 平日と休日のタブ。一覧と同じ幅に広げる */
+:global(.days.mdc-tab-bar) {
 	margin: 0.5rem 0 0;
-	padding: 0;
 	border-bottom: 1px solid var(--fm-divider);
-	list-style: none;
-
-	button {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		width: 100%;
-		min-height: 48px;
-		border: 0;
-		border-bottom: 3px solid transparent;
-		background: none;
-		color: var(--fm-text);
-		font: inherit;
-		cursor: pointer;
-	}
-
-	button[aria-pressed='true'] {
-		border-bottom-color: var(--fm-primary);
-		color: var(--fm-primary);
-		font-weight: 700;
-	}
 }
 
 .departures {
