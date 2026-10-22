@@ -3,14 +3,14 @@
 	$schema: 'https://docs.renovatebot.com/renovate-schema.json',
 	extends: ['config:recommended', 'helpers:pinGitHubActionDigests', ':timezone(Asia/Tokyo)'],
 
-	// 第 1 と第 3 月曜の 10 時台 (日本時間)。Renovate は日付と曜日の条件を両方満たす日だけを選ぶ
-	schedule: ['* 10 1-7,15-21 * 1'],
+	// 毎週月曜の 10 時台 (日本時間)
+	schedule: ['* 10 * * 1'],
 	// 公開から 3 日たっていない版は取り込まない
 	minimumReleaseAge: '3 days',
 	lockFileMaintenance: {
 		enabled: true,
 		automerge: true,
-		schedule: ['* 10 1-7,15-21 * 1'],
+		schedule: ['* 10 * * 1'],
 		commitMessageAction: 'lockfile を更新',
 		commitMessageTopic: '',
 		commitMessageExtra: '',
