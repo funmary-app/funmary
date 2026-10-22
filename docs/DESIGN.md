@@ -25,7 +25,14 @@
 
 ## 部品と SCSS
 
-- スタイルは、すべて `<style lang="scss">`。繰り返しの並べ方は `_mixins.scss` の `stack()` と `wrap-row()` を使う
+- スタイルは、すべて `<style lang="scss">`。2 つ以上の画面に同じ形で書くものは、`apps/web/src/lib/styles/` の mixin を使う
+  - `_mixins.scss`: 並べ方 (`stack()`、`wrap-row()`、`cluster()`)
+  - `_forms.scss`: チェックボックスの行 (`choice-row()`)、縦に並べたフォーム (`column()`)
+  - `_surfaces.scss`: 線で囲んだ入れ物 (`outlined()`)、薄い背景の入れ物 (`muted-panel`)、秘密の値の枠 (`secret-box`)
+  - `_text.scss`: 補足の小さな文字 (`muted()`)、一覧の 1 件の名前 (`item-title`)、状態の札 (`badge`)
+  - `_touch.scss`: 押せる高さのリンク (`target()`)、`<details>` の見出し (`summary`)
+  - `_tables.scss`: 管理画面の表 (`data`)
+  - `_chrome.scss`、`_header-action.scss`: レイアウトのロゴとフッター、上のバーの操作
 - ページ本文の幅は `.page` (既定 44rem)。広い表だけ `.page-w-<rem>` で広げる
 - 補助の文字は `.muted`、画面の外に隠す文字は `.visually-hidden`
 - 確認のポップアップを出す操作は `confirmSubmit` のアクション (フォームの `use:enhance` より先に書く)
