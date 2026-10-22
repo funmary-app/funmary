@@ -8,6 +8,7 @@
 	import '@fontsource/noto-sans-jp/700.css';
 	import '#lib/styles/generated/smui.css';
 	import '#lib/styles/base.scss';
+	import '#lib/styles/smui-overrides.scss';
 	import type { Snippet } from 'svelte';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';

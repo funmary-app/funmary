@@ -5,6 +5,7 @@ import { sveltekit } from '@sveltejs/kit/vite';
 import Icons from 'unplugin-icons/vite';
 import { defineConfig } from 'vite';
 import { BUILD_ALIASES, UNBUNDLED_DEPS } from './bundled-deps.js';
+import { smuiStyles } from './scripts/smui-styles.js';
 
 // 単体テストの設定はルートの vitest.config.js に置く
 export default defineConfig(({ command }) => ({
@@ -35,6 +36,9 @@ export default defineConfig(({ command }) => ({
 
 		// 使ったアイコンだけを、ビルド時に SVG の Svelte コンポーネントにして埋め込む
 		Icons({ compiler: 'svelte' }),
+
+		// SMUI の部品の CSS を、その部品を使うページだけで読ませる
+		smuiStyles(),
 	],
 	css: {
 		preprocessorOptions: {
