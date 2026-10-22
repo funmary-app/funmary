@@ -1,161 +1,137 @@
 // 画面全体の基本のスタイル。色はテーマ (src/theme) の CSS 変数で書き、ライトとダークの両方に効かせる
 @use 'fonts';
 
-// width: 100% と padding を一緒に使っても、要素が親からはみ出さないようにする (箱の大きさに padding と border を含める)
-*,
-*::before,
-*::after {
-	box-sizing: border-box;
-}
-
-html {
-	background: var(--fm-background);
-	color: var(--fm-text);
-	-webkit-text-size-adjust: 100%;
-	// 日本語の禁則処理を、最も厳密なものにする。「ー」(長音符) や小さい仮名が、行の先頭に来ないようにする
-	line-break: strict;
-}
-
-// アイコン (unplugin-icons が生成する svg、width/height は em 単位の属性) は、Safari (iOS) だと
-// flex の中で意図せず 0 幅に潰れ、見えなくなることがある。すべての svg を、潰れない大きさに固定する
-svg {
-	flex-shrink: 0;
-}
-
-body {
-	margin: 0;
-	font-family: fonts.$sans;
-	font-size: 1rem;
-	line-height: 1.7;
-	// 長い URL やコマンドの並びなど、折り返せない英数字も、入りきらないときは折り返して、枠の外に出さない
-	overflow-wrap: break-word;
-}
-
-h1,
-h2,
-h3 {
-	line-height: 1.35;
-	letter-spacing: 0.01em;
-	text-wrap: balance;
-}
-
-h1 {
-	margin: 0 0 1rem;
-	font-size: 1.5rem;
-}
-
-h2 {
-	margin: 2rem 0 0.75rem;
-	font-size: 1.125rem;
-}
-
-a {
-	color: var(--fm-link);
-	text-underline-offset: 0.2em;
-}
-
-:focus-visible {
-	outline: 2px solid var(--fm-primary);
-	outline-offset: 2px;
-}
-
-::selection {
-	background: var(--fm-primary-soft);
-	color: var(--fm-text);
-}
-
-// 時刻や件数の数字は、桁をそろえる
-time,
-.numeric {
-	font-variant-numeric: tabular-nums;
-}
-
-// ページの本文の幅。ふつうは 44rem で、広い表や狭いフォームだけ page-w-<rem> で変える
-.page {
-	max-width: 44rem;
-}
-
-@each $width in (36, 40, 48, 56, 64, 72) {
-	.page.page-w-#{$width} {
-		max-width: #{$width}rem;
+// SMUI の部品のスタイル (レイヤー smui) より弱くする。部品は、ここの要素への指定 (input など) を上書きできる。
+// SMUI の見た目を変える指定は smui-overrides.scss に置く。レイヤーの順番は、テーマの CSS (generated/smui.css) の先頭で決める
+@layer base {
+	// width: 100% と padding を一緒に使っても、要素が親からはみ出さないようにする (箱の大きさに padding と border を含める)
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
 	}
-}
 
-.muted {
-	color: var(--fm-text-muted);
-	font-size: 0.875rem;
-}
+	html {
+		background: var(--fm-background);
+		color: var(--fm-text);
+		-webkit-text-size-adjust: 100%;
+		// 日本語の禁則処理を、最も厳密なものにする。「ー」(長音符) や小さい仮名が、行の先頭に来ないようにする
+		line-break: strict;
+	}
 
-.visually-hidden {
-	position: absolute;
-	width: 1px;
-	height: 1px;
-	overflow: hidden;
-	clip-path: inset(50%);
-	white-space: nowrap;
-}
+	// アイコン (unplugin-icons が生成する svg、width/height は em 単位の属性) は、Safari (iOS) だと
+	// flex の中で意図せず 0 幅に潰れ、見えなくなることがある。すべての svg を、潰れない大きさに固定する
+	svg {
+		flex-shrink: 0;
+	}
 
-// SMUI のボタン。押せる部分は 48px 四方以上にする。
-// 既定の大文字への変換は、日本語の画面には合わないので外す
-.mdc-button {
-	height: 48px;
-	border-radius: 0.5rem;
-	text-transform: none;
-	letter-spacing: 0.02em;
-}
+	body {
+		margin: 0;
+		font-family: fonts.$sans;
+		font-size: 1rem;
+		line-height: 1.7;
+		// 長い URL やコマンドの並びなど、折り返せない英数字も、入りきらないときは折り返して、枠の外に出さない
+		overflow-wrap: break-word;
+	}
 
-// 塗りのボタンの色。ダークでは、主色 (淡い赤) の地に暗い文字だと落ち着かないので、濃い赤の地に白の文字にする
-.mdc-button--unelevated:not(:disabled) {
-	background-color: var(--fm-button);
-	color: var(--fm-on-button);
-}
+	h1,
+	h2,
+	h3 {
+		line-height: 1.35;
+		letter-spacing: 0.01em;
+		text-wrap: balance;
+	}
 
-// 輪郭のボタン。SMUI の既定の輪郭は黒の半透明で、ダークでは見えないので、テーマの色にする
-.mdc-button--outlined:not(:disabled) {
-	border-color: var(--fm-outline);
-	color: var(--fm-primary);
-}
+	h1 {
+		margin: 0 0 1rem;
+		font-size: 1.5rem;
+	}
 
-// 無効なボタンも、テーマに合う文字・背景・輪郭で状態を判別できるようにする
-button.mdc-button:disabled {
-	border-color: var(--fm-outline);
-	background-color: var(--fm-surface-muted);
-	color: var(--fm-text-muted);
-}
+	h2 {
+		margin: 2rem 0 0.75rem;
+		font-size: 1.125rem;
+	}
 
-// 入力欄と選択欄。ブラウザの既定の見た目 (特にダークの灰色) を、テーマの色にそろえる
-input:not([type='radio'], [type='checkbox'], [type='hidden']),
-select,
-textarea {
-	box-sizing: border-box;
-	// 選択欄は、いちばん長い選択肢の幅に広がるので、入れ物の幅を超えないようにする
-	max-width: 100%;
-	min-height: 48px;
-	padding: 0 0.75rem;
-	border: 1px solid var(--fm-outline);
-	border-radius: 0.5rem;
-	background: var(--fm-surface);
-	color: var(--fm-text);
-	font: inherit;
+	a {
+		color: var(--fm-link);
+		text-underline-offset: 0.2em;
+	}
 
-	&::placeholder {
+	:focus-visible {
+		outline: 2px solid var(--fm-primary);
+		outline-offset: 2px;
+	}
+
+	::selection {
+		background: var(--fm-primary-soft);
+		color: var(--fm-text);
+	}
+
+	// 時刻や件数の数字は、桁をそろえる
+	time,
+	.numeric {
+		font-variant-numeric: tabular-nums;
+	}
+
+	// ページの本文の幅。ふつうは 44rem で、広い表や狭いフォームだけ page-w-<rem> で変える
+	.page {
+		max-width: 44rem;
+	}
+
+	@each $width in (36, 40, 48, 56, 64, 72) {
+		.page.page-w-#{$width} {
+			max-width: #{$width}rem;
+		}
+	}
+
+	.muted {
 		color: var(--fm-text-muted);
+		font-size: 0.875rem;
 	}
-}
 
-textarea {
-	padding: 0.5rem 0.75rem;
-}
+	.visually-hidden {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
 
-// ファイルの欄は、ブラウザが描くボタンと「選択されていません」の文字の幅で広がり、
-// 文字の幅が広いフォントでは、スマホの幅を超える。入れ物の幅に合わせる
-input[type='file'] {
-	width: 100%;
-}
+	// 入力欄と選択欄。ブラウザの既定の見た目 (特にダークの灰色) を、テーマの色にそろえる
+	input:not([type='radio'], [type='checkbox'], [type='hidden']),
+	select,
+	textarea {
+		box-sizing: border-box;
+		// 選択欄は、いちばん長い選択肢の幅に広がるので、入れ物の幅を超えないようにする
+		max-width: 100%;
+		min-height: 48px;
+		padding: 0 0.75rem;
+		border: 1px solid var(--fm-outline);
+		border-radius: 0.5rem;
+		background: var(--fm-surface);
+		color: var(--fm-text);
+		font: inherit;
 
-input[type='radio'],
-input[type='checkbox'] {
-	width: 1.25rem;
-	height: 1.25rem;
-	accent-color: var(--fm-primary);
+		&::placeholder {
+			color: var(--fm-text-muted);
+		}
+	}
+
+	textarea {
+		padding: 0.5rem 0.75rem;
+	}
+
+	// ファイルの欄は、ブラウザが描くボタンと「選択されていません」の文字の幅で広がり、
+	// 文字の幅が広いフォントでは、スマホの幅を超える。入れ物の幅に合わせる
+	input[type='file'] {
+		width: 100%;
+	}
+
+	input[type='radio'],
+	input[type='checkbox'] {
+		width: 1.25rem;
+		height: 1.25rem;
+		accent-color: var(--fm-primary);
+	}
 }

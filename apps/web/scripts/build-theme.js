@@ -1,14 +1,19 @@
-// SMUI のテーマ (src/theme) と、入れてある SMUI の部品のスタイルを、1 つの CSS に変換する。
+// SMUI のテーマ (src/theme) と、入れてある SMUI の部品のスタイルを CSS に変換する。
+// - generated/smui.css: 色の CSS 変数とダーク用だけ。どのページでも読む
+// - generated/smui/<部品>.css: 部品ごとのスタイル。その部品を import したモジュールに、vite.config.js の
+//   smuiStyles が読み込みを足すので、部品を使うページだけで読まれる (全部のページで全部の部品の CSS を読まない)
 // ダーク用は色の CSS 変数だけで、端末の設定がダークのときだけ効くよう @media で囲んで後ろに足す。
 // smui-theme の compile は、pnpm の置き方では入れた部品のスタイルを見つけられないので使わず、Sass を直接呼ぶ。
 // pnpm dev と pnpm build の前に動かす。部品を足したら、ここで作り直される。
-import { mkdirSync, readFileSync, realpathSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as sass from 'sass';
+import { smuiStyleFile } from './smui-styles.js';
 
 const webRoot = fileURLToPath(new URL('..', import.meta.url));
-const output = join(webRoot, 'src/lib/styles/generated/smui.css');
+const generated = join(webRoot, 'src/lib/styles/generated');
+const output = join(generated, 'smui.css');
 
 /** @type {unknown} */
 const manifest = JSON.parse(readFileSync(join(webRoot, 'package.json'), 'utf8'));
@@ -56,7 +61,7 @@ function compile(theme, packages) {
 	}).css;
 }
 
-const light = compile('smui-theme', smuiPackages);
+const light = compile('smui-theme', []);
 // 部品のスタイルは色を CSS 変数で読むので、ダーク用は変数だけにする (部品のスタイルを 2 回出さない)
 const dark = compile('dark/smui-theme', []);
 /**
@@ -71,16 +76,38 @@ function darkVariables(css, selector) {
 	return blocks.map((block) => block.replace(':root', selector)).join('');
 }
 
-mkdirSync(dirname(output), { recursive: true });
+// CSS のレイヤーの順番 (後ろほど強い)。全体の要素への指定 (base.scss) < SMUI の部品 < SMUI の見た目の上書き (smui-overrides.scss)。
+// 画面ごとのスタイルはレイヤーに入れないので、いつもいちばん強い。部品の CSS はあとから読まれることがあるので、
+// 最初に読まれたファイルで順番が決まるよう、どのファイルの先頭にも同じ宣言を置く
+const header =
+	'/* scripts/build-theme.js が作る。手で直さない */\n@layer base,smui,smui-overrides;';
+mkdirSync(generated, { recursive: true });
 writeFileSync(
 	output,
 	[
-		'/* scripts/build-theme.js が作る。手で直さない */',
+		header,
+		'@layer smui{',
 		light,
 		// 画面の色の設定 (<html data-theme>) がシステムなら端末の設定に従い、ダークならいつでもダークにする
 		`@media (prefers-color-scheme: dark){${darkVariables(dark, ':root:not([data-theme="light"])')}}`,
 		darkVariables(dark, ':root[data-theme="dark"]'),
+		'}',
 		'',
 	].join('\n'),
 );
-console.log(`テーマの CSS を作りました (${smuiPackages.join('、')}): ${output}`);
+
+// 部品ごとの CSS。テーマを読んだあとに部品を読み、テーマの分 (smui.css にあるもの) を除く。
+// 部品どうしが共有する下位の部品 (ripple など) は、それぞれのファイルに入る
+rmSync(join(generated, 'smui'), { recursive: true, force: true });
+mkdirSync(join(generated, 'smui'), { recursive: true });
+for (const name of smuiPackages) {
+	const css = compile('smui-theme', [name]);
+	if (!css.startsWith(light)) {
+		throw new Error(`${name} のスタイルの先頭が、テーマの CSS と一致しません`);
+	}
+	writeFileSync(
+		join(webRoot, smuiStyleFile(name)),
+		`${header}\n@layer smui{${css.slice(light.length)}}\n`,
+	);
+}
+console.log(`テーマの CSS を作りました (${smuiPackages.join('、')}): ${generated}`);

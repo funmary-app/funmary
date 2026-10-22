@@ -1,0 +1,31 @@
+// SMUI の部品の見た目を、Funmary に合わせて変える。部品のスタイル (レイヤー smui) より強いレイヤーに置く。
+// 部品の CSS は、その部品を使うページだけで読まれ、全体の CSS よりあとに読まれることがあるので、読み込む順番ではなくレイヤーで強さを決める
+@layer smui-overrides {
+	// SMUI のボタン。押せる部分は 48px 四方以上にする。
+	// 既定の大文字への変換は、日本語の画面には合わないので外す
+	.mdc-button {
+		height: 48px;
+		border-radius: 0.5rem;
+		text-transform: none;
+		letter-spacing: 0.02em;
+	}
+
+	// 塗りのボタンの色。ダークでは、主色 (淡い赤) の地に暗い文字だと落ち着かないので、濃い赤の地に白の文字にする
+	.mdc-button--unelevated:not(:disabled) {
+		background-color: var(--fm-button);
+		color: var(--fm-on-button);
+	}
+
+	// 輪郭のボタン。SMUI の既定の輪郭は黒の半透明で、ダークでは見えないので、テーマの色にする
+	.mdc-button--outlined:not(:disabled) {
+		border-color: var(--fm-outline);
+		color: var(--fm-primary);
+	}
+
+	// 無効なボタンも、テーマに合う文字・背景・輪郭で状態を判別できるようにする
+	button.mdc-button:disabled {
+		border-color: var(--fm-outline);
+		background-color: var(--fm-surface-muted);
+		color: var(--fm-text-muted);
+	}
+}
