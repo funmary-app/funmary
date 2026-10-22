@@ -1,4 +1,6 @@
 <script lang="ts">
+	import CheckboxField from '#lib/components/CheckboxField.svelte';
+	import RadioField from '#lib/components/RadioField.svelte';
 	import Button, { Label } from '@smui/button';
 	import { enhance } from '$app/forms';
 	import FormNotice from '#lib/components/FormNotice.svelte';
@@ -80,33 +82,24 @@
 	<fieldset>
 		<legend>時間</legend>
 		<div class="choices">
-			<label class="choice">
-				<input
-					type="radio"
-					name="timeKind"
-					value="allDay"
-					checked={timeKind === 'allDay'}
-					onchange={() => (chosen.timeKind = 'allDay')}
-				/>終日
-			</label>
-			<label class="choice">
-				<input
-					type="radio"
-					name="timeKind"
-					value="time"
-					checked={timeKind === 'time'}
-					onchange={() => (chosen.timeKind = 'time')}
-				/>時刻で決める
-			</label>
-			<label class="choice">
-				<input
-					type="radio"
-					name="timeKind"
-					value="period"
-					checked={timeKind === 'period'}
-					onchange={() => (chosen.timeKind = 'period')}
-				/>時限で決める
-			</label>
+			<RadioField
+				name="timeKind"
+				value="allDay"
+				group={timeKind}
+				onchange={() => (chosen.timeKind = 'allDay')}>終日</RadioField
+			>
+			<RadioField
+				name="timeKind"
+				value="time"
+				group={timeKind}
+				onchange={() => (chosen.timeKind = 'time')}>時刻で決める</RadioField
+			>
+			<RadioField
+				name="timeKind"
+				value="period"
+				group={timeKind}
+				onchange={() => (chosen.timeKind = 'period')}>時限で決める</RadioField
+			>
 		</div>
 		{#if timeKind === 'time'}
 			<div class="row">
@@ -170,76 +163,49 @@
 					<legend>曜日 (選ばなければ、開始日の曜日)</legend>
 					<div class="choices">
 						{#each WEEKDAYS as weekday (weekday.value)}
-							<label class="choice">
-								<input
-									type="checkbox"
-									name="weekday"
-									value={weekday.value}
-									checked={values.weekdays.includes(weekday.value)}
-								/>{weekday.label}
-							</label>
+							<CheckboxField
+								name="weekday"
+								value={weekday.value}
+								checked={values.weekdays.includes(weekday.value)}>{weekday.label}</CheckboxField
+							>
 						{/each}
 					</div>
 				</fieldset>
 			{:else if repeat === 'monthly'}
 				<fieldset class="inner">
 					<legend>毎月の決め方</legend>
-					<label class="choice">
-						<input
-							type="radio"
-							name="monthlyMode"
-							value="day"
-							checked={values.monthlyMode === 'day'}
-						/>開始日と同じ日付
-					</label>
-					<label class="choice">
-						<input
-							type="radio"
-							name="monthlyMode"
-							value="nth"
-							checked={values.monthlyMode === 'nth'}
-						/>開始日と同じ、第何曜日 (例: 第 2 火曜日)
-					</label>
-					<label class="choice">
-						<input
-							type="radio"
-							name="monthlyMode"
-							value="last"
-							checked={values.monthlyMode === 'last'}
-						/>開始日と同じ曜日の、最終週
-					</label>
+					<RadioField name="monthlyMode" value="day" group={values.monthlyMode}
+						>開始日と同じ日付</RadioField
+					>
+					<RadioField name="monthlyMode" value="nth" group={values.monthlyMode}
+						>開始日と同じ、第何曜日 (例: 第 2 火曜日)</RadioField
+					>
+					<RadioField name="monthlyMode" value="last" group={values.monthlyMode}
+						>開始日と同じ曜日の、最終週</RadioField
+					>
 				</fieldset>
 			{/if}
 
 			<fieldset class="inner">
 				<legend>終わり</legend>
-				<label class="choice">
-					<input
-						type="radio"
-						name="endKind"
-						value="never"
-						checked={endKind === 'never'}
-						onchange={() => (chosen.endKind = 'never')}
-					/>終わりなし
-				</label>
-				<label class="choice">
-					<input
-						type="radio"
-						name="endKind"
-						value="until"
-						checked={endKind === 'until'}
-						onchange={() => (chosen.endKind = 'until')}
-					/>日付まで
-				</label>
-				<label class="choice">
-					<input
-						type="radio"
-						name="endKind"
-						value="count"
-						checked={endKind === 'count'}
-						onchange={() => (chosen.endKind = 'count')}
-					/>回数まで
-				</label>
+				<RadioField
+					name="endKind"
+					value="never"
+					group={endKind}
+					onchange={() => (chosen.endKind = 'never')}>終わりなし</RadioField
+				>
+				<RadioField
+					name="endKind"
+					value="until"
+					group={endKind}
+					onchange={() => (chosen.endKind = 'until')}>日付まで</RadioField
+				>
+				<RadioField
+					name="endKind"
+					value="count"
+					group={endKind}
+					onchange={() => (chosen.endKind = 'count')}>回数まで</RadioField
+				>
 				{#if endKind === 'until'}
 					<label class="field narrow">
 						終わりの日
@@ -258,14 +224,12 @@
 					<legend>この日は除く</legend>
 					<div class="excludes">
 						{#each candidates as candidate (candidate.date)}
-							<label class="choice">
-								<input
-									type="checkbox"
-									name="exclude"
-									value={candidate.date}
-									checked={values.excludedDates.includes(candidate.date)}
-								/>{candidate.label}
-							</label>
+							<CheckboxField
+								name="exclude"
+								value={candidate.date}
+								checked={values.excludedDates.includes(candidate.date)}
+								>{candidate.label}</CheckboxField
+							>
 						{/each}
 					</div>
 				</fieldset>
@@ -278,26 +242,13 @@
 
 	<fieldset>
 		<legend>公開範囲</legend>
-		<label class="choice">
-			<input
-				type="radio"
-				name="visibility"
-				value="private"
-				checked={values.visibility === 'private'}
-			/>自分だけ
-		</label>
-		<label class="choice">
-			<input type="radio" name="visibility" value="link" checked={values.visibility === 'link'} />
-			共有のリンクを知っている人 (Funmary にログインした人だけ)
-		</label>
-		<label class="choice">
-			<input
-				type="radio"
-				name="visibility"
-				value="public"
-				checked={values.visibility === 'public'}
-			/>Funmary にログインしている全員 (「みんなの予定」に載る)
-		</label>
+		<RadioField name="visibility" value="private" group={values.visibility}>自分だけ</RadioField>
+		<RadioField name="visibility" value="link" group={values.visibility}
+			>共有のリンクを知っている人 (Funmary にログインした人だけ)</RadioField
+		>
+		<RadioField name="visibility" value="public" group={values.visibility}
+			>Funmary にログインしている全員 (「みんなの予定」に載る)</RadioField
+		>
 		<p class="hint">
 			公開した予定に、あなたの名前やメールアドレスは出ません。公開をやめると、ほかの人の時間割から消えます。
 		</p>
@@ -310,7 +261,6 @@
 	@use 'mixins';
 	@use 'surfaces';
 	@use 'text';
-	@use 'touch';
 
 	.event-form {
 		@include mixins.stack(1rem);
@@ -339,10 +289,6 @@
 	}
 	.choices {
 		@include mixins.wrap-row(0.25rem 1rem);
-	}
-	.choice {
-		@include touch.target;
-		gap: 0.5rem;
 	}
 	.excludes {
 		display: grid;

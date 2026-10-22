@@ -1,4 +1,5 @@
 <script lang="ts">
+	import CheckboxField from '#lib/components/CheckboxField.svelte';
 	import Button, { Label } from '@smui/button';
 	import { enhance } from '$app/forms';
 	import { confirmSubmit } from '#lib/actions/confirm-submit.ts';
@@ -113,15 +114,11 @@
 					<fieldset>
 						<legend>フィードに載せる通知の種類</legend>
 						{#each data.kindOptions as option (option.kind)}
-							<label>
-								<input
-									type="checkbox"
-									name="kinds"
-									value={option.kind}
-									checked={data.kinds.includes(option.kind)}
-								/>
-								{option.label}
-							</label>
+							<CheckboxField
+								name="kinds"
+								value={option.kind}
+								checked={data.kinds.includes(option.kind)}>{option.label}</CheckboxField
+							>
 						{/each}
 					</fieldset>
 					<Button type="submit" variant="unelevated"><Label>保存する</Label></Button>
@@ -171,11 +168,6 @@
 	fieldset {
 		@include mixins.stack(0.5rem);
 		@include surfaces.outlined($margin: 0);
-	}
-
-	fieldset label {
-		@include forms.choice-row;
-		margin-top: 0;
 	}
 
 	.actions {

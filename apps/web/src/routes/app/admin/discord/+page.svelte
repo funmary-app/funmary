@@ -1,4 +1,6 @@
 <script lang="ts">
+	import CheckboxField from '#lib/components/CheckboxField.svelte';
+	import RadioField from '#lib/components/RadioField.svelte';
 	import Button, { Label } from '@smui/button';
 	import { enhance } from '$app/forms';
 	import FormNotice from '#lib/components/FormNotice.svelte';
@@ -159,33 +161,24 @@
 				<form method="POST" action="?/joinRole" use:enhance class="join-role">
 					<fieldset>
 						<legend>付け方</legend>
-						<label>
-							<input type="radio" name="mode" value="none" bind:group={joinRoleMode} />
-							付けない
-						</label>
-						<label>
-							<input type="radio" name="mode" value="custom" bind:group={joinRoleMode} />
-							独自に選んだロールを付ける
-						</label>
-						<label>
-							<input type="radio" name="mode" value="invite" bind:group={joinRoleMode} />
-							登録済みの招待リンクと同じロールを付ける
-						</label>
+						<RadioField name="mode" value="none" bind:group={joinRoleMode}>付けない</RadioField>
+						<RadioField name="mode" value="custom" bind:group={joinRoleMode}
+							>独自に選んだロールを付ける</RadioField
+						>
+						<RadioField name="mode" value="invite" bind:group={joinRoleMode}
+							>登録済みの招待リンクと同じロールを付ける</RadioField
+						>
 					</fieldset>
 					{#if joinRoleMode === 'custom'}
 						<fieldset>
 							<legend>付けるロール</legend>
 							{#each data.guildRoles as role (role.id)}
-								<label>
-									<input
-										type="checkbox"
-										name="roleIds"
-										value={role.id}
-										checked={data.joinRole.mode === 'custom' &&
-											data.joinRole.roleIds.includes(role.id)}
-									/>
-									{role.name}
-								</label>
+								<CheckboxField
+									name="roleIds"
+									value={role.id}
+									checked={data.joinRole.mode === 'custom' &&
+										data.joinRole.roleIds.includes(role.id)}>{role.name}</CheckboxField
+								>
 							{:else}
 								<p class="meta">サーバーにロールがありません。</p>
 							{/each}

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import RadioField from '#lib/components/RadioField.svelte';
 	import Button, { Label } from '@smui/button';
 	import type { InviteIssuers, InviteSettings } from '@funmary/core';
 	import { enhance } from '$app/forms';
@@ -84,19 +85,17 @@
 			<fieldset>
 				<legend>モード</legend>
 				{#each ISSUERS as issuer (issuer.value)}
-					<label class="choice">
-						<input
-							type="radio"
-							name="issuers"
-							value={issuer.value}
-							checked={issuers === issuer.value}
-							onchange={() => (edited.issuers = issuer.value)}
-						/>
-						<span>
+					<RadioField
+						name="issuers"
+						value={issuer.value}
+						group={issuers}
+						onchange={() => (edited.issuers = issuer.value)}
+					>
+						<span class="choice-text">
 							<span class="choice-label">{issuer.label}</span>
 							<span class="muted">{issuer.description}</span>
 						</span>
-					</label>
+					</RadioField>
 				{/each}
 			</fieldset>
 			<div class="limit" class:unused={!limitUsed}>
@@ -201,24 +200,14 @@
 		font-size: 0.875rem;
 	}
 
-	.choice {
-		display: flex;
-		align-items: flex-start;
-		gap: 0.5rem;
-		min-height: 44px;
-
-		input {
-			margin-top: 0.25rem;
-		}
-
-		> span {
-			display: flex;
-			flex-direction: column;
-		}
-	}
-
 	.choice-label {
 		font-weight: 700;
+	}
+
+	/* 選び方の名前と説明を、2 段に並べる */
+	.choice-text {
+		display: flex;
+		flex-direction: column;
 	}
 
 	.limit {

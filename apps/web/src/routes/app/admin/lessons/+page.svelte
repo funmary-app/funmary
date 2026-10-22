@@ -1,4 +1,5 @@
 <script lang="ts">
+	import RadioField from '#lib/components/RadioField.svelte';
 	import Button, { Label } from '@smui/button';
 	import { enhance } from '$app/forms';
 	import { resolve } from '$app/paths';
@@ -68,10 +69,7 @@
 		<fieldset>
 			<legend>紐付ける科目</legend>
 			{#each lesson.candidates as candidate (candidate.id)}
-				<label class="choice">
-					<input type="radio" name="subjectId" value={candidate.id} />
-					{candidate.label}
-				</label>
+				<RadioField name="subjectId" value={candidate.id}>{candidate.label}</RadioField>
 			{:else}
 				<p>似た名前の科目はありません。</p>
 			{/each}
@@ -189,7 +187,6 @@
 </div>
 
 <style lang="scss">
-	@use 'forms';
 	@use 'mixins';
 	@use 'surfaces';
 	@use 'text';
@@ -238,8 +235,5 @@
 		border: none;
 		padding: 0;
 		margin: 0.5rem 0;
-	}
-	.choice {
-		@include forms.choice-row(48px);
 	}
 </style>

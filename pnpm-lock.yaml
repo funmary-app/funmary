@@ -349,6 +349,15 @@ importers:
       '@smui/button':
         specifier: ^9.0.6
         version: 9.0.6
+      '@smui/checkbox':
+        specifier: ^9.0.6
+        version: 9.0.6
+      '@smui/form-field':
+        specifier: ^9.0.6
+        version: 9.0.6
+      '@smui/radio':
+        specifier: ^9.0.6
+        version: 9.0.6
       better-sqlite3:
         specifier: 'catalog:'
         version: 13.0.3
@@ -1781,8 +1790,17 @@ packages:
   '@smui/button@9.0.6':
     resolution: {integrity: sha512-5vZY/7Stpfvwh72DQ6sMvlwbOp1D0MemBG5/3prs0STKO94aZ2pX1cfYTMyFP6Ioc2z8ONd/yVlhCpbAjbEw5Q==}
 
+  '@smui/checkbox@9.0.6':
+    resolution: {integrity: sha512-0J2/QTAxVL10FbeRWGjqP/kHO0myU4c3IiRqIwMpSOCAVR5d0G4XvFMj+9rJKtaWxBcFsrX9A0CsIy46JJ72bg==}
+
   '@smui/common@9.0.6':
     resolution: {integrity: sha512-wWQ+4ixA0PjlHGlF9rTD8UKOxbyZlMGz0IKIwDqgo2189v9LOJFIHoqXfZO8b0YXcK0pO82M85xsvcUXkTcv1g==}
+
+  '@smui/form-field@9.0.6':
+    resolution: {integrity: sha512-dfVmdDsPBglrqGC+3qKD2GTh3Ef/JTKDeQZFe12IVk7hV21c2daUSdbugjPYjnPYuUNVksmC7CQ1KFovBCYwhg==}
+
+  '@smui/radio@9.0.6':
+    resolution: {integrity: sha512-nGzprTNtT7Ni79aRvwp5zNEJWOk6DIAP7DjqSK9ZitcTJm9z4acKtR6k5q4vTCrezySUssl5Mh46BFXrLoM0PA==}
 
   '@smui/ripple@9.0.6':
     resolution: {integrity: sha512-ju3IDWJAor0Lp9N1RPnVS5yStBzuPPEvsEZSlHHWpP4oQkP0xa+pByqKeX+7+Kb1YCzTGYuTcIihDvmavuYLCw==}
@@ -5076,9 +5094,26 @@ snapshots:
       '@smui/ripple': 9.0.6
       '@smui/touch-target': 9.0.6
 
+  '@smui/checkbox@9.0.6':
+    dependencies:
+      '@smui/common': 9.0.6
+      '@smui/ripple': 9.0.6
+      '@smui/touch-target': 9.0.6
+
   '@smui/common@9.0.6':
     dependencies:
       safevalues: 1.2.0
+
+  '@smui/form-field@9.0.6':
+    dependencies:
+      '@smui/common': 9.0.6
+      '@smui/ripple': 9.0.6
+
+  '@smui/radio@9.0.6':
+    dependencies:
+      '@smui/common': 9.0.6
+      '@smui/ripple': 9.0.6
+      '@smui/touch-target': 9.0.6
 
   '@smui/ripple@9.0.6':
     dependencies:

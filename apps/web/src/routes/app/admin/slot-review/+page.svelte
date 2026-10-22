@@ -1,4 +1,5 @@
 <script lang="ts">
+	import RadioField from '#lib/components/RadioField.svelte';
 	import Button, { Label } from '@smui/button';
 	import { enhance } from '$app/forms';
 	import { resolve } from '$app/paths';
@@ -50,10 +51,7 @@
 		{#if data.canChangeMode}
 			<form method="POST" action="?/saveMode" use:enhance class="mode-form">
 				{#each data.modes as mode (mode.id)}
-					<label class="radio">
-						<input type="radio" name="mode" value={mode.id} checked={mode.id === data.mode} />
-						{mode.label}
-					</label>
+					<RadioField name="mode" value={mode.id} group={data.mode}>{mode.label}</RadioField>
 				{/each}
 				<Button type="submit" variant="unelevated"><Label>保存する</Label></Button>
 			</form>
@@ -107,7 +105,6 @@
 </div>
 
 <style lang="scss">
-	@use 'forms';
 	@use 'mixins';
 	@use 'surfaces';
 
@@ -120,10 +117,6 @@
 		flex-direction: column;
 		align-items: start;
 		gap: 0.5rem;
-	}
-
-	.radio {
-		@include forms.choice-row;
 	}
 
 	.pending {
