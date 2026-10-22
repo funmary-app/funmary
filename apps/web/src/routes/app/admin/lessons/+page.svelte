@@ -189,16 +189,18 @@
 </div>
 
 <style lang="scss">
+	@use 'forms';
 	@use 'mixins';
+	@use 'surfaces';
+	@use 'text';
+	@use 'touch';
 
 	.lessons {
 		padding: 0;
 		list-style: none;
 	}
 	summary {
-		min-height: 44px;
-		align-content: center;
-		cursor: pointer;
+		@include touch.summary;
 	}
 	.create {
 		display: flex;
@@ -212,10 +214,7 @@
 		}
 	}
 	.lessons > li {
-		margin: 0.75rem 0;
-		padding: 0.75rem 1rem;
-		border: 1px solid var(--fm-divider);
-		border-radius: 0.5rem;
+		@include surfaces.outlined;
 	}
 	h2 {
 		margin: 0;
@@ -228,9 +227,7 @@
 		@include mixins.wrap-row(0.5rem);
 	}
 	.name {
-		margin: 0;
-		font-size: 1.1rem;
-		font-weight: 500;
+		@include text.item-title;
 	}
 	.meta {
 		margin: 0;
@@ -243,9 +240,6 @@
 		margin: 0.5rem 0;
 	}
 	.choice {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		min-height: 48px;
+		@include forms.choice-row(48px);
 	}
 </style>

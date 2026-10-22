@@ -90,6 +90,7 @@
 
 <style lang="scss">
 	@use 'mixins';
+	@use 'surfaces';
 
 	h2 {
 		margin: 2.5rem 0 1rem;
@@ -107,9 +108,7 @@
 		@include mixins.stack(1rem);
 
 		li {
-			padding: 1rem;
-			border: 1px solid var(--fm-divider);
-			border-radius: 0.5rem;
+			@include surfaces.outlined($margin: null, $padding: 1rem);
 		}
 	}
 

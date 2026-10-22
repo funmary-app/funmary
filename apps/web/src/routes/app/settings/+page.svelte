@@ -340,6 +340,8 @@
 </div>
 
 <style lang="scss">
+	@use 'touch';
+
 	section {
 		margin-top: 2rem;
 	}
@@ -350,9 +352,7 @@
 		list-style: none;
 
 		a {
-			display: inline-flex;
-			align-items: center;
-			min-height: 44px;
+			@include touch.target;
 		}
 	}
 

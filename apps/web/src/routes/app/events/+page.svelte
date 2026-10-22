@@ -82,6 +82,9 @@
 
 <style lang="scss">
 	@use 'mixins';
+	@use 'surfaces';
+	@use 'text';
+	@use 'touch';
 
 	.actions {
 		@include mixins.wrap-row(0.5rem);
@@ -97,32 +100,15 @@
 		list-style: none;
 	}
 	.events > li {
-		margin: 0.75rem 0;
-		padding: 0.75rem 1rem;
-		border: 1px solid var(--fm-divider);
-		border-radius: 0.5rem;
+		@include surfaces.outlined;
 	}
 	.title {
-		margin: 0;
-		font-size: 1.1rem;
-		font-weight: 500;
+		@include text.item-title;
 	}
 	.meta {
-		margin: 0;
-		color: var(--fm-text-muted);
-		font-size: 0.875rem;
+		@include text.muted;
 	}
 	.edit {
-		display: inline-flex;
-		align-items: center;
-		min-height: 44px;
-	}
-	.visually-hidden {
-		position: absolute;
-		width: 1px;
-		height: 1px;
-		overflow: hidden;
-		clip-path: inset(50%);
-		white-space: nowrap;
+		@include touch.target;
 	}
 </style>

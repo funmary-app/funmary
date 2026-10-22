@@ -65,6 +65,7 @@
 </div>
 
 <style lang="scss">
+	@use 'forms';
 	@use 'mixins';
 
 	fieldset {
@@ -82,10 +83,7 @@
 	}
 
 	.scope {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		min-height: 2.75rem;
+		@include forms.choice-row;
 	}
 
 	.destination {

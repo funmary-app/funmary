@@ -40,6 +40,8 @@
 {/if}
 
 <style lang="scss">
+	@use 'text';
+
 	.codes {
 		margin: 0;
 		padding: 0;
@@ -59,9 +61,7 @@
 	}
 
 	.detail {
-		margin: 0;
-		color: var(--fm-text-muted);
-		font-size: 0.8125rem;
+		@include text.muted(0.8125rem);
 		font-variant-numeric: tabular-nums;
 		overflow-wrap: anywhere;
 	}

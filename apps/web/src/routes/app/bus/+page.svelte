@@ -297,8 +297,9 @@
 </div>
 
 <style lang="scss">
-	@use 'mixins';
 	@use 'breakpoints';
+	@use 'mixins';
+	@use 'touch';
 
 	.bus-page {
 		min-width: 0;
@@ -418,10 +419,8 @@
 	}
 
 	.locate {
-		display: inline-flex;
-		align-items: center;
+		@include touch.target;
 		gap: 0.375rem;
-		min-height: 44px;
 		padding: 0 0.75rem;
 		border: 1px solid var(--fm-divider);
 		border-radius: 999px;
@@ -538,10 +537,7 @@
 		}
 
 		.section {
-			display: flex;
-			align-items: center;
-			flex-wrap: wrap;
-			gap: 0.375rem;
+			@include mixins.cluster(0.375rem);
 			grid-column: 1 / -1;
 
 			:global(svg) {

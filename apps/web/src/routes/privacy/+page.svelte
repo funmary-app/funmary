@@ -138,6 +138,8 @@
 </div>
 
 <style lang="scss">
+	@use 'touch';
+
 	h2 {
 		margin-top: 2rem;
 	}
@@ -153,9 +155,7 @@
 		list-style: none;
 
 		a {
-			display: inline-flex;
-			align-items: center;
-			min-height: 44px;
+			@include touch.target;
 		}
 	}
 </style>

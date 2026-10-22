@@ -107,7 +107,9 @@
 </div>
 
 <style lang="scss">
+	@use 'forms';
 	@use 'mixins';
+	@use 'surfaces';
 
 	section {
 		margin-top: 2rem;
@@ -121,10 +123,7 @@
 	}
 
 	.radio {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		min-height: 44px;
+		@include forms.choice-row;
 	}
 
 	.pending {
@@ -134,10 +133,7 @@
 	}
 
 	.pending > li {
-		margin: 0.75rem 0;
-		padding: 0.75rem 1rem;
-		border: 1px solid var(--fm-divider);
-		border-radius: 0.5rem;
+		@include surfaces.outlined;
 	}
 
 	.meta {

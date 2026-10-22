@@ -146,6 +146,8 @@
 
 <style lang="scss">
 	@use 'mixins';
+	@use 'surfaces';
+	@use 'text';
 
 	section {
 		margin-top: 2rem;
@@ -158,20 +160,12 @@
 	}
 
 	.status {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 0.25rem 0.5rem;
+		@include mixins.cluster(0.25rem 0.5rem);
 		margin: 0 0 1rem;
 	}
 
 	.entry {
-		display: grid;
-		gap: 1rem;
-		padding: 1rem;
-		border-radius: 0.75rem;
-		background: var(--fm-surface-muted);
-		justify-items: start;
+		@include surfaces.muted-panel;
 
 		p {
 			margin: 0;
@@ -199,11 +193,8 @@
 		list-style: none;
 
 		li {
-			display: flex;
-			flex-wrap: wrap;
-			align-items: center;
+			@include mixins.cluster(0.5rem 1rem);
 			justify-content: space-between;
-			gap: 0.5rem 1rem;
 			padding: 0.75rem 0;
 			border-bottom: 1px dashed var(--fm-divider);
 		}
@@ -218,21 +209,13 @@
 	}
 
 	.head {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 0.25rem 0.5rem;
+		@include mixins.cluster(0.25rem 0.5rem);
 	}
 
 	.tag {
-		display: inline-block;
-		padding: 0 0.5rem;
-		border-radius: 0.375rem;
+		@include text.badge;
 		background: var(--fm-surface-muted);
 		color: var(--fm-text-muted);
-		font-size: 0.8125rem;
-		font-weight: 700;
-		white-space: nowrap;
 	}
 
 	.registered {

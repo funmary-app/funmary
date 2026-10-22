@@ -371,17 +371,17 @@
 </div>
 
 <style lang="scss">
+	@use 'forms';
 	@use 'mixins';
+	@use 'touch';
 
 	details {
 		margin-top: 1rem;
 	}
 
 	summary {
-		min-height: 44px;
-		align-content: center;
+		@include touch.summary;
 		font-size: 0.875rem;
-		cursor: pointer;
 	}
 
 	.preview {
@@ -417,18 +417,12 @@
 	}
 
 	.apply {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 0.75rem 1rem;
+		@include mixins.cluster(0.75rem 1rem);
 		margin-top: 1rem;
 	}
 
 	.confirm {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		min-height: 44px;
+		@include forms.choice-row;
 	}
 
 	.years {
@@ -497,11 +491,8 @@
 		list-style: none;
 
 		li {
-			display: flex;
-			flex-wrap: wrap;
-			align-items: center;
+			@include mixins.cluster;
 			justify-content: space-between;
-			gap: 0.5rem;
 			padding: 0.25rem 0;
 			border-bottom: 1px dashed var(--fm-divider);
 		}

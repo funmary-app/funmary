@@ -64,31 +64,13 @@
 </div>
 
 <style lang="scss">
+	@use 'tables';
+
 	.scroll {
 		overflow-x: auto;
 	}
 
 	table {
-		width: 100%;
-		border-collapse: collapse;
-		font-size: 0.875rem;
-	}
-
-	th,
-	td {
-		padding: 0.5rem;
-		border-bottom: 1px dashed var(--fm-divider);
-		text-align: left;
-		vertical-align: top;
-	}
-
-	thead th {
-		color: var(--fm-text-muted);
-		font-weight: 400;
-		white-space: nowrap;
-	}
-
-	td.numeric {
-		white-space: nowrap;
+		@include tables.data;
 	}
 </style>

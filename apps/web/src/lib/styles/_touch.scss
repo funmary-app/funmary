@@ -1,0 +1,16 @@
+// 指で押す部分の大きさ。押せる範囲は 44px 四方以上にする。
+// コンポーネントの <style lang="scss"> から @use 'touch'; で読む。
+
+/// 文中のリンクやボタンを、文字の大きさのまま、押せる高さにする
+@mixin target($min-height: 44px) {
+	display: inline-flex;
+	align-items: center;
+	min-height: $min-height;
+}
+
+/// 開いたり閉じたりする <details> の見出し。1 行でも押せる高さにし、文字は上下の中央に置く
+@mixin summary {
+	align-content: center;
+	min-height: 44px;
+	cursor: pointer;
+}

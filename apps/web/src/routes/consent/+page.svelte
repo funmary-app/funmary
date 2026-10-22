@@ -62,6 +62,8 @@
 </div>
 
 <style lang="scss">
+	@use 'forms';
+
 	.documents {
 		margin: 1rem 0 1.5rem;
 		padding-left: 1.25rem;
@@ -69,10 +71,7 @@
 	}
 
 	.agree {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		min-height: 2.75rem;
+		@include forms.choice-row;
 	}
 
 	.account {

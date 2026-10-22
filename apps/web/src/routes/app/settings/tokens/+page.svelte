@@ -218,17 +218,17 @@
 </div>
 
 <style lang="scss">
+	@use 'forms';
 	@use 'mixins';
+	@use 'surfaces';
+	@use 'text';
 
 	h2 {
 		margin: 2.5rem 0 1rem;
 	}
 
 	.key-box {
-		margin: 1rem 0;
-		padding: 0.75rem 1rem;
-		border: 1px solid var(--fm-accent, currentcolor);
-		border-radius: 0.25rem;
+		@include surfaces.secret-box;
 	}
 
 	.entry {
@@ -259,16 +259,11 @@
 	}
 
 	.choice {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		min-height: 48px;
+		@include forms.choice-row(48px);
 	}
 
 	.hint {
-		margin: 0;
-		color: var(--fm-text-muted);
-		font-size: 0.8125rem;
+		@include text.muted(0.8125rem);
 	}
 
 	.tokens,
@@ -290,9 +285,7 @@
 	}
 
 	.meta {
-		margin: 0;
-		color: var(--fm-text-muted);
-		font-size: 0.8125rem;
+		@include text.muted(0.8125rem);
 	}
 
 	code {

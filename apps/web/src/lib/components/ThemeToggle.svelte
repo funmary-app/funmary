@@ -48,24 +48,14 @@
 </button>
 
 <style lang="scss">
+	@use 'header-action';
+
 	.toggle {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.375rem;
-		min-width: 48px;
-		min-height: 48px;
-		padding: 0 0.75rem;
 		border: 0;
-		border-radius: 0.5rem;
 		background: none;
-		color: var(--fm-text-muted);
 		font: inherit;
-		font-size: 0.875rem;
 		cursor: pointer;
-	}
-	.toggle:hover {
-		background: var(--fm-surface-muted);
-		color: var(--fm-text);
+		@include header-action.base;
 	}
 	.labels {
 		display: inline-grid;
@@ -78,13 +68,6 @@
 		visibility: hidden;
 	}
 	.compact {
-		justify-content: center;
-		width: 48px;
-		height: 48px;
-		padding: 0;
-	}
-	.toggle :global(.icon) {
-		width: 1.5rem;
-		height: 1.5rem;
+		@include header-action.compact;
 	}
 </style>

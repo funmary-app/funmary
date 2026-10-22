@@ -88,15 +88,15 @@
 </div>
 
 <style lang="scss">
+	@use 'touch';
+
 	.links {
 		margin: 1rem 0 0;
 		padding: 0;
 		list-style: none;
 
 		a {
-			display: inline-flex;
-			align-items: center;
-			min-height: 44px;
+			@include touch.target;
 		}
 	}
 </style>

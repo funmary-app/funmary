@@ -193,10 +193,7 @@
 	}
 
 	.qr {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 1rem;
+		@include mixins.cluster(1rem);
 
 		svg {
 			width: 10rem;

@@ -25,39 +25,22 @@
 </a>
 
 <style lang="scss">
+	@use 'header-action';
+
 	.bell {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.375rem;
-		min-width: 48px;
-		min-height: 48px;
-		padding: 0 0.75rem;
-		border-radius: 0.5rem;
-		color: var(--fm-text-muted);
-		font-size: 0.875rem;
 		text-decoration: none;
-	}
-	.bell:hover {
-		background: var(--fm-surface-muted);
-		color: var(--fm-text);
+		@include header-action.base;
 	}
 	/* バッジがアイコンの右にはみ出すので、文字との間を広く取る */
 	.bell:not(.compact) {
 		gap: 1rem;
 	}
 	.compact {
-		justify-content: center;
-		width: 48px;
-		height: 48px;
-		padding: 0;
+		@include header-action.compact;
 	}
 	.icon-wrap {
 		position: relative;
 		display: inline-flex;
-	}
-	.bell :global(.icon) {
-		width: 1.5rem;
-		height: 1.5rem;
 	}
 	/* 未読があっても、押せる範囲と位置は変えない (アイコンの上に重ねる) */
 	.badge {

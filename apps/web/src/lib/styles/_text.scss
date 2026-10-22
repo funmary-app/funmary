@@ -1,0 +1,25 @@
+// 文字の見せ方。コンポーネントの <style lang="scss"> から @use 'text'; で読む。
+
+/// 補足の小さな文字 (取得の時刻、注意書きなど)。段落の余白は付けない
+@mixin muted($font-size: 0.875rem) {
+	margin: 0;
+	color: var(--fm-text-muted);
+	font-size: $font-size;
+}
+
+/// 一覧の 1 件の名前 (予定や授業の名前)。見出しほど目立たせず、本文より少し大きくする
+@mixin item-title {
+	margin: 0;
+	font-size: 1.1rem;
+	font-weight: 500;
+}
+
+/// 状態を表す小さな札 (成功、失敗、使用済みなど)。色は使う側で決める
+@mixin badge {
+	display: inline-block;
+	padding: 0 0.5rem;
+	border-radius: 0.375rem;
+	font-size: 0.8125rem;
+	font-weight: 700;
+	white-space: nowrap;
+}
