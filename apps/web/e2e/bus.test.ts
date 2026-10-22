@@ -210,6 +210,16 @@ test.describe('バス', () => {
 		}
 	});
 
+	test('PC のバスの画面でも、公式のアプリではないことの断りが見える', async ({ page }) => {
+		await page.setViewportSize({ width: 1440, height: 900 });
+		await signInAs(page, email);
+		await page.goto('/app/bus');
+
+		await expect(
+			page.getByText('Funmary は公立はこだて未来大学の公式のアプリではありません。'),
+		).toBeInViewport();
+	});
+
 	test('スマホでは、次のバスの欄を出さない', async ({ page }) => {
 		await page.setViewportSize({ width: 390, height: 844 });
 		await signInAs(page, email);
