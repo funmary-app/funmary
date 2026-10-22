@@ -21,8 +21,8 @@ const ADAPTER_VARIABLES = [
 	'HEADERS_TIMEOUT',
 ] as const;
 
-export const DEFAULT_HOST = '127.0.0.1';
-export const DEFAULT_PORT = '28461';
+const DEFAULT_HOST = '127.0.0.1';
+const DEFAULT_PORT = '28461';
 
 /** env を書き換える (実際には process.env を渡す) */
 export function prepareAdapterEnv(env: NodeJS.ProcessEnv): void {

@@ -1,6 +1,6 @@
 // 管理画面で上げた PDF を受け取る。ブラウザから来るものは信用せず、大きさと先頭の印を確かめる。
 // 上限は adapter-node の既定の BODY_SIZE_LIMIT (512 KB) に合わせる。これを超える PDF は、管理用コマンドで取り込む
-export const MAX_PDF_BYTES = 512 * 1024;
+const MAX_PDF_BYTES = 512 * 1024;
 const PDF_MAGIC = '%PDF-';
 
 type UploadResult =

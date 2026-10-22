@@ -17,9 +17,9 @@ export type AdminChannel = (typeof ADMIN_CHANNELS)[number];
 export const ADMIN_ROLES = ['deploy', 'errors', 'subjects'] as const;
 export type AdminRole = (typeof ADMIN_ROLES)[number];
 
-export const CATEGORY_NAME = 'Funmary';
-export const roleName = (role: AdminRole) => `funmary-${role}`;
-export const channelName = (channel: AdminChannel) => channel;
+const CATEGORY_NAME = 'Funmary';
+const roleName = (role: AdminRole) => `funmary-${role}`;
+const channelName = (channel: AdminChannel) => channel;
 
 /** managed は Bot が作ったか、同じ名前で見つけたもの。false は、管理者が置き換えたもの */
 export interface LayoutEntry {

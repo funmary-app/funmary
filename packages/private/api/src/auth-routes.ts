@@ -39,7 +39,7 @@ export function returnCookieName(origin: string): string {
 export const RETURN_COOKIE_MAX_AGE_S = 10 * 60;
 
 /** 戻り先に使ってよいパスか。外のサイトへ飛ばされないよう、同意の画面だけに限る */
-export const isReturnPath = (value: string | undefined): value is string =>
+const isReturnPath = (value: string | undefined): value is string =>
 	value !== undefined && /^\/oauth\/authorize\?[!-~]*$/.test(value);
 
 export function sessionCookieOptions(origin: string): CookieOptions {
