@@ -13,16 +13,7 @@ export default defineConfig({
 					environment: 'node',
 				},
 			},
-			{
-				// SvelteKit の Vite プラグインは作業ディレクトリを基準にするので、ここでは読み込まない。
-				// .svelte のコンポーネントを試すときは @sveltejs/vite-plugin-svelte を足す
-				test: {
-					name: 'web',
-					root: 'apps/web',
-					include: ['src/**/*.test.ts', 'scripts/**/*.test.js'],
-					environment: 'node',
-				},
-			},
+			'apps/web/vitest.config.js',
 		],
 	},
 });
