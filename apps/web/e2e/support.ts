@@ -110,7 +110,7 @@ export async function signInAs(page: Page, email: string) {
 }
 
 /**
- * バスの時刻表の写しを DB に入れる。毎日 5 時から 24 時まで 30 分おきに、2 つの停留所の発車を入れる (いつ動かしても次のバスがある)。
+ * バスの時刻表の写しを DB に入れる。毎日 5 時から 24 時まで 30 分おきに、各停留所の発車を入れる (いつ動かしても次のバスがある)。
  * 函館駅前 (A) は、偶数の発車が未来大 (経由に未来大) を通る赤川行、奇数の発車が反対向きの千代台行。
  * 未来大は、偶数の発車が千代台行 (A を通る)、奇数の発車が赤川行
  */
@@ -125,6 +125,7 @@ export function seedBus() {
 		const stops = [
 			{ id: '14023', name: 'はこだて未来大学' },
 			{ id: '11003', name: '函館駅前' },
+			{ id: '11099', name: '赤川１丁目ライフプレステージ白ゆり美原前' },
 		];
 		bus.saveCatalog(
 			{ generatedAt: now.toISOString(), generations: [generation], stops },
@@ -140,6 +141,7 @@ export function seedBus() {
 		const away = { destination: '千代台', via: '亀田支所前' };
 		const patterns = new Map([
 			['11003', (index: number) => (index % 2 === 0 ? toward : away)],
+			['11099', (index: number) => (index % 2 === 0 ? toward : away)],
 			['14023', (index: number) => (index % 2 === 0 ? away : { destination: '赤川' })],
 		]);
 		for (const stop of stops) {
@@ -154,12 +156,15 @@ export function seedBus() {
 						platformName: '1 番のりば',
 						day,
 						notes: ['△＝架空の注意書き'],
-						departures: times.map((time, index) => ({
-							time,
-							routes: ['55A'],
-							...pattern(index),
-							marks: [],
-						})),
+						departures: times
+							.map((time, index) => ({
+								time,
+								routes: ['55A'],
+								...pattern(index),
+								marks: [],
+							}))
+							// 到着時刻を照合できない便も含める
+							.filter((departure) => stop.id !== '14023' || departure.time !== '06:30'),
 					})),
 				},
 				null,

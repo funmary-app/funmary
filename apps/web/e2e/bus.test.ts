@@ -64,6 +64,145 @@ test.describe('バス', () => {
 		await expect(page.getByRole('link', { name: /出発.*函館駅前/ })).toBeVisible();
 	});
 
+	test('長いバス停名を選んでも、画面の横幅を超えない', async ({ page }) => {
+		await page.setViewportSize({ width: 840, height: 900 });
+		await signInAs(page, email);
+		await page.goto('/app/bus');
+		await page.getByRole('link', { name: /出発.*函館駅前/ }).click();
+		await page.getByRole('button', { name: '赤川１丁目ライフプレステージ白ゆり美原前' }).click();
+
+		await expect(
+			page.getByRole('link', { name: /出発.*赤川１丁目ライフプレステージ白ゆり美原前/ }),
+		).toBeVisible();
+		const main = page.getByRole('main');
+		await expect(main).toHaveJSProperty(
+			'scrollWidth',
+			await main.evaluate((element) => element.clientWidth),
+		);
+	});
+
+	test('デスクトップでは、次のバスと経路を横に並べ、その下に時刻表を出す', async ({ page }) => {
+		await page.setViewportSize({ width: 1440, height: 900 });
+		await signInAs(page, email);
+		await page.goto('/app/bus');
+
+		const nextBus = await page.getByRole('region', { name: '次のバス' }).boundingBox();
+		const route = await page.getByRole('region', { name: '経路' }).boundingBox();
+		const timetable = await page.getByRole('region', { name: '時刻表' }).boundingBox();
+		expect(nextBus).not.toBeNull();
+		expect(route).not.toBeNull();
+		expect(timetable).not.toBeNull();
+		expect(nextBus!.x + nextBus!.width).toBeLessThanOrEqual(route!.x);
+		expect(timetable!.y).toBeGreaterThanOrEqual(
+			Math.max(nextBus!.y + nextBus!.height, route!.y + route!.height),
+		);
+	});
+
+	test('デスクトップでは、画面全体ではなく便の一覧の中だけがスクロールする', async ({ page }) => {
+		await page.setViewportSize({ width: 1440, height: 900 });
+		await signInAs(page, email);
+		await page.goto('/app/bus');
+
+		const departures = page.getByRole('list', { name: '函館駅前からはこだて未来大学への発車' });
+		await expect(departures).toBeVisible();
+		const list = await departures.evaluate((element) => ({
+			scrollHeight: element.scrollHeight,
+			clientHeight: element.clientHeight,
+		}));
+		expect(list.scrollHeight).toBeGreaterThan(list.clientHeight);
+		const main = page.getByRole('main');
+		await expect(main).toHaveJSProperty(
+			'scrollHeight',
+			await main.evaluate((element) => element.clientHeight),
+		);
+	});
+
+	test('一覧が広いときは各便を 1 行に並べ、到着時刻の有無にかかわらず列を揃える', async ({
+		page,
+	}) => {
+		await page.setViewportSize({ width: 1440, height: 900 });
+		await signInAs(page, email);
+		await page.goto('/app/bus');
+
+		const rows = page
+			.getByRole('list', { name: '函館駅前からはこだて未来大学への発車' })
+			.getByRole('listitem');
+		await expect(rows.filter({ hasText: '→' })).not.toHaveCount(0);
+		await expect(rows.filter({ hasNotText: '→' })).not.toHaveCount(0);
+		const routes = rows.getByText('55A', { exact: true });
+		const sections = rows.getByText('函館駅前 - はこだて未来大学', { exact: true });
+		const firstRoute = await routes.first().boundingBox();
+		const firstSection = await sections.first().boundingBox();
+		expect(firstRoute).not.toBeNull();
+		expect(firstSection).not.toBeNull();
+		// 文字の大きさが違うので、上端ではなく、縦の範囲が重なる (同じ行にある) ことを確かめる
+		expect(firstSection!.y).toBeLessThan(firstRoute!.y + firstRoute!.height);
+		expect(firstRoute!.y).toBeLessThan(firstSection!.y + firstSection!.height);
+		for (const column of [routes, sections]) {
+			const positions = await column.evaluateAll((elements) =>
+				elements.map((element) => element.getBoundingClientRect().x),
+			);
+			expect(Math.max(...positions) - Math.min(...positions)).toBeLessThanOrEqual(1);
+		}
+	});
+
+	test('一覧が狭いときは、スマホと同じく各便を縦に並べ、横にはみ出さない', async ({ page }) => {
+		await signInAs(page, email);
+		for (const width of [390, 880]) {
+			await page.setViewportSize({ width, height: 900 });
+			await page.goto('/app/bus');
+			const row = page
+				.getByRole('list', { name: '函館駅前からはこだて未来大学への発車' })
+				.getByRole('listitem')
+				.first();
+			const route = await row.getByText('55A', { exact: true }).boundingBox();
+			const section = await row
+				.getByText('函館駅前 - はこだて未来大学', { exact: true })
+				.boundingBox();
+			expect(route).not.toBeNull();
+			expect(section).not.toBeNull();
+			expect(section!.y).toBeGreaterThanOrEqual(route!.y + route!.height - 1);
+			const main = page.getByRole('main');
+			await expect(main).toHaveJSProperty(
+				'scrollWidth',
+				await main.evaluate((element) => element.clientWidth),
+			);
+		}
+	});
+
+	test('次のバスは向きと選択中のダイヤ区分に合わせて案内を変える', async ({ page }) => {
+		await page.setViewportSize({ width: 1440, height: 900 });
+		await signInAs(page, email);
+		await page.goto('/app/bus');
+
+		const nextBus = page.getByRole('region', { name: '次のバス' });
+		await expect(nextBus).toContainText('函館駅前 → はこだて未来大学');
+		await page.getByRole('button', { name: /向きを入れ替える/ }).click();
+		await expect(nextBus).toContainText('はこだて未来大学 → 函館駅前');
+
+		const today = page.getByRole('button', { name: /\(今日\)/ });
+		const otherDayLabel = (
+			await page.getByRole('button', { name: /^(平日|休日)/ }).allTextContents()
+		).find((label) => !label.includes('(今日)'));
+		if (!otherDayLabel) throw new Error('今日以外のダイヤ区分がありません');
+		await page.getByRole('button', { name: otherDayLabel.trim(), exact: true }).click();
+		await expect(today).toBeVisible();
+		await expect(nextBus).toContainText(
+			`${otherDayLabel.includes('平日') ? '平日' : '休日'}ダイヤ`,
+		);
+	});
+
+	test('スマホでは、次のバスの欄を出さない', async ({ page }) => {
+		await page.setViewportSize({ width: 390, height: 844 });
+		await signInAs(page, email);
+		await page.goto('/app/bus');
+
+		await expect(
+			page.getByRole('list', { name: '函館駅前からはこだて未来大学への発車' }),
+		).toBeVisible();
+		await expect(page.getByRole('region', { name: '次のバス' })).toBeHidden();
+	});
+
 	test('平日と休日を、URL は変えずに切り替えられ、その日のうちは覚える。今日の区分には (今日) が付く', async ({
 		page,
 	}) => {

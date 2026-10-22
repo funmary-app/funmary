@@ -129,7 +129,7 @@
 		</div>
 	</nav>
 
-	<main>
+	<main class:bus-page={page.url.pathname === '/app/bus'}>
 		{@render children()}
 		<footer>
 			{@render unofficial()}
@@ -155,6 +155,10 @@
 		box-sizing: border-box;
 		max-width: 72rem;
 		padding: 1rem 1rem 6rem;
+	}
+
+	main.bus-page {
+		max-width: none;
 	}
 
 	footer {
@@ -297,6 +301,17 @@
 
 		main {
 			padding: 2rem 2.5rem 3rem;
+		}
+
+		main.bus-page {
+			display: flex;
+			height: 100dvh;
+			min-height: 0;
+			overflow: hidden;
+		}
+
+		main.bus-page > footer {
+			display: none;
 		}
 	}
 

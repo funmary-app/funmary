@@ -58,6 +58,9 @@
 
 	const leg = $derived(data.legs[direction][day]);
 	const isToday = $derived(day === data.todayDay);
+	const nextDeparture = $derived(
+		isToday ? (leg?.upcoming[0] ?? null) : (leg?.departures[0] ?? null),
+	);
 
 	/** 今日の区分のとき、まだ発車していない最初の便 (これに目印を付けて、一覧をその位置に合わせる) */
 	const nextIndex = $derived(
@@ -132,7 +135,6 @@
 		<span class="section">
 			<IconBus aria-hidden="true" />
 			<span>{departure.from.name} - {departure.to.name}</span>
-			{#if departure.platformName}<span class="platform">{departure.platformName}</span>{/if}
 		</span>
 		{#if index === nextIndex && untilNext !== null}
 			<span class="until">{formatMinutesUntil(untilNext)}</span>
@@ -157,7 +159,7 @@
 	</a>
 {/snippet}
 
-<div class="page page-w-48">
+<div class="bus-page">
 	<h1>バス</h1>
 
 	{#if data.stale}
@@ -170,83 +172,122 @@
 	{#if !data.hasStops || data.stopId === null}
 		<p>時刻表は、まだ取り込めていません。しばらくしてからもう一度開いてください。</p>
 	{:else}
-		<div class="trip">
-			<button
-				type="button"
-				class="swap"
-				onclick={() => (swapped = toUniversity ? 'fromUniversity' : 'toUniversity')}
-				aria-label={toUniversity
-					? '向きを入れ替える (未来大から出発)'
-					: '向きを入れ替える (未来大へ向かう)'}
-			>
-				<IconSwap aria-hidden="true" />
-			</button>
-			<div class="cards">
-				{#if toUniversity}
-					{@render stopCard('出発')}
-					{@render universityCard('到着')}
-				{:else}
-					{@render universityCard('出発')}
-					{@render stopCard('到着')}
-				{/if}
-			</div>
-		</div>
-
-		{#if locatable}
-			<p class="hint">
-				<button type="button" class="locate" onclick={decideByLocation} disabled={locating}>
-					<IconLocation aria-hidden="true" />現在地から向きを決める
-				</button>
-			</p>
-			{#if locationProblem === 'denied'}
-				<p class="muted hint" role="status">
-					位置情報が許可されていません。端末の設定で、このアプリ (またはブラウザ)
-					の位置情報を許可してください。
-				</p>
-			{:else if locationProblem === 'unavailable'}
-				<p class="muted hint" role="status">
-					現在地を取れませんでした。少し待って、もう一度試してください。
-				</p>
-			{/if}
-		{/if}
-
-		{#if leg}
-			<nav aria-label="日の種類">
-				<ul class="days">
-					{#each ['weekday', 'holiday'] as const as option (option)}
-						<li>
-							<button type="button" onclick={() => selectDay(option)} aria-pressed={day === option}>
-								{DAY_LABELS[option]}{option === data.todayDay ? ' (今日)' : ''}
-							</button>
-						</li>
-					{/each}
-				</ul>
-			</nav>
-
-			<h2 class="visually-hidden">
-				{leg.from.name}から{leg.to.name}への発車
-			</h2>
-			{#if leg.departures.length === 0}
-				<p class="empty">
-					{#if leg.checkedAt === null}
-						この停留所の時刻表は、まだ取り込めていません。
+		<div class="bus-workspace">
+			<div class="overview">
+				<section class="next-bus" aria-labelledby="next-bus-heading">
+					<h2 id="next-bus-heading">次のバス</h2>
+					{#if leg && nextDeparture}
+						<div class="next-content">
+							<time class="next-time">{nextDeparture.time}</time>
+							{#if isToday && untilNext !== null}
+								<span class="next-until">{formatMinutesUntil(untilNext)}</span>
+							{:else if !isToday}
+								<span class="muted">{DAY_LABELS[day]}ダイヤの最初の便</span>
+							{/if}
+							<p class="next-route">
+								<strong>{nextDeparture.routes.join(' ')}</strong>
+								{#if nextDeparture.destination}{nextDeparture.destination}行き{/if}
+							</p>
+							<p class="muted next-stops">{nextDeparture.from.name} → {nextDeparture.to.name}</p>
+						</div>
+					{:else if leg && !isToday}
+						<p class="muted">{DAY_LABELS[day]}ダイヤの発車はありません。</p>
+					{:else if leg}
+						<p class="muted">今日の発車は、もうありません。</p>
+						<p class="muted next-stops">{leg.from.name} → {leg.to.name}</p>
 					{:else}
-						この日の、{leg.from.name}から{leg.to.name}へ向かう便は、取り込んだ時刻表にありません。
+						<p class="muted">この向きの時刻表はありません。</p>
 					{/if}
-				</p>
-			{:else}
-				<ul class="departures" bind:this={list}>
-					{#each leg.departures as departure, index (`${departure.time}-${departure.platformNo}-${departure.routes.join()}-${index}`)}
-						{@render row(departure, index)}
-					{/each}
-				</ul>
-				{#if isToday && nextIndex === -1}
-					<p class="muted">今日の発車は、もうありません。</p>
+				</section>
+
+				<section class="route-panel" aria-label="経路">
+					<div class="trip">
+						<button
+							type="button"
+							class="swap"
+							onclick={() => (swapped = toUniversity ? 'fromUniversity' : 'toUniversity')}
+							aria-label={toUniversity
+								? '向きを入れ替える (未来大から出発)'
+								: '向きを入れ替える (未来大へ向かう)'}
+						>
+							<IconSwap aria-hidden="true" />
+						</button>
+						<div class="cards">
+							{#if toUniversity}
+								{@render stopCard('出発')}
+								{@render universityCard('到着')}
+							{:else}
+								{@render universityCard('出発')}
+								{@render stopCard('到着')}
+							{/if}
+						</div>
+					</div>
+
+					{#if locatable}
+						<p class="hint">
+							<button type="button" class="locate" onclick={decideByLocation} disabled={locating}>
+								<IconLocation aria-hidden="true" />現在地から向きを決める
+							</button>
+						</p>
+						{#if locationProblem === 'denied'}
+							<p class="muted hint" role="status">
+								位置情報が許可されていません。端末の設定で、このアプリ (またはブラウザ)
+								の位置情報を許可してください。
+							</p>
+						{:else if locationProblem === 'unavailable'}
+							<p class="muted hint" role="status">
+								現在地を取れませんでした。少し待って、もう一度試してください。
+							</p>
+						{/if}
+					{/if}
+				</section>
+			</div>
+
+			<section class="timetable-panel" aria-label="時刻表">
+				{#if leg}
+					<nav aria-label="日の種類">
+						<ul class="days">
+							{#each ['weekday', 'holiday'] as const as option (option)}
+								<li>
+									<button
+										type="button"
+										onclick={() => selectDay(option)}
+										aria-pressed={day === option}
+									>
+										{DAY_LABELS[option]}{option === data.todayDay ? ' (今日)' : ''}
+									</button>
+								</li>
+							{/each}
+						</ul>
+					</nav>
+
+					<h2 id="departures-heading" class="visually-hidden">
+						{leg.from.name}から{leg.to.name}への発車
+					</h2>
+					{#if leg.departures.length === 0}
+						<p class="empty">
+							{#if leg.checkedAt === null}
+								この停留所の時刻表は、まだ取り込めていません。
+							{:else}
+								この日の、{leg.from.name}から{leg.to
+									.name}へ向かう便は、取り込んだ時刻表にありません。
+							{/if}
+						</p>
+					{:else}
+						<ul class="departures" aria-labelledby="departures-heading" bind:this={list}>
+							{#each leg.departures as departure, index (`${departure.time}-${departure.platformNo}-${departure.routes.join()}-${index}`)}
+								{@render row(departure, index)}
+							{/each}
+						</ul>
+						{#if isToday && nextIndex === -1}
+							<p class="muted">今日の発車は、もうありません。</p>
+						{/if}
+					{/if}
+				{:else}
+					<p>この停留所の時刻表は、取り込んだ時刻表にありません。</p>
 				{/if}
-			{/if}
-		{:else}
-			<p>この停留所の時刻表は、取り込んだ時刻表にありません。</p>
-		{/if}
+			</section>
+		</div>
 
 		<p class="muted meta">
 			函館バスの公式のサービスではありません。ダイヤは、函館バスのサイトで確かめてください。
@@ -256,6 +297,27 @@
 
 <style lang="scss">
 	@use 'mixins';
+	@use 'breakpoints';
+
+	.bus-page {
+		min-width: 0;
+		max-width: 48rem;
+	}
+
+	.bus-workspace {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		min-height: 0;
+	}
+
+	.overview {
+		flex: none;
+	}
+
+	.next-bus {
+		display: none;
+	}
 
 	.trip {
 		display: flex;
@@ -318,6 +380,13 @@
 			color: var(--fm-text-muted);
 			font-size: 0.75rem;
 		}
+	}
+
+	.timetable-panel {
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+		min-height: 0;
 	}
 
 	/* 選べる停留所は、浮かせて見せる。未来大は、固定なので平らにする */
@@ -423,6 +492,14 @@
 			border-bottom: 1px solid var(--fm-divider);
 		}
 
+		li:hover {
+			background: var(--fm-surface-muted);
+		}
+
+		li.next:hover {
+			background: var(--fm-primary-soft);
+		}
+
 		li.past {
 			opacity: 0.5;
 		}
@@ -474,11 +551,6 @@
 			}
 		}
 
-		.platform {
-			color: var(--fm-text-muted);
-			font-size: 0.75rem;
-		}
-
 		.until {
 			grid-column: 2;
 			grid-row: 1;
@@ -496,5 +568,160 @@
 	.meta {
 		margin-top: 1.5rem;
 		font-size: 0.8125rem;
+	}
+
+	@include breakpoints.wide {
+		.bus-page {
+			display: flex;
+			flex-direction: column;
+			width: 100%;
+			height: 100%;
+			max-width: none;
+			min-height: 0;
+		}
+
+		h1 {
+			flex: none;
+			margin-bottom: 1rem;
+		}
+
+		.stale {
+			flex: none;
+			margin-bottom: 0.5rem;
+		}
+
+		.overview {
+			display: grid;
+			grid-template-columns: minmax(12rem, 3fr) minmax(18rem, 7fr);
+			align-items: stretch;
+			gap: 1rem;
+			margin-bottom: 0.5rem;
+		}
+
+		.next-bus {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			min-width: 0;
+			min-height: 7rem;
+			padding: 0.75rem 1rem;
+			border-radius: 0.75rem;
+			background: var(--fm-primary-soft);
+
+			h2 {
+				margin: 0 0 0.25rem;
+				color: var(--fm-primary);
+				font-size: 1rem;
+			}
+		}
+
+		.next-content {
+			display: grid;
+			grid-template-columns: auto 1fr;
+			align-items: baseline;
+			gap: 0 0.5rem;
+		}
+
+		.next-time {
+			font-size: 2rem;
+			font-weight: 700;
+			line-height: 1.3;
+			font-variant-numeric: tabular-nums;
+		}
+
+		.next-until {
+			color: var(--fm-primary);
+			font-size: 1rem;
+		}
+
+		.next-route,
+		.next-stops {
+			grid-column: 1 / -1;
+			margin: 0;
+			font-size: 1rem;
+		}
+
+		.route-panel {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			min-width: 0;
+			width: 100%;
+		}
+
+		.trip {
+			margin: 0 0 0.5rem;
+		}
+
+		.hint {
+			margin: 0.25rem 0 0;
+		}
+
+		/* 便の一覧を横並びにするかは、画面ではなく一覧の幅で決める (列が収まらない幅で、残り時間が切れないように) */
+		.timetable-panel {
+			container: timetable / inline-size;
+		}
+
+		.departures {
+			flex: 1;
+			min-height: 0;
+			max-height: none;
+
+			@container timetable (min-width: 36rem) {
+				display: grid;
+				grid-template-columns:
+					max-content minmax(8rem, 1.4fr) minmax(10rem, 1.7fr)
+					minmax(5rem, 0.8fr);
+				align-content: start;
+				column-gap: 0.75rem;
+
+				li {
+					grid-column: 1 / -1;
+					grid-template-columns: subgrid;
+					align-items: center;
+					gap: 0.75rem;
+					min-height: 2.75rem;
+					padding: 0.25rem 0.5rem;
+				}
+
+				.times,
+				.detail,
+				.section,
+				.until {
+					grid-column: auto;
+					grid-row: auto;
+				}
+
+				.times {
+					font-size: 1rem;
+				}
+
+				.section {
+					flex-wrap: nowrap;
+					min-width: 0;
+					font-size: 0.875rem;
+				}
+
+				.section > span:first-of-type {
+					overflow: hidden;
+					text-overflow: ellipsis;
+					white-space: nowrap;
+				}
+
+				.until {
+					justify-self: end;
+					white-space: nowrap;
+				}
+			}
+		}
+
+		.empty {
+			flex: 1;
+		}
+
+		.meta {
+			flex: none;
+			margin-top: 0.5rem;
+		}
 	}
 </style>
