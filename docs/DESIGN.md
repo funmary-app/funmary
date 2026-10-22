@@ -38,7 +38,8 @@
 - SMUI にある部品は SMUI を使う。`@smui/<部品>` を import すれば、その部品の CSS は自動で読まれる。SMUI の見た目を変えるときは `smui-overrides.scss` に書く (CSS のレイヤーで、部品より強くなる)
 - チェックボックスとラジオボタンは `CheckboxField` と `RadioField` (SMUI の部品とラベルを包んだもの)。フォームはブラウザの標準のまま送る。ラジオの組は、同じ変数を `bind:group` (変えないなら `group`) に渡す
 - 補助の文字は `.muted`、画面の外に隠す文字は `.visually-hidden`
-- 確認のポップアップを出す操作は `confirmSubmit` のアクション (フォームの `use:enhance` より先に書く)
+- 破壊的な操作の前の確認は、フォームに `use:confirmSubmit={'…よろしいですか?'}` を付ける。最上位のレイアウトの SMUI のダイアログ (`ConfirmDialog`) が出て、「続ける」で送る
+- フォームの結果は `FormNotice` に渡す。失敗の理由は画面の中に残し、うまくいった知らせは画面の下に短く出す (SMUI の snackbar、`NotifySnackbar`)。スマホでは下のタブの上に出す
 
 ## 操作
 
