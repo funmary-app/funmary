@@ -310,8 +310,15 @@
 			overflow: hidden;
 		}
 
+		/* 便の一覧の中だけをスクロールするので、断り書きは画面の下に詰めて、いつも見えるようにする */
+		main.bus-page {
+			flex-direction: column;
+		}
+
 		main.bus-page > footer {
-			display: none;
+			flex: none;
+			margin-top: 1rem;
+			padding-top: 0.75rem;
 		}
 	}
 

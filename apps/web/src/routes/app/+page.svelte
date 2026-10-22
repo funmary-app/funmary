@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { invalidateAll } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import InstallGuide from '#lib/components/InstallGuide.svelte';
 	import LessonRoom from '#lib/components/LessonRoom.svelte';
@@ -79,9 +80,13 @@
 		});
 	});
 
+	// 開いたままでも、発車したバスの次の便と「あと N 分」が進むよう、バスの画面と同じく 1 分ごとに読み直す
 	let nowMs = $state(Date.now());
 	$effect(() => {
-		const timer = setInterval(() => (nowMs = Date.now()), 30_000);
+		const timer = setInterval(() => {
+			nowMs = Date.now();
+			void invalidateAll();
+		}, 60 * 1000);
 		return () => clearInterval(timer);
 	});
 	const minutesUntilBus = $derived(

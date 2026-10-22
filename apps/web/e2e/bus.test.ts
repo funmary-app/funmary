@@ -24,6 +24,8 @@ test.describe('バス', () => {
 		const rows = page.getByRole('listitem').filter({ hasText: '55A' });
 		await expect(rows.first()).toContainText('赤川行き');
 		await expect(rows.first()).toContainText('函館駅前 - はこだて未来大学');
+		// のりばがいくつもある停留所で、待つ場所が分かるように
+		await expect(rows.first()).toContainText('1 番のりば');
 		// 到着の時刻 (出発の 15 分後。未来大の発車表の同じ行き先の便) が付く
 		await expect(rows.first()).toContainText('→');
 		// 反対向き (千代台行き) は出ない
@@ -192,6 +194,32 @@ test.describe('バス', () => {
 		);
 	});
 
+	test('今日の最終便のあとは、次のバスの欄に翌日の便を出さない', async ({ page }) => {
+		// 0 時の 1 便だけにすると、今日の便は発車し終わり、これからの便は翌日の 0 時だけになる
+		seedBus({ times: ['00:00'] });
+		try {
+			await page.setViewportSize({ width: 1440, height: 900 });
+			await signInAs(page, email);
+			await page.goto('/app/bus');
+
+			const nextBus = page.getByRole('region', { name: '次のバス' });
+			await expect(nextBus).toContainText('今日の発車は、もうありません');
+			await expect(nextBus).not.toContainText('55A');
+		} finally {
+			seedBus();
+		}
+	});
+
+	test('PC のバスの画面でも、公式のアプリではないことの断りが見える', async ({ page }) => {
+		await page.setViewportSize({ width: 1440, height: 900 });
+		await signInAs(page, email);
+		await page.goto('/app/bus');
+
+		await expect(
+			page.getByText('Funmary は公立はこだて未来大学の公式のアプリではありません。'),
+		).toBeInViewport();
+	});
+
 	test('スマホでは、次のバスの欄を出さない', async ({ page }) => {
 		await page.setViewportSize({ width: 390, height: 844 });
 		await signInAs(page, email);
@@ -231,6 +259,23 @@ test.describe('バス', () => {
 		await expect(section).toContainText('函館駅前 → はこだて未来大学');
 		await section.getByRole('link').click();
 		await expect(page.getByRole('heading', { level: 1, name: 'バス' })).toBeVisible();
+	});
+
+	test('ホームを開いたままでも、1 分ごとに次のバスを読み直す', async ({ page }) => {
+		await page.clock.install();
+		await signInAs(page, email);
+		await page.goto('/app');
+		const section = page.getByRole('region', { name: '次のバス' });
+		await expect(section).toContainText('55A');
+
+		// 開いている間に時刻表が変わったことにして、読み直したら新しい系統が出ることで確かめる
+		seedBus({ route: '99Z' });
+		try {
+			await page.clock.runFor('01:00');
+			await expect(section).toContainText('99Z');
+		} finally {
+			seedBus();
+		}
 	});
 
 	test.describe('現在地が許可されているとき', () => {

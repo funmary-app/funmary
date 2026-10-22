@@ -58,13 +58,13 @@
 
 	const leg = $derived(data.legs[direction][day]);
 	const isToday = $derived(day === data.todayDay);
-	const nextDeparture = $derived(
-		isToday ? (leg?.upcoming[0] ?? null) : (leg?.departures[0] ?? null),
-	);
-
 	/** 今日の区分のとき、まだ発車していない最初の便 (これに目印を付けて、一覧をその位置に合わせる) */
 	const nextIndex = $derived(
 		isToday && leg ? leg.departures.findIndex((departure) => departure.time >= data.nowTime) : -1,
+	);
+	// 今日の区分では、一覧の目印と同じ便を出す (これからの発車には翌日の便も入るので、最終便のあとに出さないよう使わない)
+	const nextDeparture = $derived(
+		isToday ? (leg?.departures[nextIndex] ?? null) : (leg?.departures[0] ?? null),
 	);
 	const untilNext = $derived(leg?.upcoming[0]?.minutesUntil ?? null);
 
@@ -135,6 +135,7 @@
 		<span class="section">
 			<IconBus aria-hidden="true" />
 			<span>{departure.from.name} - {departure.to.name}</span>
+			{#if departure.platformName}<span class="platform">{departure.platformName}</span>{/if}
 		</span>
 		{#if index === nextIndex && untilNext !== null}
 			<span class="until">{formatMinutesUntil(untilNext)}</span>
@@ -551,6 +552,12 @@
 			}
 		}
 
+		.platform {
+			flex: none;
+			color: var(--fm-text-muted);
+			font-size: 0.75rem;
+		}
+
 		.until {
 			grid-column: 2;
 			grid-row: 1;
@@ -574,8 +581,8 @@
 		.bus-page {
 			display: flex;
 			flex-direction: column;
+			flex: 1;
 			width: 100%;
-			height: 100%;
 			max-width: none;
 			min-height: 0;
 		}
