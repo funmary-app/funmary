@@ -1,4 +1,5 @@
 <script lang="ts">
+	import CheckboxField from '#lib/components/CheckboxField.svelte';
 	import Button, { Label } from '@smui/button';
 	import { enhance } from '$app/forms';
 	import { confirmSubmit } from '#lib/actions/confirm-submit.ts';
@@ -90,10 +91,7 @@
 			<fieldset>
 				<legend>読める範囲</legend>
 				{#each data.scopeOptions.filter((option) => !option.write) as option (option.scope)}
-					<label class="choice">
-						<input type="checkbox" name="scopes" value={option.scope} />
-						{option.label}
-					</label>
+					<CheckboxField name="scopes" value={option.scope}>{option.label}</CheckboxField>
 				{/each}
 			</fieldset>
 			<fieldset>
@@ -102,10 +100,7 @@
 					必要なときだけ選んでください。渡した相手が、あなたの予定を変えられるようになります。予定の公開範囲は、トークンからは変えられません。足す予定は、常に非公開です。
 				</p>
 				{#each data.scopeOptions.filter((option) => option.write) as option (option.scope)}
-					<label class="choice">
-						<input type="checkbox" name="scopes" value={option.scope} />
-						{option.label}
-					</label>
+					<CheckboxField name="scopes" value={option.scope}>{option.label}</CheckboxField>
 				{/each}
 			</fieldset>
 			<label class="field narrow">
@@ -218,7 +213,6 @@
 </div>
 
 <style lang="scss">
-	@use 'forms';
 	@use 'mixins';
 	@use 'surfaces';
 	@use 'text';
@@ -256,10 +250,6 @@
 			font-size: 0.875rem;
 			font-weight: 700;
 		}
-	}
-
-	.choice {
-		@include forms.choice-row(48px);
 	}
 
 	.hint {

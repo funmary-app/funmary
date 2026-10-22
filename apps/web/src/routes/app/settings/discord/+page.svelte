@@ -1,4 +1,6 @@
 <script lang="ts">
+	import CheckboxField from '#lib/components/CheckboxField.svelte';
+	import RadioField from '#lib/components/RadioField.svelte';
 	import Button, { Label } from '@smui/button';
 	import { enhance } from '$app/forms';
 	import { confirmSubmit } from '#lib/actions/confirm-submit.ts';
@@ -136,23 +138,15 @@
 				<form method="POST" action="?/routingAll" use:enhance class="link-form">
 					<fieldset>
 						<legend>送り先</legend>
-						<label>
-							<input type="radio" name="destination" value="thread" bind:group={bulkDestination} />
-							非公開スレッド
-						</label>
-						<label>
-							<input type="radio" name="destination" value="dm" bind:group={bulkDestination} />
-							DM
-						</label>
-						<label>
-							<input type="radio" name="destination" value="both" bind:group={bulkDestination} />
-							両方
-						</label>
+						<RadioField name="destination" value="thread" bind:group={bulkDestination}
+							>非公開スレッド</RadioField
+						>
+						<RadioField name="destination" value="dm" bind:group={bulkDestination}>DM</RadioField>
+						<RadioField name="destination" value="both" bind:group={bulkDestination}
+							>両方</RadioField
+						>
 					</fieldset>
-					<label>
-						<input type="checkbox" name="mention" bind:checked={bulkMention} />
-						メンションする
-					</label>
+					<CheckboxField name="mention" bind:checked={bulkMention}>メンションする</CheckboxField>
 					<Button type="submit" variant="outlined"><Label>すべての種類に適用する</Label></Button>
 				</form>
 
@@ -168,37 +162,18 @@
 					{#each data.routing as row (row.kind)}
 						<fieldset>
 							<legend>{row.label}</legend>
-							<label>
-								<input
-									type="radio"
-									name="destination_{row.kind}"
-									value="thread"
-									checked={row.destination === 'thread'}
-								/>
-								非公開スレッド
-							</label>
-							<label>
-								<input
-									type="radio"
-									name="destination_{row.kind}"
-									value="dm"
-									checked={row.destination === 'dm'}
-								/>
-								DM
-							</label>
-							<label>
-								<input
-									type="radio"
-									name="destination_{row.kind}"
-									value="both"
-									checked={row.destination === 'both'}
-								/>
-								両方
-							</label>
-							<label>
-								<input type="checkbox" name="mention_{row.kind}" checked={row.mention} />
-								メンションする
-							</label>
+							<RadioField name="destination_{row.kind}" value="thread" group={row.destination}
+								>非公開スレッド</RadioField
+							>
+							<RadioField name="destination_{row.kind}" value="dm" group={row.destination}
+								>DM</RadioField
+							>
+							<RadioField name="destination_{row.kind}" value="both" group={row.destination}
+								>両方</RadioField
+							>
+							<CheckboxField name="mention_{row.kind}" checked={row.mention}
+								>メンションする</CheckboxField
+							>
 						</fieldset>
 					{/each}
 					<Button type="submit" variant="unelevated"><Label>保存する</Label></Button>
@@ -221,15 +196,11 @@
 					<fieldset>
 						<legend>届ける通知の種類</legend>
 						{#each data.kindOptions as option (option.kind)}
-							<label>
-								<input
-									type="checkbox"
-									name="kinds"
-									value={option.kind}
-									checked={data.kinds.includes(option.kind)}
-								/>
-								{option.label}
-							</label>
+							<CheckboxField
+								name="kinds"
+								value={option.kind}
+								checked={data.kinds.includes(option.kind)}>{option.label}</CheckboxField
+							>
 						{/each}
 					</fieldset>
 					<Button type="submit" variant="unelevated"><Label>保存する</Label></Button>
@@ -253,24 +224,18 @@
 							update({ reset: false })}
 					class="link-form"
 				>
-					<label>
-						<input type="checkbox" name="enabled" checked={data.digest.enabled} />
-						予定のまとめを受け取る
-					</label>
+					<CheckboxField name="enabled" checked={data.digest.enabled}
+						>予定のまとめを受け取る</CheckboxField
+					>
 					<fieldset>
 						<legend>届ける時刻</legend>
-						<label>
-							<input type="radio" name="timing" value="evening" bind:group={timing} />
-							前日の 20:30 に、明日の予定を届ける
-						</label>
-						<label>
-							<input type="radio" name="timing" value="morning" bind:group={timing} />
-							当日の 06:30 に、今日の予定を届ける
-						</label>
-						<label>
-							<input type="radio" name="timing" value="custom" bind:group={timing} />
-							時刻を選ぶ
-						</label>
+						<RadioField name="timing" value="evening" bind:group={timing}
+							>前日の 20:30 に、明日の予定を届ける</RadioField
+						>
+						<RadioField name="timing" value="morning" bind:group={timing}
+							>当日の 06:30 に、今日の予定を届ける</RadioField
+						>
+						<RadioField name="timing" value="custom" bind:group={timing}>時刻を選ぶ</RadioField>
 						<div class="custom">
 							<label>
 								時
@@ -305,10 +270,9 @@
 							</label>
 						</div>
 					</fieldset>
-					<label>
-						<input type="checkbox" name="sendWhenEmpty" checked={data.digest.sendWhenEmpty} />
-						授業も予定もない日にも、「予定はありません」と届ける
-					</label>
+					<CheckboxField name="sendWhenEmpty" checked={data.digest.sendWhenEmpty}
+						>授業も予定もない日にも、「予定はありません」と届ける</CheckboxField
+					>
 					<Button type="submit" variant="unelevated"><Label>保存する</Label></Button>
 				</form>
 			</section>
@@ -322,14 +286,12 @@
 		<form method="POST" action="?/link" use:enhance class="link-form">
 			<fieldset>
 				<legend>はじめの送り先</legend>
-				<label>
-					<input type="radio" name="destination" value="thread" bind:group={initialDestination} />
-					サポートサーバーの、あなただけの非公開スレッド
-				</label>
-				<label>
-					<input type="radio" name="destination" value="dm" bind:group={initialDestination} />
-					あなたへの DM (サーバーのメンバーからの DM を許可している必要があります)
-				</label>
+				<RadioField name="destination" value="thread" bind:group={initialDestination}
+					>サポートサーバーの、あなただけの非公開スレッド</RadioField
+				>
+				<RadioField name="destination" value="dm" bind:group={initialDestination}
+					>あなたへの DM (サーバーのメンバーからの DM を許可している必要があります)</RadioField
+				>
 			</fieldset>
 			<Button type="submit" variant="unelevated"><Label>Discord と連携する</Label></Button>
 		</form>

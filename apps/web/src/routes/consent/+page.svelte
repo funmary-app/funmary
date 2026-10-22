@@ -1,4 +1,5 @@
 <script lang="ts">
+	import CheckboxField from '#lib/components/CheckboxField.svelte';
 	import Button, { Label } from '@smui/button';
 	import FormNotice from '#lib/components/FormNotice.svelte';
 	import { CURRENT_TERMS_VERSION } from '#lib/legal-versions.ts';
@@ -45,10 +46,7 @@
 
 	<form method="POST">
 		<input type="hidden" name="version" value={CURRENT_TERMS_VERSION} />
-		<label class="agree">
-			<input type="checkbox" name="agree" required />
-			利用規約とプライバシーポリシーに同意します
-		</label>
+		<CheckboxField name="agree" required>利用規約とプライバシーポリシーに同意します</CheckboxField>
 		<p class="account">ログイン中のアカウント: {data.email}</p>
 		<div class="actions">
 			<Button type="submit" variant="unelevated"><Label>同意して続ける</Label></Button>
@@ -62,16 +60,10 @@
 </div>
 
 <style lang="scss">
-	@use 'forms';
-
 	.documents {
 		margin: 1rem 0 1.5rem;
 		padding-left: 1.25rem;
 		line-height: 1.8;
-	}
-
-	.agree {
-		@include forms.choice-row;
 	}
 
 	.account {

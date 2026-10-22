@@ -1,4 +1,5 @@
 <script lang="ts">
+	import CheckboxField from '#lib/components/CheckboxField.svelte';
 	import Button, { Label } from '@smui/button';
 	import { enhance } from '$app/forms';
 	import FormNotice from '#lib/components/FormNotice.svelte';
@@ -92,17 +93,11 @@
 							より上のロールは付けられません。付いたロールは、招待を消しても残ります。
 						</p>
 						{#each data.roles as role (role.id)}
-							<label class="choice">
-								<input type="checkbox" name="roleIds" value={role.id} />
-								<span>{role.name}</span>
-							</label>
+							<CheckboxField name="roleIds" value={role.id}><span>{role.name}</span></CheckboxField>
 						{/each}
 					</fieldset>
 				{/if}
-				<label class="choice">
-					<input type="checkbox" name="public" />
-					<span>公開する</span>
-				</label>
+				<CheckboxField name="public"><span>公開する</span></CheckboxField>
 				<div class="field">
 					<label for="issue-note">メモ (任意)</label>
 					<input id="issue-note" type="text" name="note" maxlength="100" />
@@ -130,10 +125,7 @@
 					の招待そのものは残ります。
 				</p>
 			</div>
-			<label class="choice">
-				<input type="checkbox" name="public" />
-				<span>公開する</span>
-			</label>
+			<CheckboxField name="public"><span>公開する</span></CheckboxField>
 			<div class="field">
 				<label for="register-note">メモ (任意)</label>
 				<input id="register-note" type="text" name="note" maxlength="100" />

@@ -26,13 +26,6 @@
 		@include mixins.stack(0.25rem);
 		font-size: 0.875rem;
 	}
-
-	.confirm {
-		flex-direction: row;
-		align-items: center;
-		gap: 0.5rem;
-		min-height: 44px;
-	}
 }
 
 .visibility {
@@ -51,13 +44,6 @@
 		padding: 0;
 		font-size: 0.875rem;
 		color: var(--fm-text-muted);
-	}
-
-	.radio {
-		flex-direction: row;
-		align-items: center;
-		gap: 0.5rem;
-		min-height: 44px;
 	}
 }
 

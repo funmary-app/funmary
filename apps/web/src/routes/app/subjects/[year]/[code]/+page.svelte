@@ -1,4 +1,6 @@
 <script lang="ts">
+	import CheckboxField from '#lib/components/CheckboxField.svelte';
+	import RadioField from '#lib/components/RadioField.svelte';
 	import Button, { Label } from '@smui/button';
 	import { enhance } from '$app/forms';
 	import { TERMS } from '@funmary/core';
@@ -222,15 +224,9 @@
 				<fieldset>
 					<legend>公開範囲</legend>
 					{#each Object.entries(VISIBILITY_LABELS) as [value, label] (value)}
-						<label class="radio">
-							<input
-								type="radio"
-								name="visibility"
-								{value}
-								checked={data.subject.visibility === value}
-							/>
-							{label}
-						</label>
+						<RadioField name="visibility" {value} group={data.subject.visibility}
+							>{label}</RadioField
+						>
 					{/each}
 				</fieldset>
 				<Button type="submit" variant="outlined"><Label>公開範囲を変える</Label></Button>
@@ -270,10 +266,9 @@
 			<details>
 				<summary>この授業を消す</summary>
 				<form method="POST" action="?/deleteSubject" use:enhance class="edit">
-					<label class="confirm">
-						<input type="checkbox" name="confirm" required />
-						ほかの利用者の履修登録と、曜日と時限も消え、元に戻せないことを確かめました
-					</label>
+					<CheckboxField name="confirm" required
+						>ほかの利用者の履修登録と、曜日と時限も消え、元に戻せないことを確かめました</CheckboxField
+					>
 					<Button type="submit" variant="outlined"><Label>消す</Label></Button>
 				</form>
 			</details>

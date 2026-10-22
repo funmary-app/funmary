@@ -1,4 +1,5 @@
 <script lang="ts">
+	import CheckboxField from '#lib/components/CheckboxField.svelte';
 	import Button, { Label } from '@smui/button';
 	import FormNotice from '#lib/components/FormNotice.svelte';
 
@@ -44,10 +45,9 @@
 			<fieldset>
 				<legend>許可する範囲</legend>
 				{#each data.scopes ?? [] as option (option.scope)}
-					<label class="scope">
-						<input type="checkbox" name="scope" value={option.scope} checked={!option.write} />
-						{option.label}
-					</label>
+					<CheckboxField name="scope" value={option.scope} checked={!option.write}
+						>{option.label}</CheckboxField
+					>
 				{/each}
 			</fieldset>
 			<p class="destination">許可すると、<code>{data.redirectHost}</code> に戻ります。</p>
@@ -65,7 +65,6 @@
 </div>
 
 <style lang="scss">
-	@use 'forms';
 	@use 'mixins';
 
 	fieldset {
@@ -80,10 +79,6 @@
 		border: 1px solid var(--fm-accent, currentcolor);
 		border-radius: 0.5rem;
 		font-weight: 700;
-	}
-
-	.scope {
-		@include forms.choice-row;
 	}
 
 	.destination {

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import CheckboxField from '#lib/components/CheckboxField.svelte';
 	import Button, { Label } from '@smui/button';
 	import { enhance } from '$app/forms';
 	import { resolve } from '$app/paths';
@@ -137,10 +138,7 @@
 			<form method="POST" action="?/applyPdf" use:enhance={submitting} class="apply">
 				<input type="hidden" name="id" value={preview.id} />
 				{#if preview.warnings.length > 0}
-					<label class="confirm">
-						<input type="checkbox" name="confirmWarnings" required />
-						警告の内容を確かめました
-					</label>
+					<CheckboxField name="confirmWarnings" required>警告の内容を確かめました</CheckboxField>
 				{/if}
 				<Button type="submit" variant="unelevated" disabled={busy}>
 					<Label>この内容で取り込む</Label>
@@ -151,7 +149,6 @@
 </div>
 
 <style lang="scss">
-	@use 'forms';
 	@use 'mixins';
 	@use 'touch';
 
@@ -223,9 +220,5 @@
 	.apply {
 		@include mixins.cluster(0.75rem 1rem);
 		margin-top: 1rem;
-	}
-
-	.confirm {
-		@include forms.choice-row;
 	}
 </style>

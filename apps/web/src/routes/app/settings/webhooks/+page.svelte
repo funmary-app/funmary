@@ -1,4 +1,6 @@
 <script lang="ts">
+	import RadioField from '#lib/components/RadioField.svelte';
+	import CheckboxField from '#lib/components/CheckboxField.svelte';
 	import Button, { Label } from '@smui/button';
 	import { enhance } from '$app/forms';
 	import { confirmSubmit } from '#lib/actions/confirm-submit.ts';
@@ -95,15 +97,11 @@
 						<fieldset>
 							<legend>届ける通知</legend>
 							{#each data.kindOptions as option (option.kind)}
-								<label class="check">
-									<input
-										type="checkbox"
-										name="kinds"
-										value={option.kind}
-										checked={webhook.kinds.includes(option.kind)}
-									/>
-									{option.label}
-								</label>
+								<CheckboxField
+									name="kinds"
+									value={option.kind}
+									checked={webhook.kinds.includes(option.kind)}>{option.label}</CheckboxField
+								>
 							{/each}
 						</fieldset>
 						<Button type="submit" variant="outlined"><Label>保存する</Label></Button>
@@ -152,14 +150,12 @@
 		{#if canAdd}
 			<fieldset class="kind-choice">
 				<legend>種類</legend>
-				<label class="check">
-					<input type="radio" name="newKind" value="discord" bind:group={newKind} form="add-form" />
-					Discord の Webhook
-				</label>
-				<label class="check">
-					<input type="radio" name="newKind" value="generic" bind:group={newKind} form="add-form" />
-					汎用の Webhook (自分で用意した URL)
-				</label>
+				<RadioField name="newKind" value="discord" bind:group={newKind} form="add-form"
+					>Discord の Webhook</RadioField
+				>
+				<RadioField name="newKind" value="generic" bind:group={newKind} form="add-form"
+					>汎用の Webhook (自分で用意した URL)</RadioField
+				>
 			</fieldset>
 			{#if newKind === 'discord'}
 				<ol class="steps">
@@ -223,10 +219,7 @@
 				<fieldset>
 					<legend>届ける通知</legend>
 					{#each data.kindOptions as option (option.kind)}
-						<label class="check">
-							<input type="checkbox" name="kinds" value={option.kind} checked />
-							{option.label}
-						</label>
+						<CheckboxField name="kinds" value={option.kind} checked>{option.label}</CheckboxField>
 					{/each}
 				</fieldset>
 				<Button type="submit" variant="unelevated"><Label>登録して、テスト通知を送る</Label></Button
@@ -336,10 +329,6 @@
 
 	.kind-choice {
 		margin-bottom: 1rem;
-	}
-
-	.check {
-		@include forms.choice-row;
 	}
 
 	.steps {
