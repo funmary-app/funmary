@@ -347,8 +347,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/private/sources
       '@smui/button':
-        specifier: ^9.0.2
-        version: 9.0.2
+        specifier: ^9.0.6
+        version: 9.0.6
       better-sqlite3:
         specifier: 'catalog:'
         version: 13.0.3
@@ -1778,17 +1778,17 @@ packages:
     resolution: {integrity: sha512-fCTuZK4QBa+39Oz9l4OGfJfz+GpwCp3AqO7Zch3to99xHPgstVsRFpeQ8LNd2o1Gv8raL2mCFwiaHh7bFSp5DQ==}
     engines: {node: '>=22'}
 
-  '@smui/button@9.0.2':
-    resolution: {integrity: sha512-WpbCYTMN4o7R1KSm5pX8X2nihW8zH57ikgWQgyJGLeiBFTvGliMxQ8zOEtQZXSfRJjf67nU6qE1eNVW+TCdGWw==}
+  '@smui/button@9.0.6':
+    resolution: {integrity: sha512-5vZY/7Stpfvwh72DQ6sMvlwbOp1D0MemBG5/3prs0STKO94aZ2pX1cfYTMyFP6Ioc2z8ONd/yVlhCpbAjbEw5Q==}
 
-  '@smui/common@9.0.2':
-    resolution: {integrity: sha512-m2x8E8PJoULAzGL/A85eWdoQu79NADwHGXC32nPZ64K6BidoZa1gju1cOL7a9dWkcKxOlQ9mta6gVHMXqXVvzg==}
+  '@smui/common@9.0.6':
+    resolution: {integrity: sha512-wWQ+4ixA0PjlHGlF9rTD8UKOxbyZlMGz0IKIwDqgo2189v9LOJFIHoqXfZO8b0YXcK0pO82M85xsvcUXkTcv1g==}
 
-  '@smui/ripple@9.0.2':
-    resolution: {integrity: sha512-MNKK20mhyKG8OpUoHU7ZwsaYMJKZqWxCnyvnp66P945SuLGg4/tGw+NI1K2qvSvDZj/vfdjC6JkTBtxmNNbZJQ==}
+  '@smui/ripple@9.0.6':
+    resolution: {integrity: sha512-ju3IDWJAor0Lp9N1RPnVS5yStBzuPPEvsEZSlHHWpP4oQkP0xa+pByqKeX+7+Kb1YCzTGYuTcIihDvmavuYLCw==}
 
-  '@smui/touch-target@9.0.2':
-    resolution: {integrity: sha512-WZBddE1ifceCtUtGIj5eVGqspUF/RWpEeR55ETxaWgt9SW11o2KJtVEKHswv/5FtuoDyO6zDdSuw7qX74ojtxA==}
+  '@smui/touch-target@9.0.6':
+    resolution: {integrity: sha512-MF3dc7XRYvVofCURlppNhTQdJjfGRVM9B9YDRUhxloIIMmDFWPJvAqGlAbF2sFizZ67TwjMvoLtEBRVcwvEWaQ==}
 
   '@stablelib/base64@1.0.1':
     resolution: {integrity: sha512-1bnPQqSxSuc3Ii6MhBysoWCg58j97aUjuCSZrGSmDxNqtytIi0k8utUenAwTZN4V5mXXYGsVUI9zeBqy+jBOSQ==}
@@ -5070,23 +5070,23 @@ snapshots:
 
   '@simple-libs/stream-utils@2.0.0': {}
 
-  '@smui/button@9.0.2':
+  '@smui/button@9.0.6':
     dependencies:
-      '@smui/common': 9.0.2
-      '@smui/ripple': 9.0.2
-      '@smui/touch-target': 9.0.2
+      '@smui/common': 9.0.6
+      '@smui/ripple': 9.0.6
+      '@smui/touch-target': 9.0.6
 
-  '@smui/common@9.0.2':
+  '@smui/common@9.0.6':
     dependencies:
       safevalues: 1.2.0
 
-  '@smui/ripple@9.0.2':
+  '@smui/ripple@9.0.6':
     dependencies:
-      '@smui/common': 9.0.2
+      '@smui/common': 9.0.6
 
-  '@smui/touch-target@9.0.2':
+  '@smui/touch-target@9.0.6':
     dependencies:
-      '@smui/common': 9.0.2
+      '@smui/common': 9.0.6
 
   '@stablelib/base64@1.0.1': {}
 
