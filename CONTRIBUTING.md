@@ -184,6 +184,7 @@ PR を作ったあとに、コミットを分け直すときは、自分のブ�
 
 - CI は、PR では検査、ビルド、単体テスト、E2E テストをすべて動かします。main への push では、リリースの前に要る検査とビルドだけを動かします。Windows での単体テストは、PR の待ち時間を延ばさないよう、main への push のときだけ別のワークフロー (`windows.yml`) で動かします。Windows に関わる変更は、手元の Windows でも `pnpm test` を動かしてください。
 - 文書 (Markdown、`docs/`) だけの変更では、main の CI を動かさず、リリースと本番への反映も行いません。
+- PR では、文書だけの変更なら、検査とビルド、E2E テストを飛ばします。所有者とメンテナーは、PR のタイトルか本文、またはコメントに `!ignore_ci` と書くと、ほかの変更でも飛ばせます (コメントで頼むと、CI を動かし直します)。飛ばしたときは、手元で `pnpm format:check`、`pnpm lint`、`pnpm typecheck`、`pnpm test` を通してください。仕組みは [設計書の 5.6](docs/design/05-tooling.md#56-ci-は-github-actions-で回す) にあります。
 
 ## 依存の置き方
 
