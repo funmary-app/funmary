@@ -97,8 +97,9 @@ jobs:
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
-      # キャッシュがあれば、ブラウザの取得は飛ばされ、OS の依存だけを入れる
-      - run: pnpm --filter @funmary/web exec playwright install --with-deps chromium
+      # キャッシュがあれば、ブラウザの取得は飛ばされる。OS の依存 (--with-deps) は入れない。apt の取得が遅いと、
+      # これだけで 10 分近くかかることがあり、GitHub の Ubuntu には Chrome とその依存が入っているため
+      - run: pnpm --filter @funmary/web exec playwright install --only-shell chromium
       - run: pnpm test:e2e
       - if: failure()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -126,7 +127,7 @@ jobs:
           key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
           lookup-only: true
       - if: steps.cache.outputs.cache-hit != 'true'
-        run: pnpm --filter @funmary/web exec playwright install chromium
+        run: pnpm --filter @funmary/web exec playwright install --only-shell chromium
       - if: steps.cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
