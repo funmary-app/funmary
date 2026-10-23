@@ -2,7 +2,8 @@ name: CI
 
 # PR では、必須の検査をすべて動かす。main への push では、リリースの前に要るものだけを動かす
 # (E2E は PR で通したものとする。Windows での単体テストは windows.yml で、main への push のときに別に動かす)。
-# 文書だけの変更では、main の CI を動かさない。CI が動かなければ Release と Deploy も走らず、本番を再起動しない
+# 文書だけの変更では、main の CI を動かさない。CI が動かなければ Release と Deploy も走らず、本番を再起動しない。
+# PR では、文書だけの変更か、所有者かメンテナーが !ignore_ci と書いたときに、重い検査を飛ばす (skip ジョブが決める)
 on:
   pull_request:
   push:
@@ -14,14 +15,42 @@ on:
 
 permissions:
   contents: read
+  # skip ジョブが、PR の変更したファイルとコメントを読むため
+  pull-requests: read
 
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  # main には必須の検査があるので、ワークフローごと止めると PR をマージできなくなる。ここで決め、重いジョブを if で飛ばす
+  # (飛ばしたジョブは、必須の検査を満たす)。決められなければ skip は false になり、すべて動かす
+  skip:
+    name: CI を飛ばすかの判定
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      skip: ${{ steps.decide.outputs.skip }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup
+        with:
+          install: false
+      - id: decide
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: node scripts/workflows/ci/ci-skip.js
+
   check:
     name: 検査とビルド
+    needs: skip
+    # main への push では skip が動かない (飛ばしたことになる) ので、!cancelled() で待ってから動く
+    if: ${{ !cancelled() && needs.skip.outputs.skip != 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -52,7 +81,8 @@ jobs:
 
   e2e:
     name: E2E テスト
-    if: github.event_name == 'pull_request'
+    needs: skip
+    if: ${{ !cancelled() && github.event_name == 'pull_request' && needs.skip.outputs.skip != 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
