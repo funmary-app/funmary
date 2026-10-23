@@ -119,15 +119,16 @@ td {
 	vertical-align: top;
 	text-align: left;
 }
+// 時限の列は、時刻 (09:00-10:30) が 1 行に収まる幅にする
 tbody th {
-	width: 4.5rem;
+	width: 6.5rem;
 	position: sticky;
 	left: 0;
 	background: var(--fm-background);
 	white-space: nowrap;
 }
 thead th:first-child {
-	width: 4.5rem;
+	width: 6.5rem;
 }
 thead th {
 	background: var(--fm-background);

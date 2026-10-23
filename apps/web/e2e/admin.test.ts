@@ -747,7 +747,7 @@ test.describe('招待コード', () => {
 		await signInAs(adminPage, 'e2e-admin@fun.ac.jp');
 		await adminPage.goto('/app/admin/invites');
 		const memberRow = adminPage.getByRole('listitem').filter({ hasText: member });
-		const limit = adminPage.getByLabel('管理者でない人が 1 か月に発行できる数');
+		const limit = adminPage.getByLabel('1 か月に発行できる数');
 		// 管理者のみのときは、月の上限を使わない
 		await expect(limit).toBeDisabled();
 		await adminPage.getByLabel(/許可したユーザー/).check();
