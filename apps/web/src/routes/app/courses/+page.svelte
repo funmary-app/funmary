@@ -116,7 +116,7 @@
 			hidden={activeTab !== 'registered'}
 		>
 			{#if data.registered.length === 0}
-				<p>まだ登録していません。下の「科目を探す」から登録してください。</p>
+				<p>まだ登録していません。「科目を探す」のタブから登録してください。</p>
 			{:else}
 				<ul class="subjects">
 					{#each data.registered as subject (subject.id)}
