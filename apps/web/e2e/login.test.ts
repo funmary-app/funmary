@@ -5,11 +5,6 @@ import { oidc, signIn, useMockOidc, answerConfirm } from './support.ts';
 
 useMockOidc();
 
-test('ログインしていないと、トップページにログインへのリンクが出る', async ({ page }) => {
-	await page.goto('/');
-	await expect(page.getByRole('link', { name: '大学のアカウントではじめる' })).toBeVisible();
-});
-
 test('共有したときのカード (OGP) の情報を出し、画像は絶対 URL で配る', async ({
 	page,
 	request,

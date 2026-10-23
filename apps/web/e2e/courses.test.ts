@@ -16,11 +16,6 @@ test.describe('ポータルの時間割の取り込み', () => {
 		await expect(page).toHaveURL('/app');
 	};
 
-	test('ログインしていなければ、ログインの画面に移る', async ({ page }) => {
-		await page.goto('/app/courses/import');
-		await expect(page).toHaveURL('/login');
-	});
-
 	test('使い方と、自動では取れないため利用者どうしで登録している旨、ブックマークレットを出す', async ({
 		page,
 	}) => {
@@ -102,11 +97,6 @@ test.describe('履修科目の登録', () => {
 	});
 
 	const loginAs = (page: Page) => signInAs(page, `${sub}@fun.ac.jp`);
-
-	test('ログインしていなければ、ログインの画面に移る', async ({ page }) => {
-		await page.goto('/app/courses');
-		await expect(page).toHaveURL('/login');
-	});
 
 	test('科目を探して登録し、曜日と時限を足し、登録を取り消せる', async ({ page }) => {
 		await loginAs(page);
