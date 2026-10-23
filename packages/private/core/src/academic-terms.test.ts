@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { addDays, isoWeekday } from './calendar-date.ts';
-import { estimateAcademicTerms, resolveAcademicTerms, type StoredTerm } from './academic-terms.ts';
+import {
+	estimateAcademicTerms,
+	resolveAcademicTerms,
+	termsOn,
+	type StoredTerm,
+} from './academic-terms.ts';
 
 describe('addDays', () => {
 	it('月や年をまたいで日付を足し引きする', () => {
@@ -146,5 +151,21 @@ describe('resolveAcademicTerms', () => {
 			'q3',
 			'q4',
 		]);
+	});
+});
+
+describe('termsOn', () => {
+	const terms = resolveAcademicTerms(2026, []);
+
+	it('その日を期間に含む学期を返す。クォーターと通年も含む', () => {
+		expect(termsOn(terms, '2026-10-07').sort()).toEqual(['fall', 'full-year', 'q3', 'q4']);
+		// 期間の初日と最終日も含む
+		expect(termsOn(terms, '2026-04-01')).toContain('spring');
+		expect(termsOn(terms, '2026-07-31')).toContain('spring');
+	});
+
+	it('前期と後期の間の日は通年だけを、後期のあとの春休みはどの学期も含まない', () => {
+		expect(termsOn(terms, '2026-08-20')).toEqual(['full-year']);
+		expect(termsOn(terms, '2027-03-01')).toEqual([]);
 	});
 });
