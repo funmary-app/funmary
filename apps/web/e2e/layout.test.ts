@@ -79,6 +79,19 @@ test.describe('スマホの幅で、画面が横にはみ出さない', () => {
 		}
 	});
 
+	test('週の時間割の時限の時刻は、PC の幅でも列からはみ出さない', async ({ page }) => {
+		await signInAs(page, 'e2e-admin@fun.ac.jp');
+		await page.setViewportSize({ width: 1280, height: 800 });
+		await page.goto('/app/week');
+
+		const periods = page.locator('tbody th');
+		await expect(periods.first()).toBeVisible();
+		const overflows = await periods.evaluateAll((cells) =>
+			cells.map((cell) => cell.scrollWidth - cell.clientWidth),
+		);
+		expect(Math.max(...overflows)).toBeLessThanOrEqual(1);
+	});
+
 	test('長い名前のファイルを選んでも、取り込みの欄がスマホの幅を超えない', async ({ page }) => {
 		await signInAs(page, 'e2e-admin@fun.ac.jp');
 		await page.setViewportSize({ width: 390, height: 844 });
