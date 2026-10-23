@@ -2,7 +2,13 @@
 // 枠は科目ごとに共有するので、既にある枠は上書きしない。教室が食い違えば、管理者に知らせる。
 import { fail, type Actions, type ServerLoad } from '@sveltejs/kit';
 import { isSubjectSearchable, jstDateTime, resolveAcademicTerms } from '@funmary/core';
-import { parseSlotForm, parseSubjectId } from '#lib/server/course-form.ts';
+import { parseSlotForm } from '#lib/server/course-form.ts';
+import {
+	addPersonalSlot,
+	registerCourse,
+	removePersonalSlot,
+	unregisterCourse,
+} from '#lib/server/course-actions.ts';
 import { getServices } from '#lib/server/services.ts';
 import { shareSlot } from '#lib/server/shared-slot.ts';
 import { readSlotSharingMode } from '#lib/server/slot-permission.ts';
@@ -82,15 +88,7 @@ export const load: ServerLoad = ({ locals, url }) => {
 };
 
 export const actions: Actions = {
-	register: async ({ request, locals }) => {
-		requireSignedIn(locals);
-		const subjectId = parseSubjectId(await request.formData());
-		const { courses, subjects } = getServices();
-		const subject = subjectId === null ? null : subjects.findById(subjectId);
-		if (!subject) return fail(400, { error: '科目が見つかりませんでした。探し直してください。' });
-		courses.register(locals.user.id, subject.id, new Date());
-		return { message: `${subject.name} を履修科目に登録しました。` };
-	},
+	register: registerCourse,
 
 	/** シラバスにない授業を科目として足し、足した人の履修科目に登録する */
 	createSubject: async ({ request, locals }) => {
@@ -129,16 +127,7 @@ export const actions: Actions = {
 		};
 	},
 
-	unregister: async ({ request, locals }) => {
-		requireSignedIn(locals);
-		const subjectId = parseSubjectId(await request.formData());
-		const { courses, subjects } = getServices();
-		if (subjectId === null || !courses.unregister(locals.user.id, subjectId)) {
-			return fail(400, { error: 'この科目は履修科目に登録されていません。' });
-		}
-		const name = subjects.findById(subjectId)?.name ?? '科目';
-		return { message: `${name} の登録を取り消しました。` };
-	},
+	unregister: unregisterCourse,
 
 	addSlot: async ({ request, locals }) => {
 		requireSignedIn(locals);
@@ -166,27 +155,6 @@ export const actions: Actions = {
 		);
 	},
 
-	/** 自分だけに使う曜日と時限を登録する。共有の登録の設定に関わらず、いつでも使える */
-	addPersonalSlot: async ({ request, locals }) => {
-		requireSignedIn(locals);
-		const parsed = parseSlotForm(await request.formData());
-		if (!parsed.ok) return fail(400, { error: parsed.error });
-		const { subjectId, ...slot } = parsed.value;
-		getServices().personalSlots.set(locals.user.id, subjectId, slot, new Date());
-		return { message: '自分だけに使う曜日と時限を登録しました。' };
-	},
-
-	/** 自分だけの曜日と時限を消す */
-	removePersonalSlot: async ({ request, locals }) => {
-		requireSignedIn(locals);
-		const form = await request.formData();
-		const subjectId = parseSubjectId(form);
-		const weekday = Number(form.get('weekday'));
-		const period = Number(form.get('period'));
-		if (subjectId === null || !Number.isInteger(weekday) || !Number.isInteger(period)) {
-			return fail(400, { error: '曜日と時限が正しくありません。' });
-		}
-		getServices().personalSlots.remove(locals.user.id, subjectId, weekday, period);
-		return { message: '自分だけの曜日と時限を消しました。' };
-	},
+	addPersonalSlot,
+	removePersonalSlot,
 };
