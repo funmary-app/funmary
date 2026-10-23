@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SelectField from '#lib/components/SelectField.svelte';
 	import TextField from '#lib/components/TextField.svelte';
 	import CheckboxField from '#lib/components/CheckboxField.svelte';
 	import Button, { Label } from '@smui/button';
@@ -67,20 +68,18 @@
 		{:else}
 			<form method="POST" action="?/issue" use:enhance class="entry">
 				<div class="field">
-					<label for="channel">招待するチャンネル</label>
-					<select id="channel" name="channelId" required>
+					<SelectField label="招待するチャンネル" name="channelId" required>
 						{#each data.channels as channel (channel.id)}
 							<option value={channel.id}>#{channel.name}</option>
 						{/each}
-					</select>
+					</SelectField>
 				</div>
 				<div class="field">
-					<label for="days">期限</label>
-					<select id="days" name="days">
+					<SelectField label="期限" name="days">
 						{#each DAYS as day (day)}
 							<option value={String(day)}>{day === 0 ? '無期限' : `${day} 日`}</option>
 						{/each}
-					</select>
+					</SelectField>
 				</div>
 				<div class="field">
 					<TextField

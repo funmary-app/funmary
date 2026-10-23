@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SelectField from '#lib/components/SelectField.svelte';
 	import CheckboxField from '#lib/components/CheckboxField.svelte';
 	import RadioField from '#lib/components/RadioField.svelte';
 	import TextField from '#lib/components/TextField.svelte';
@@ -106,22 +107,16 @@
 			</div>
 		{:else if timeKind === 'period'}
 			<div class="row">
-				<label class="field">
-					始まりの時限
-					<select name="startPeriod" value={values.startPeriod}>
-						{#each PERIODS as period (period)}
-							<option value={String(period)}>{period} 限</option>
-						{/each}
-					</select>
-				</label>
-				<label class="field">
-					終わりの時限
-					<select name="endPeriod" value={values.endPeriod}>
-						{#each PERIODS as period (period)}
-							<option value={String(period)}>{period} 限</option>
-						{/each}
-					</select>
-				</label>
+				<SelectField label="始まりの時限" name="startPeriod" value={values.startPeriod}>
+					{#each PERIODS as period (period)}
+						<option value={String(period)}>{period} 限</option>
+					{/each}
+				</SelectField>
+				<SelectField label="終わりの時限" name="endPeriod" value={values.endPeriod}>
+					{#each PERIODS as period (period)}
+						<option value={String(period)}>{period} 限</option>
+					{/each}
+				</SelectField>
 			</div>
 		{/if}
 		<p class="hint">数日にわたる予定は、終日だけ選べます。</p>
@@ -129,20 +124,17 @@
 
 	<fieldset>
 		<legend>繰り返し</legend>
-		<label class="field">
-			繰り返しの種類
-			<select
-				name="repeat"
-				value={repeat}
-				onchange={(event) => (chosen.repeat = event.currentTarget.value)}
-			>
-				<option value="none">繰り返さない</option>
-				<option value="daily">毎日</option>
-				<option value="weekly">毎週</option>
-				<option value="monthly">毎月</option>
-				<option value="yearly">毎年</option>
-			</select>
-		</label>
+		<SelectField
+			label="繰り返しの種類"
+			name="repeat"
+			bind:value={() => repeat, (value) => (chosen.repeat = String(value))}
+		>
+			<option value="none">繰り返さない</option>
+			<option value="daily">毎日</option>
+			<option value="weekly">毎週</option>
+			<option value="monthly">毎月</option>
+			<option value="yearly">毎年</option>
+		</SelectField>
 
 		{#if repeat !== 'none'}
 			<TextField
@@ -285,10 +277,6 @@
 		padding: 0 0.25rem;
 		font-weight: 500;
 	}
-	.field {
-		@include mixins.stack(0.25rem);
-		font-size: 0.875rem;
-	}
 	.event-form :global(.narrow) {
 		max-width: 12rem;
 	}
@@ -296,7 +284,8 @@
 		@include mixins.wrap-row(0.5rem 1rem);
 
 		// ラベルが欄の枠に収まる幅にする
-		> :global(.mdc-text-field) {
+		> :global(.mdc-text-field),
+		> :global(.select-field) {
 			flex: 1 1 14rem;
 		}
 	}

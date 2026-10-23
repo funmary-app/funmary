@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SelectField from '#lib/components/SelectField.svelte';
 	import TextField from '#lib/components/TextField.svelte';
 	import CheckboxField from '#lib/components/CheckboxField.svelte';
 	import Button, { Label } from '@smui/button';
@@ -101,14 +102,11 @@
 					<CheckboxField name="scopes" value={option.scope}>{option.label}</CheckboxField>
 				{/each}
 			</fieldset>
-			<label class="field narrow">
-				有効期限
-				<select name="expiresInDays">
-					{#each data.expiresOptions as option (option.days)}
-						<option value={option.days} selected={option.days === 90}>{option.label}</option>
-					{/each}
-				</select>
-			</label>
+			<SelectField label="有効期限" class="narrow" name="expiresInDays">
+				{#each data.expiresOptions as option (option.days)}
+					<option value={option.days} selected={option.days === 90}>{option.label}</option>
+				{/each}
+			</SelectField>
 			<Button type="submit" variant="unelevated"><Label>発行する</Label></Button>
 		</form>
 	</section>
@@ -228,12 +226,7 @@
 		max-width: 28rem;
 	}
 
-	.field {
-		@include mixins.stack(0.25rem);
-		font-size: 0.875rem;
-	}
-
-	.field.narrow {
+	.entry > :global(.narrow) {
 		max-width: 12rem;
 	}
 

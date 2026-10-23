@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SelectField from '#lib/components/SelectField.svelte';
 	import TextField from '#lib/components/TextField.svelte';
 	import CheckboxField from '#lib/components/CheckboxField.svelte';
 	import Button, { Label } from '@smui/button';
@@ -251,14 +252,11 @@
 		<details>
 			<summary>日付を入れて学期の期間を入力する</summary>
 			<form method="POST" action="?/saveTerm" use:enhance class="entry">
-				<label>
-					学期
-					<select name="term" required>
-						{#each data.terms as row (row.term)}
-							<option value={row.term}>{formatTerm(row.term)}</option>
-						{/each}
-					</select>
-				</label>
+				<SelectField label="学期" name="term" required>
+					{#each data.terms as row (row.term)}
+						<option value={row.term}>{formatTerm(row.term)}</option>
+					{/each}
+				</SelectField>
 				<TextField
 					label="始まりの日"
 					type="date"
@@ -322,14 +320,11 @@
 					max={data.range.end}
 					required
 				/>
-				<label>
-					行う授業の曜日
-					<select name="weekday" required>
-						{#each WEEKDAY_LABELS as day (day.weekday)}
-							<option value={day.weekday}>{day.label}曜</option>
-						{/each}
-					</select>
-				</label>
+				<SelectField label="行う授業の曜日" name="weekday" required>
+					{#each WEEKDAY_LABELS as day (day.weekday)}
+						<option value={day.weekday}>{day.label}曜</option>
+					{/each}
+				</SelectField>
 				<Button type="submit" variant="unelevated"><Label>振替授業日を保存する</Label></Button>
 			</form>
 		</details>

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SelectField from '#lib/components/SelectField.svelte';
 	import TextField from '#lib/components/TextField.svelte';
 	import CheckboxField from '#lib/components/CheckboxField.svelte';
 	import RadioField from '#lib/components/RadioField.svelte';
@@ -208,14 +209,11 @@
 					required
 					value={data.subject.name}
 				/>
-				<label>
-					学期
-					<select name="term" required value={data.subject.term}>
-						{#each TERMS as term (term)}
-							<option value={term}>{formatTerm(term)}</option>
-						{/each}
-					</select>
-				</label>
+				<SelectField label="学期" name="term" required value={data.subject.term}>
+					{#each TERMS as term (term)}
+						<option value={term}>{formatTerm(term)}</option>
+					{/each}
+				</SelectField>
 				<TextField
 					label="教員 (任意)"
 					name="teacher"

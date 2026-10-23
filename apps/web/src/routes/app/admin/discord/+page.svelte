@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SelectField from '#lib/components/SelectField.svelte';
 	import TextField from '#lib/components/TextField.svelte';
 	import CheckboxField from '#lib/components/CheckboxField.svelte';
 	import RadioField from '#lib/components/RadioField.svelte';
@@ -188,24 +189,20 @@
 							{/each}
 						</fieldset>
 					{:else if joinRoleMode === 'invite'}
-						<label>
-							招待リンク
-							<select name="inviteId" required>
-								{#each data.invites as invite (invite.id)}
-									<option
-										value={invite.id}
-										selected={data.joinRole.mode === 'invite' &&
-											data.joinRole.inviteId === invite.id}
-									>
-										{invite.code}{invite.note ? ` (${invite.note})` : ''} — {invite.roles
-											.map((r) => r.name)
-											.join('、') || 'ロールなし'}
-									</option>
-								{:else}
-									<option value="" disabled>登録済みの招待リンクがありません</option>
-								{/each}
-							</select>
-						</label>
+						<SelectField label="招待リンク" name="inviteId" required>
+							{#each data.invites as invite (invite.id)}
+								<option
+									value={invite.id}
+									selected={data.joinRole.mode === 'invite' && data.joinRole.inviteId === invite.id}
+								>
+									{invite.code}{invite.note ? ` (${invite.note})` : ''} — {invite.roles
+										.map((r) => r.name)
+										.join('、') || 'ロールなし'}
+								</option>
+							{:else}
+								<option value="" disabled>登録済みの招待リンクがありません</option>
+							{/each}
+						</SelectField>
 					{/if}
 					<Button type="submit" variant="unelevated"><Label>保存する</Label></Button>
 				</form>
@@ -240,16 +237,13 @@
 					autocomplete="off"
 					required
 				/>
-				<label>
-					ロール
-					<select name="name" required>
-						{#each data.view.roles.filter((role) => role.id) as role (role.name)}
-							<option value={role.name}>funmary-{role.name} ({role.label})</option>
-						{:else}
-							<option value="" disabled>先にロールを整えてください</option>
-						{/each}
-					</select>
-				</label>
+				<SelectField label="ロール" name="name" required>
+					{#each data.view.roles.filter((role) => role.id) as role (role.name)}
+						<option value={role.name}>funmary-{role.name} ({role.label})</option>
+					{:else}
+						<option value="" disabled>先にロールを整えてください</option>
+					{/each}
+				</SelectField>
 				<div class="actions">
 					<Button type="submit" name="action" value="add" variant="unelevated">
 						<Label>付ける</Label>
@@ -308,11 +302,6 @@
 		flex-wrap: wrap;
 		align-items: end;
 		gap: 0.5rem 1rem;
-
-		label {
-			@include mixins.stack(0.25rem);
-			font-size: 0.875rem;
-		}
 	}
 	.join-role {
 		@include forms.column;
@@ -321,10 +310,6 @@
 	.join-role fieldset {
 		@include mixins.stack(0.5rem);
 		@include surfaces.outlined($margin: 0);
-	}
-	.join-role > label {
-		@include mixins.stack(0.25rem);
-		font-size: 0.875rem;
 	}
 	.actions {
 		@include mixins.wrap-row(0.5rem);

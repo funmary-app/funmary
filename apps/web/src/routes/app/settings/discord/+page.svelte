@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SelectField from '#lib/components/SelectField.svelte';
 	import CheckboxField from '#lib/components/CheckboxField.svelte';
 	import RadioField from '#lib/components/RadioField.svelte';
 	import Button, { Label } from '@smui/button';
@@ -237,37 +238,31 @@
 						>
 						<RadioField name="timing" value="custom" bind:group={timing}>時刻を選ぶ</RadioField>
 						<div class="custom">
-							<label>
-								時
-								<select
-									name="customHour"
-									value={data.digest.customTime.slice(0, 2)}
-									disabled={timing !== 'custom'}
-								>
-									{#each HOURS as hour (hour)}<option value={hour}>{Number(hour)}</option>{/each}
-								</select>
-							</label>
-							<label>
-								分
-								<select
-									name="customMinute"
-									value={data.digest.customTime.slice(3, 5)}
-									disabled={timing !== 'custom'}
-								>
-									{#each MINUTES as minute (minute)}<option value={minute}>{minute}</option>{/each}
-								</select>
-							</label>
-							<label>
-								届ける予定
-								<select
-									name="customDay"
-									value={data.digest.customDay}
-									disabled={timing !== 'custom'}
-								>
-									<option value="today">その日の予定</option>
-									<option value="tomorrow">翌日の予定</option>
-								</select>
-							</label>
+							<SelectField
+								label="時"
+								name="customHour"
+								value={data.digest.customTime.slice(0, 2)}
+								disabled={timing !== 'custom'}
+							>
+								{#each HOURS as hour (hour)}<option value={hour}>{Number(hour)}</option>{/each}
+							</SelectField>
+							<SelectField
+								label="分"
+								name="customMinute"
+								value={data.digest.customTime.slice(3, 5)}
+								disabled={timing !== 'custom'}
+							>
+								{#each MINUTES as minute (minute)}<option value={minute}>{minute}</option>{/each}
+							</SelectField>
+							<SelectField
+								label="届ける予定"
+								name="customDay"
+								value={data.digest.customDay}
+								disabled={timing !== 'custom'}
+							>
+								<option value="today">その日の予定</option>
+								<option value="tomorrow">翌日の予定</option>
+							</SelectField>
 						</div>
 					</fieldset>
 					<CheckboxField name="sendWhenEmpty" checked={data.digest.sendWhenEmpty}
@@ -333,9 +328,5 @@
 	.custom {
 		@include mixins.wrap-row(0.5rem 1.5rem);
 		padding-left: 1.75rem;
-	}
-
-	label {
-		@include forms.choice-row;
 	}
 </style>
