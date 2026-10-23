@@ -2,7 +2,7 @@
 // 公開シラバスの科目名は「科目名 + クラス」の形 (例: 余暇と健康Ⅱ1-EF) なので、時間割の科目名とクラスをつなげて照合する。
 // 誤った科目に枠を付けると、別の授業の時間割を出してしまうので、決められない名前と、似た名前でしか合わない名前は枠にせず、人の確認へ回す。
 import { matchLessonName, type MatchResult, type SubjectName } from './lesson-matching.ts';
-import type { Term } from './timetable.ts';
+import { SEMESTER_TERMS } from './academic-terms.ts';
 
 /** 時間割の表の 1 つのコマ。@funmary/sources の TimetablePdfEntry と同じ形 */
 export interface TimetableCell {
@@ -50,11 +50,6 @@ type PlannedMatch =
 
 const MAX_WEEKDAY = 6;
 const MAX_PERIOD = 6;
-
-const SEMESTER_TERMS: Record<'spring' | 'fall', readonly Term[]> = {
-	spring: ['full-year', 'spring', 'q1', 'q2'],
-	fall: ['full-year', 'fall', 'q3', 'q4'],
-};
 
 /**
  * 時間割の学期 (前期か後期) に行われうる科目だけを選ぶ。前期と後期に同じ名前の科目があるので、照合の前に絞る。

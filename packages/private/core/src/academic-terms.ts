@@ -98,3 +98,40 @@ export function resolveAcademicTerms(
 export function termsOn(terms: readonly TermPeriod[], date: CalendarDate): Term[] {
 	return terms.filter((term) => term.start <= date && date <= term.end).map((term) => term.term);
 }
+
+export type Semester = 'spring' | 'fall';
+
+/** 前期と後期に行われうる学期 (通年とクォーターを含む) */
+export const SEMESTER_TERMS: Record<Semester, readonly Term[]> = {
+	spring: ['full-year', 'spring', 'q1', 'q2'],
+	fall: ['full-year', 'fall', 'q3', 'q4'],
+};
+
+const isSemester = (period: TermPeriod): period is TermPeriod & { term: Semester } =>
+	period.term === 'spring' || period.term === 'fall';
+
+/** 始まって days 日のうち (始まりの日を 1 日目とする) の前期か後期。なければ null */
+export function semesterJustStarted(
+	terms: readonly TermPeriod[],
+	today: CalendarDate,
+	days: number,
+): (TermPeriod & { term: Semester }) | null {
+	return (
+		terms
+			.filter(isSemester)
+			.find((term) => term.start <= today && today <= addDays(term.start, days - 1)) ?? null
+	);
+}
+
+/** 履修登録を促す前期か後期。始まる leadDays 日前から、終わりの日までの間なら、その学期 */
+export function semesterForRegistration(
+	terms: readonly TermPeriod[],
+	today: CalendarDate,
+	leadDays: number,
+): (TermPeriod & { term: Semester }) | null {
+	return (
+		terms
+			.filter(isSemester)
+			.find((term) => addDays(term.start, -leadDays) <= today && today <= term.end) ?? null
+	);
+}

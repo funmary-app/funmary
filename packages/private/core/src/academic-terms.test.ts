@@ -3,6 +3,8 @@ import { addDays, isoWeekday } from './calendar-date.ts';
 import {
 	estimateAcademicTerms,
 	resolveAcademicTerms,
+	semesterForRegistration,
+	semesterJustStarted,
 	termsOn,
 	type StoredTerm,
 } from './academic-terms.ts';
@@ -167,5 +169,43 @@ describe('termsOn', () => {
 	it('前期と後期の間の日は通年だけを、後期のあとの春休みはどの学期も含まない', () => {
 		expect(termsOn(terms, '2026-08-20')).toEqual(['full-year']);
 		expect(termsOn(terms, '2027-03-01')).toEqual([]);
+	});
+});
+
+describe('semesterJustStarted', () => {
+	const terms = resolveAcademicTerms(2026, [
+		{ term: 'fall', start: '2026-09-24', end: '2027-01-31', source: 'auto' },
+	]);
+
+	it('前期か後期が始まって days 日のうちなら、その学期を返す (学年暦の値を使う)', () => {
+		expect(semesterJustStarted(terms, '2026-09-24', 7)).toMatchObject({
+			term: 'fall',
+			start: '2026-09-24',
+		});
+		expect(semesterJustStarted(terms, '2026-09-30', 7)).toMatchObject({ term: 'fall' });
+		expect(semesterJustStarted(terms, '2026-04-01', 7)).toMatchObject({ term: 'spring' });
+	});
+
+	it('始まる前と、days 日を過ぎたあとは null', () => {
+		expect(semesterJustStarted(terms, '2026-09-23', 7)).toBeNull();
+		expect(semesterJustStarted(terms, '2026-10-01', 7)).toBeNull();
+	});
+});
+
+describe('semesterForRegistration', () => {
+	const terms = resolveAcademicTerms(2026, [
+		{ term: 'fall', start: '2026-09-24', end: '2027-01-31', source: 'auto' },
+	]);
+
+	it('始まる leadDays 日前から、終わりの日まで、その学期を返す', () => {
+		expect(semesterForRegistration(terms, '2026-09-10', 14)).toMatchObject({ term: 'fall' });
+		expect(semesterForRegistration(terms, '2026-10-23', 14)).toMatchObject({ term: 'fall' });
+		expect(semesterForRegistration(terms, '2027-01-31', 14)).toMatchObject({ term: 'fall' });
+		expect(semesterForRegistration(terms, '2026-05-01', 14)).toMatchObject({ term: 'spring' });
+	});
+
+	it('どの学期にも近くなければ null', () => {
+		expect(semesterForRegistration(terms, '2026-09-09', 14)).toBeNull();
+		expect(semesterForRegistration(terms, '2027-02-10', 14)).toBeNull();
 	});
 });
