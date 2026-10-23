@@ -1,9 +1,13 @@
 import { defineConfig, devices } from '@playwright/test';
 import { E2E_DATA_DIR } from './e2e-data-dir.ts';
 import { OIDC_PORT } from './oidc-port.ts';
+import { workerClient } from './e2e-worker.ts';
 import { generateSecrets } from './src/lib/server/env-file.ts';
 
 const port = 4173;
+
+/** 全体の設定を変えるテストのファイル */
+const SHARED_SETTINGS = ['admin.test.ts', 'notifications.test.ts'];
 
 /** テスト用のサーバーに渡す環境変数。本番と同じ検査を通る形にした架空の値 */
 const serverEnv = {
@@ -11,7 +15,7 @@ const serverEnv = {
 	ORIGIN: `http://localhost:${port}`,
 	GOOGLE_CLIENT_ID: 'e2e.apps.googleusercontent.com',
 	GOOGLE_CLIENT_SECRET: 'e2e-client-secret',
-	// Google の代わりに、テスト本体が立てる OpenID Connect のサーバーを使う
+	// Google の代わりに、e2e/global-setup.ts が立てる OpenID Connect のサーバーを使う
 	OIDC_ISSUER: `http://127.0.0.1:${OIDC_PORT}`,
 	// 大学のアカウントなら誰でも登録できる形にする (招待コードの流れは単体テストで確かめている)
 	REGISTRATION: 'open',
@@ -35,15 +39,42 @@ const serverEnv = {
 export default defineConfig({
 	testDir: 'e2e',
 	forbidOnly: !!process.env['CI'],
-	// ログインの OpenID Connect のサーバーを、同じポートで 1 つずつ立てるので、ファイルも 1 つずつ動かす
-	workers: 1,
+	// ファイルを並べて動かす (ファイルの中のテストは順に動く)。ログインの OpenID Connect のサーバーは、
+	// global-setup.ts が 1 つだけ立て、次にログインする人をワーカーごとに分ける
+	globalSetup: './e2e/global-setup.ts',
+	workers: 4,
 	retries: process.env['CI'] ? 2 : 0,
 	reporter: process.env['CI'] ? [['github'], ['html', { open: 'never' }]] : 'list',
 	use: {
 		baseURL: `http://localhost:${port}`,
 		trace: 'on-first-retry',
+		// どのワーカーのブラウザかを、テスト用の OpenID Connect のサーバーに伝える (e2e-worker.ts)
+		extraHTTPHeaders: { 'x-e2e-worker': workerClient() },
 	},
-	projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+	projects: [
+		// 初めにサーバーが動いていることを確かめ、終わったら (ほかが落ちても) 全体の設定を変えるファイルを動かす
+		{
+			name: 'server',
+			use: { ...devices['Desktop Chrome'] },
+			testMatch: 'healthz.test.ts',
+			teardown: 'shared-settings',
+		},
+		{
+			name: 'chromium',
+			use: { ...devices['Desktop Chrome'] },
+			testIgnore: ['healthz.test.ts', ...SHARED_SETTINGS],
+			dependencies: ['server'],
+		},
+		// 全体の設定 (曜日と時限の登録のしかた、学期の期間、招待の方式、Webhook の上限など) を変えるファイル。
+		// ほかのファイルの確かめる画面を変えてしまうので、ほかがすべて終わってから動かす。
+		// この 2 つのファイルは、互いに別の設定を変えるので、並べて動かせる
+		{
+			name: 'shared-settings',
+			use: { ...devices['Desktop Chrome'] },
+			testMatch: SHARED_SETTINGS,
+			workers: 2,
+		},
+	],
 	webServer: {
 		command: `pnpm build && pnpm preview --port ${port} --strictPort`,
 		port,

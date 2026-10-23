@@ -5,8 +5,6 @@ import type { AddressInfo } from 'node:net';
 import { expect, test } from '@playwright/test';
 import { oidc, seedSubjects, signIn, useMockOidc, answerConfirm } from './support.ts';
 
-// サーバーの状態 (次にログインする人) を共有するので、テストは 1 つずつ動かす
-test.describe.configure({ mode: 'serial' });
 useMockOidc();
 
 test.describe('公開 API と MCP', () => {
@@ -15,7 +13,7 @@ test.describe('公開 API と MCP', () => {
 		request,
 	}) => {
 		const email = `e2e-tokens-${Date.now()}@fun.ac.jp`;
-		oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
+		await oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
 		await signIn(page);
 		await page.goto('/app/settings');
 		await page.getByRole('link', { name: '公開 API と MCP' }).click();
@@ -26,8 +24,9 @@ test.describe('公開 API と MCP', () => {
 		await page.getByRole('button', { name: '発行する' }).click();
 		await expect(page.getByText('を発行しました', { exact: false })).toBeVisible();
 
+		// 発行したトークンは、欄が描かれたあとに入る
+		await expect(page.locator('#new-token')).toHaveValue(/^fmy_/);
 		const token = await page.locator('#new-token').inputValue();
-		expect(token).toMatch(/^fmy_/);
 
 		const item = page.getByRole('listitem').filter({ hasText: 'e2e のテスト' });
 		await expect(item).toContainText('read:lessons');
@@ -67,7 +66,7 @@ test.describe('公開 API と MCP', () => {
 		request,
 	}) => {
 		const email = `e2e-write-${Date.now()}@fun.ac.jp`;
-		oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
+		await oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
 		await signIn(page);
 		await page.goto('/app/settings/tokens');
 
@@ -76,6 +75,8 @@ test.describe('公開 API と MCP', () => {
 		await page.getByLabel('名前 (どこで使うかのメモ)').fill('読むだけ');
 		await page.getByLabel('今日や週の授業').check();
 		await page.getByRole('button', { name: '発行する' }).click();
+		// 発行したトークンは、欄が描かれたあとに入る
+		await expect(page.locator('#new-token')).toHaveValue(/^fmy_/);
 		const readOnly = await page.locator('#new-token').inputValue();
 		const event = {
 			title: 'E2E の予定',
@@ -92,6 +93,8 @@ test.describe('公開 API と MCP', () => {
 		await page.getByLabel('名前 (どこで使うかのメモ)').fill('予定の登録用');
 		await page.getByLabel('予定を足す、直す、消す').check();
 		await page.getByRole('button', { name: '発行する' }).click();
+		// 発行したトークンは、欄が描かれたあとに入る
+		await expect(page.locator('#new-token')).toHaveValue(/^fmy_/);
 		const writer = await page.locator('#new-token').inputValue();
 
 		// 手元の MCP の設定と、コマンドのログインの例が、この Funmary の URL で出る (トークンは、設定の例にだけ入る)
@@ -128,7 +131,7 @@ test.describe('公開 API と MCP', () => {
 	}) => {
 		seedSubjects(() => undefined);
 		const email = `e2e-courses-${Date.now()}@fun.ac.jp`;
-		oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
+		await oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
 		await signIn(page);
 		await page.goto('/app/settings/tokens');
 		await expect(
@@ -137,6 +140,8 @@ test.describe('公開 API と MCP', () => {
 		await page.getByLabel('名前 (どこで使うかのメモ)').fill('履修の登録用');
 		await page.getByLabel('履修登録、自分だけの曜日と時限、略称を書き換える').check();
 		await page.getByRole('button', { name: '発行する' }).click();
+		// 発行したトークンは、欄が描かれたあとに入る
+		await expect(page.locator('#new-token')).toHaveValue(/^fmy_/);
 		const writer = await page.locator('#new-token').inputValue();
 		const headers = { Authorization: `Bearer ${writer}` };
 
@@ -217,7 +222,7 @@ test.describe('公開 API と MCP', () => {
 
 		// ログインしていないと、ログインに送られ、ログインのあとに同意の画面へ戻る
 		const email = `e2e-oauth-${Date.now()}@fun.ac.jp`;
-		oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
+		await oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
 		await page.goto(authorizeUrl);
 		await expect(page).toHaveURL('/login');
 		await signIn(page);

@@ -33,13 +33,22 @@ export interface MockOidcOptions {
 	keyFile?: string;
 }
 
+export type TamperMode = 'none' | 'wrong-key' | 'wrong-audience' | 'expired' | 'wrong-nonce';
+
+/**
+ * 認可のリクエストの x-e2e-worker ヘッダーの値ごとに、ログインする人と ID トークンの壊し方を分ける。
+ * E2E のワーカー (別のプロセス) が 1 つのサーバーを共有するので、ワーカーは POST /__mock/identity と
+ * POST /__mock/tamper ({ client, identity } と { client, mode }) で、自分の分を決める
+ */
+export const CLIENT_HEADER = 'x-e2e-worker';
+
 export interface MockOidcServer {
 	/** issuer の URL (末尾の / なし) */
 	readonly issuer: string;
-	/** 次にログインする人。認可のリクエストが来ると、この人でログインしたことにする */
+	/** 次にログインする人 (x-e2e-worker のないリクエストの分)。認可のリクエストが来ると、この人でログインしたことにする */
 	setIdentity(identity: MockIdentity): void;
-	/** 次に返す ID トークンを、わざと壊す */
-	tamper(mode: 'none' | 'wrong-key' | 'wrong-audience' | 'expired' | 'wrong-nonce'): void;
+	/** 次に返す ID トークンを、わざと壊す (x-e2e-worker のないリクエストの分) */
+	tamper(mode: TamperMode): void;
 	close(): Promise<void>;
 }
 
@@ -84,10 +93,26 @@ export async function startMockOidcServer(options: MockOidcOptions): Promise<Moc
 	const kid = 'mock-key-1';
 	const jwk = { ...keys.publicKey.export({ format: 'jwk' }), kid, alg: 'RS256', use: 'sig' };
 
-	let identity: MockIdentity = { sub: 'mock-sub', email: 'mock@fun.ac.jp', hd: 'fun.ac.jp' };
-	let tamper: Parameters<MockOidcServer['tamper']>[0] = 'none';
+	const defaultIdentity: MockIdentity = {
+		sub: 'mock-sub',
+		email: 'mock@fun.ac.jp',
+		hd: 'fun.ac.jp',
+	};
+	/** x-e2e-worker の値 (ないときは '') → ログインする人と、ID トークンの壊し方 */
+	const clients = new Map<string, { identity: MockIdentity; tamper: TamperMode }>();
+	const clientOf = (key: string) => {
+		let client = clients.get(key);
+		if (!client) {
+			client = { identity: defaultIdentity, tamper: 'none' };
+			clients.set(key, client);
+		}
+		return client;
+	};
 	/** 認可のコード → 認可のときに受け取った値 */
-	const codes = new Map<string, { nonce: string; challenge: string; identity: MockIdentity }>();
+	const codes = new Map<
+		string,
+		{ nonce: string; challenge: string; identity: MockIdentity; tamper: TamperMode }
+	>();
 	let issuer = '';
 
 	const server: Server = createServer((request, response) => {
@@ -113,6 +138,20 @@ export async function startMockOidcServer(options: MockOidcOptions): Promise<Moc
 			}
 			if (url.pathname === '/jwks') return json(200, { keys: [jwk] });
 
+			if (url.pathname === '/__mock/identity' && request.method === 'POST') {
+				const body = JSON.parse(await readBody(request)) as {
+					client: string;
+					identity: MockIdentity;
+				};
+				clientOf(body.client).identity = body.identity;
+				return json(200, {});
+			}
+			if (url.pathname === '/__mock/tamper' && request.method === 'POST') {
+				const body = JSON.parse(await readBody(request)) as { client: string; mode: TamperMode };
+				clientOf(body.client).tamper = body.mode;
+				return json(200, {});
+			}
+
 			if (url.pathname === '/authorize') {
 				const redirectUri = url.searchParams.get('redirect_uri');
 				const state = url.searchParams.get('state');
@@ -127,7 +166,14 @@ export async function startMockOidcServer(options: MockOidcOptions): Promise<Moc
 					return json(400, { error: 'invalid_request' });
 				}
 				const code = randomBytes(16).toString('hex');
-				codes.set(code, { nonce: url.searchParams.get('nonce') ?? '', challenge, identity });
+				const header = request.headers[CLIENT_HEADER];
+				const client = clientOf(typeof header === 'string' ? header : '');
+				codes.set(code, {
+					nonce: url.searchParams.get('nonce') ?? '',
+					challenge,
+					identity: client.identity,
+					tamper: client.tamper,
+				});
 				const back = new URL(redirectUri);
 				back.searchParams.set('code', code);
 				back.searchParams.set('state', state);
@@ -158,6 +204,7 @@ export async function startMockOidcServer(options: MockOidcOptions): Promise<Moc
 					return json(400, { error: 'invalid_grant' });
 				}
 
+				const { tamper } = entry;
 				const now = Math.floor(Date.now() / 1000);
 				const claims = {
 					iss: issuer,
@@ -193,10 +240,10 @@ export async function startMockOidcServer(options: MockOidcOptions): Promise<Moc
 	return {
 		issuer,
 		setIdentity(next) {
-			identity = next;
+			clientOf('').identity = next;
 		},
 		tamper(mode) {
-			tamper = mode;
+			clientOf('').tamper = mode;
 		},
 		close: () =>
 			new Promise<void>((resolve, reject) => {

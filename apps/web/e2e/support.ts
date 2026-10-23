@@ -1,55 +1,39 @@
 // E2E のテストが共有する部品。Google の代わりに、テスト用の OpenID Connect のサーバーを使う。
 // サーバーは本物の RS256 で署名した ID トークンを返すので、アプリは本番と同じ手順 (PKCE、state、nonce、署名の検証) を通る。
-import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { createBusStore, createSubjectStore, openDatabase, type Database } from '@funmary/db';
 import { expect, test, type Page } from '@playwright/test';
-import {
-	startMockOidcServer,
-	type MockOidcServer,
+import type {
+	MockIdentity,
+	TamperMode,
 } from '../../../packages/private/auth/src/testing/mock-oidc-server.ts';
 import { E2E_DATA_DIR } from '../e2e-data-dir.ts';
 import { OIDC_PORT } from '../oidc-port.ts';
+import { workerClient } from '../e2e-worker.ts';
 
-let server: MockOidcServer | undefined;
-
-const running = (): MockOidcServer => {
-	if (!server) throw new Error('useMockOidc() を、テストファイルの先頭で呼んでください');
-	return server;
-};
-
-/** 次にログインする人と、ID トークンの改ざんを決める。useMockOidc() で立てたサーバーに届く */
-export const oidc = {
-	setIdentity: (...args: Parameters<MockOidcServer['setIdentity']>) =>
-		running().setIdentity(...args),
-	tamper: (...args: Parameters<MockOidcServer['tamper']>) => running().tamper(...args),
-};
+/** global-setup.ts が立てたサーバーに、このワーカーの分を頼む */
+async function control(path: string, body: object) {
+	const response = await fetch(`http://127.0.0.1:${OIDC_PORT}${path}`, {
+		method: 'POST',
+		body: JSON.stringify({ client: workerClient(), ...body }),
+	});
+	if (!response.ok)
+		throw new Error(`テスト用の OpenID Connect のサーバーが ${response.status} を返しました`);
+}
 
 /**
- * テストファイルの先頭で呼ぶ。ファイルの間、テスト用の OpenID Connect のサーバーを立てておく。
- * サーバーの状態 (次にログインする人) を共有するので、ファイルの中のテストは 1 つずつ動かし (describe.configure の serial)、
- * ファイルも 1 つずつ動かす (playwright.config の workers: 1)
+ * 次にログインする人と、ID トークンの改ざんを決める。決めた値は、このワーカーのブラウザからのログインにだけ効く
+ * (ブラウザは x-e2e-worker ヘッダーでワーカーを名乗る。playwright.config.js)
  */
+export const oidc = {
+	setIdentity: (identity: MockIdentity) => control('/__mock/identity', { identity }),
+	tamper: (mode: TamperMode) => control('/__mock/tamper', { mode }),
+};
+
+/** テストファイルの先頭で呼ぶ。ID トークンを壊したテストのあとに、元に戻す */
 export function useMockOidc() {
-	test.beforeAll(async () => {
-		mkdirSync(E2E_DATA_DIR, { recursive: true });
-		server = await startMockOidcServer({
-			clientId: 'e2e.apps.googleusercontent.com',
-			clientSecret: 'e2e-client-secret',
-			port: OIDC_PORT,
-			// 失敗したテストのやり直しでは、新しいワーカーがこのサーバーを立て直す。アプリは前の公開鍵を覚えているので、
-			// 鍵が変わると ID トークンの検証に失敗し、以降のログインがすべて落ちる。立て直しても同じ鍵を使う
-			keyFile: join(E2E_DATA_DIR, 'mock-oidc-key.pem'),
-		});
-	});
-
-	test.afterAll(async () => {
-		await server?.close();
-		server = undefined;
-	});
-
-	test.afterEach(() => {
-		server?.tamper('none');
+	test.afterEach(async () => {
+		await oidc.tamper('none');
 	});
 }
 
@@ -65,12 +49,25 @@ export async function signIn(page: Page) {
 	await expect(page).not.toHaveURL(/\/consent/);
 }
 
-/** テストのサーバーと同じ DB を開いて架空の科目を入れ (何度入れても同じになる)、演習の科目の ID と DB を fn に渡す */
-export function seedSubjects<T>(fn: (database: Database, exerciseId: number) => T): T {
+/**
+ * テストのサーバーと同じ DB を開き、fn を 1 つのトランザクションで動かす。テストのサーバーと書き込みを取り合うので、
+ * 初めに書き込みの鍵を取る (IMMEDIATE)。読んでから書くトランザクションは、その間にサーバーが書くと、待たずに
+ * database is locked で失敗する (WAL のため)
+ */
+function withTestDatabase<T>(fn: (database: Database) => T): T {
 	const database = openDatabase(join(E2E_DATA_DIR, 'funmary.db'), {
 		backupDir: join(E2E_DATA_DIR, 'backups'),
 	});
 	try {
+		return database.sqlite.transaction(() => fn(database)).immediate();
+	} finally {
+		database.close();
+	}
+}
+
+/** テストのサーバーと同じ DB を開いて架空の科目を入れ (何度入れても同じになる)、演習の科目の ID と DB を fn に渡す */
+export function seedSubjects<T>(fn: (database: Database, exerciseId: number) => T): T {
+	return withTestDatabase((database) => {
 		const subjects = createSubjectStore(database);
 		const base = {
 			academicYear: 2026,
@@ -97,14 +94,12 @@ export function seedSubjects<T>(fn: (database: Database, exerciseId: number) => 
 			new Date(),
 		);
 		return fn(database, exerciseId);
-	} finally {
-		database.close();
-	}
+	});
 }
 
 /** 指定したメールアドレスの利用者 (大学のアカウント) として、ログインして、アプリ (/app) を開く。同意の画面は通り抜ける */
 export async function signInAs(page: Page, email: string) {
-	oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
+	await oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
 	await signIn(page);
 	await expect(page).toHaveURL('/app');
 }
@@ -123,10 +118,7 @@ export function seedBus({
 		return `${hour}:${String(minutes % 60).padStart(2, '0')}`;
 	}),
 }: { route?: string; times?: string[] } = {}) {
-	const database = openDatabase(join(E2E_DATA_DIR, 'funmary.db'), {
-		backupDir: join(E2E_DATA_DIR, 'backups'),
-	});
-	try {
+	return withTestDatabase((database) => {
 		const bus = createBusStore(database);
 		const now = new Date();
 		const generation = { code: 20200101, name: '令和2年1月1日', current: true };
@@ -174,9 +166,7 @@ export function seedBus({
 				now,
 			);
 		}
-	} finally {
-		database.close();
-	}
+	});
 }
 
 /**

@@ -2,13 +2,11 @@
 import { expect, test, type Page } from '@playwright/test';
 import { oidc, signIn, useMockOidc, seedSubjects, signInAs, answerConfirm } from './support.ts';
 
-// サーバーの状態 (次にログインする人) を共有するので、テストは 1 つずつ動かす
-test.describe.configure({ mode: 'serial' });
 useMockOidc();
 
 test.describe('ポータルの時間割の取り込み', () => {
 	const loginAs = async (page: Page) => {
-		oidc.setIdentity({
+		await oidc.setIdentity({
 			sub: 'e2e-import',
 			email: 'import@fun.ac.jp',
 			email_verified: true,
@@ -17,11 +15,6 @@ test.describe('ポータルの時間割の取り込み', () => {
 		await signIn(page);
 		await expect(page).toHaveURL('/app');
 	};
-
-	test('ログインしていなければ、ログインの画面に移る', async ({ page }) => {
-		await page.goto('/app/courses/import');
-		await expect(page).toHaveURL('/login');
-	});
 
 	test('使い方と、自動では取れないため利用者どうしで登録している旨、ブックマークレットを出す', async ({
 		page,
@@ -104,11 +97,6 @@ test.describe('履修科目の登録', () => {
 	});
 
 	const loginAs = (page: Page) => signInAs(page, `${sub}@fun.ac.jp`);
-
-	test('ログインしていなければ、ログインの画面に移る', async ({ page }) => {
-		await page.goto('/app/courses');
-		await expect(page).toHaveURL('/login');
-	});
 
 	test('科目を探して登録し、曜日と時限を足し、登録を取り消せる', async ({ page }) => {
 		await loginAs(page);
@@ -204,7 +192,12 @@ test.describe('履修科目の登録', () => {
 		// ほかの利用者は探して登録できるが、直せない
 		const other = await (await browser.newContext()).newPage();
 		const otherEmail = `e2e-other-${Date.now()}@fun.ac.jp`;
-		oidc.setIdentity({ sub: otherEmail, email: otherEmail, email_verified: true, hd: 'fun.ac.jp' });
+		await oidc.setIdentity({
+			sub: otherEmail,
+			email: otherEmail,
+			email_verified: true,
+			hd: 'fun.ac.jp',
+		});
 		await signIn(other);
 		await other.goto(`/app/courses?q=${encodeURIComponent(name)}`);
 		await other.getByRole('link', { name }).click();
@@ -261,7 +254,12 @@ test.describe('履修科目の登録', () => {
 
 		const other = await (await browser.newContext()).newPage();
 		const otherEmail = `e2e-visibility-${Date.now()}@fun.ac.jp`;
-		oidc.setIdentity({ sub: otherEmail, email: otherEmail, email_verified: true, hd: 'fun.ac.jp' });
+		await oidc.setIdentity({
+			sub: otherEmail,
+			email: otherEmail,
+			email_verified: true,
+			hd: 'fun.ac.jp',
+		});
 		await signIn(other);
 
 		// 既定 (全体公開) では、ほかの利用者も探して見つけられる

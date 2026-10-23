@@ -11,7 +11,7 @@ test('ログインしていなければ、アプリの紹介と、はじめる�
 		'/auth/google',
 	);
 	// 招待コードの欄は、招待制のときだけ出す
-	await expect(page.getByLabel('はじめての方は、招待コードで登録します')).toHaveCount(0);
+	await expect(page.getByLabel('招待コード')).toHaveCount(0);
 	await expect(page.getByRole('region', { name: 'できること' }).getByRole('listitem')).toHaveCount(
 		8,
 	);
@@ -144,7 +144,7 @@ test('/favicon.ico は、ICO の形式で返る (ファビコンを集めるサ�
 
 test('だれでも登録できるときは、?code= があっても、招待コードの欄を出さない', async ({ page }) => {
 	await page.goto('/?code=abcdef');
-	await expect(page.getByLabel('はじめての方は、招待コードで登録します')).toHaveCount(0);
+	await expect(page.getByLabel('招待コード')).toHaveCount(0);
 	// 招待コードが URL にあるのは、招待制のときだけの使い方。参照元の制限も付けない
 	await expect(page.locator('meta[name="referrer"]')).toHaveCount(0);
 });

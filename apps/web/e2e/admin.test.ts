@@ -5,8 +5,6 @@ import { openDatabase } from '@funmary/db';
 import { E2E_DATA_DIR } from '../e2e-data-dir.ts';
 import { oidc, signIn, useMockOidc, seedSubjects, signInAs, answerConfirm } from './support.ts';
 
-// サーバーの状態 (次にログインする人) を共有するので、テストは 1 つずつ動かす
-test.describe.configure({ mode: 'serial' });
 useMockOidc();
 
 test.describe('管理画面', () => {
@@ -39,16 +37,27 @@ test.describe('管理画面', () => {
 			.click();
 		await expect(page.getByRole('link', { name: /カレンダーの購読/ })).toBeVisible();
 		await expect(page.getByRole('region', { name: '管理' })).toHaveCount(0);
-		const response = await page.goto('/app/admin/lessons');
-		expect(response?.status()).toBe(404);
+		// 管理の画面は、それぞれの画面で管理者かを確かめるので、すべて開いて確かめる
+		for (const path of [
+			'/app/admin',
+			'/app/admin/audit-log',
+			'/app/admin/calendar',
+			'/app/admin/campus-network',
+			'/app/admin/discord',
+			'/app/admin/invites',
+			'/app/admin/lessons',
+			'/app/admin/slot-review',
+			'/app/admin/status',
+			'/app/admin/support-invites',
+			'/app/admin/test-accounts',
+			'/app/admin/timetable',
+			'/app/admin/webhooks',
+		]) {
+			expect((await page.goto(path))?.status(), path).toBe(404);
+		}
 	});
 
-	test('シラバスにない授業の公開、情報の変更、削除が、操作の記録に残る。管理者でなければ見られない', async ({
-		page,
-	}) => {
-		await signInAs(page, 'e2e-not-admin@fun.ac.jp');
-		expect((await page.goto('/app/admin/audit-log'))?.status()).toBe(404);
-
+	test('シラバスにない授業の公開、情報の変更、削除が、操作の記録に残る', async ({ page }) => {
 		await signInAs(page, 'e2e-admin@fun.ac.jp');
 		const name = `E2E の監査ログ演習${Date.now()}`;
 		await page.goto('/app/courses');
@@ -288,14 +297,6 @@ test.describe('学年暦の管理', () => {
 
 	const loginAsAdmin = (page: Page) => signInAs(page, 'e2e-admin@fun.ac.jp');
 
-	test('管理者でなければ、学年暦の画面は見つからないことにする', async ({ page }) => {
-		const email = 'e2e-not-admin@fun.ac.jp';
-		oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
-		await signIn(page);
-		const response = await page.goto('/app/admin/calendar');
-		expect(response?.status()).toBe(404);
-	});
-
 	test('学期の期間、振替授業日、全学の休講日を入れて消せる。入れた値は時間割に使われる', async ({
 		page,
 	}) => {
@@ -442,7 +443,7 @@ test.describe('サポートサーバーの招待', () => {
 		page,
 	}) => {
 		const email = 'e2e-admin@fun.ac.jp';
-		oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
+		await oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
 		await signIn(page);
 		await page.goto('/app/settings');
 		await page.getByRole('link', { name: 'サポートサーバーの招待' }).click();
@@ -487,14 +488,6 @@ test.describe('サポートサーバーの招待', () => {
 		await page.goto('/about');
 		await expect(page.getByRole('link', { name: 'Discord のサポートサーバー' })).toHaveCount(0);
 	});
-
-	test('管理者でなければ、見つからないことにする', async ({ page }) => {
-		const email = 'e2e-not-admin@fun.ac.jp';
-		oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
-		await signIn(page);
-		const response = await page.goto('/app/admin/support-invites');
-		expect(response?.status()).toBe(404);
-	});
 });
 
 test.describe('学内のネットワーク', () => {
@@ -507,7 +500,7 @@ test.describe('学内のネットワーク', () => {
 	test.afterAll(clearRanges);
 
 	const openPage = async (page: Page) => {
-		oidc.setIdentity({
+		await oidc.setIdentity({
 			sub: 'e2e-admin@fun.ac.jp',
 			email: 'e2e-admin@fun.ac.jp',
 			email_verified: true,
@@ -587,14 +580,6 @@ test.describe('学内のネットワーク', () => {
 		await expect(current).toContainText('未登録');
 		await expect(own).toBeEnabled();
 	});
-
-	test('管理者でなければ、見つからないことにする', async ({ page }) => {
-		const email = 'e2e-not-admin@fun.ac.jp';
-		oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
-		await signIn(page);
-		const response = await page.goto('/app/admin/campus-network');
-		expect(response?.status()).toBe(404);
-	});
 });
 
 test.describe('取得元と実行履歴', () => {
@@ -629,7 +614,7 @@ test.describe('取得元と実行履歴', () => {
 
 	test('管理者は、取得元の状態と実行履歴を見られる', async ({ page }) => {
 		const email = 'e2e-admin@fun.ac.jp';
-		oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
+		await oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
 		await signIn(page);
 		await page.goto('/app/settings');
 		await page.getByRole('link', { name: '取得元と実行履歴' }).click();
@@ -651,7 +636,7 @@ test.describe('取得元と実行履歴', () => {
 
 	test('管理者は、定期処理を今すぐ動かせる。応答時間の分布も見られる', async ({ page }) => {
 		const email = 'e2e-admin@fun.ac.jp';
-		oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
+		await oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
 		await signIn(page);
 		await page.goto('/app/admin/status');
 
@@ -677,14 +662,6 @@ test.describe('取得元と実行履歴', () => {
 		const responses = page.getByRole('region', { name: '応答時間 (直近 24 時間)' });
 		await expect(responses).toContainText('100 ms 以内');
 		await expect(responses.getByRole('table', { name: '応答時間の分布' })).toBeVisible();
-	});
-
-	test('管理者でなければ、見つからないことにする', async ({ page }) => {
-		const email = 'e2e-not-admin@fun.ac.jp';
-		oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
-		await signIn(page);
-		const response = await page.goto('/app/admin/status');
-		expect(response?.status()).toBe(404);
 	});
 });
 
@@ -813,12 +790,16 @@ test.describe('テストアカウント', () => {
 		// 用意していない Google アカウントは、断られる
 		const guest = await browser.newContext();
 		const guestPage = await guest.newPage();
-		oidc.setIdentity({ sub: 'e2e-stranger', email: 'stranger@gmail.com', email_verified: true });
+		await oidc.setIdentity({
+			sub: 'e2e-stranger',
+			email: 'stranger@gmail.com',
+			email_verified: true,
+		});
 		await guestPage.goto('/auth/google/test');
 		await expect(guestPage).toHaveURL(/\/login\?error=/);
 
 		// 用意したアカウントでは、入れる (規約への同意から)
-		oidc.setIdentity({ sub: tester, email: tester, email_verified: true });
+		await oidc.setIdentity({ sub: tester, email: tester, email_verified: true });
 		await guestPage.goto('/auth/google/test');
 		await expect(guestPage).toHaveURL(/\/consent/);
 		await guestPage.getByLabel('利用規約とプライバシーポリシーに同意します').check();

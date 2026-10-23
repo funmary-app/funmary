@@ -3,14 +3,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import { oidc, signIn, useMockOidc, answerConfirm } from './support.ts';
 
-// サーバーの状態 (次にログインする人) を共有するので、テストは 1 つずつ動かす
-test.describe.configure({ mode: 'serial' });
 useMockOidc();
-
-test('ログインしていないと、トップページにログインへのリンクが出る', async ({ page }) => {
-	await page.goto('/');
-	await expect(page.getByRole('link', { name: '大学のアカウントではじめる' })).toBeVisible();
-});
 
 test('共有したときのカード (OGP) の情報を出し、画像は絶対 URL で配る', async ({
 	page,
@@ -68,7 +61,7 @@ test.describe('ホーム画面に追加 (PWA)', () => {
 	}) => {
 		const email = 'e2e-pwa@fun.ac.jp';
 		const login = async (page: Page) => {
-			oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
+			await oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
 			await signIn(page);
 			await expect(page).toHaveURL('/app');
 		};
@@ -104,7 +97,7 @@ test.describe('ホーム画面に追加 (PWA)', () => {
 });
 
 test('大学のアカウントでログインでき、ログアウトできる', async ({ page }) => {
-	oidc.setIdentity({
+	await oidc.setIdentity({
 		sub: 'e2e-taro',
 		email: 'taro@fun.ac.jp',
 		email_verified: true,
@@ -166,7 +159,7 @@ test.describe('利用規約への同意', () => {
 		page,
 	}) => {
 		const email = `e2e-consent-${Date.now()}@fun.ac.jp`;
-		oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
+		await oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
 		await page.goto('/auth/google');
 		await expect(page).toHaveURL('/consent?next=%2Fapp');
 		await expect(page.getByRole('heading', { level: 1, name: '利用規約への同意' })).toBeVisible();
@@ -201,7 +194,7 @@ test.describe('利用規約への同意', () => {
 
 	test('同意せずにログアウトできる。外のサイトへ戻る指定は受け付けない', async ({ page }) => {
 		const email = `e2e-decline-${Date.now()}@fun.ac.jp`;
-		oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
+		await oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
 		await page.goto('/auth/google');
 		await expect(page).toHaveURL('/consent?next=%2Fapp');
 		await page.getByRole('button', { name: '同意せずにログアウト' }).click();
@@ -217,7 +210,11 @@ test.describe('利用規約への同意', () => {
 });
 
 test('大学のアカウントでなければ、ログインできず、理由が出る', async ({ page }) => {
-	oidc.setIdentity({ sub: 'e2e-outsider', email: 'someone@example.com', email_verified: true });
+	await oidc.setIdentity({
+		sub: 'e2e-outsider',
+		email: 'someone@example.com',
+		email_verified: true,
+	});
 	await signIn(page);
 	await expect(page).toHaveURL(/\/login\?error=/);
 	await expect(page.getByRole('alert')).toContainText('大学');
@@ -225,13 +222,13 @@ test('大学のアカウントでなければ、ログインできず、理由�
 });
 
 test('署名の合わない ID トークンは、受け付けない', async ({ page }) => {
-	oidc.setIdentity({
+	await oidc.setIdentity({
 		sub: 'e2e-forged',
 		email: 'forged@fun.ac.jp',
 		email_verified: true,
 		hd: 'fun.ac.jp',
 	});
-	oidc.tamper('wrong-key');
+	await oidc.tamper('wrong-key');
 	await signIn(page);
 	await expect(page).toHaveURL('/login?error=invalid-callback');
 	await expect(page.getByRole('alert')).toBeVisible();

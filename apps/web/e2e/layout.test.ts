@@ -3,14 +3,12 @@ import { expect, test, type Page } from '@playwright/test';
 import { REPOSITORY_URL } from '../src/lib/repository.ts';
 import { oidc, signIn, useMockOidc, seedSubjects, signInAs } from './support.ts';
 
-// サーバーの状態 (次にログインする人) を共有するので、テストは 1 つずつ動かす
-test.describe.configure({ mode: 'serial' });
 useMockOidc();
 
 test.describe('スマホの幅で、画面が横にはみ出さない', () => {
 	test('主な画面を、スマホの幅 (390px) で開いても、横スクロールが出ない', async ({ page }) => {
 		const email = `e2e-overflow-${Date.now()}@fun.ac.jp`;
-		oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
+		await oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
 		await signIn(page);
 		await expect(page).toHaveURL('/app');
 		await page.setViewportSize({ width: 390, height: 844 });
@@ -47,7 +45,7 @@ test.describe('スマホの幅で、画面が横にはみ出さない', () => {
 	});
 
 	test('管理画面を、スマホの幅 (390px) で開いても、横スクロールが出ない', async ({ page }) => {
-		oidc.setIdentity({
+		await oidc.setIdentity({
 			sub: 'e2e-admin@fun.ac.jp',
 			email: 'e2e-admin@fun.ac.jp',
 			email_verified: true,
