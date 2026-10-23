@@ -54,6 +54,7 @@ SMUI を使うにあたって、次のように決めています。
 - **型の検査は `apps/web` だけ少し緩めます。** SMUI は型のために TypeScript のソースを同梱していて、svelte-check がこちらの設定で検査すると失敗します。パッチは当てず、`apps/web` の tsconfig だけ `noUncheckedIndexedAccess` を外します。`packages/*/*` と `scripts/` は、ルートの tsconfig で検査します
 - **CSS の強さは、読み込む順番ではなくレイヤーで決めます。** 部品の CSS は、全体の CSS よりあとに読まれることがあるためです。弱い順に、全体の要素への指定 (`base.scss`、レイヤー `base`)、SMUI の部品 (`smui`)、SMUI の見た目の上書き (`smui-overrides.scss`、`smui-overrides`) です。画面ごとのスタイルはレイヤーに入れないので、いつもいちばん強くなります
 - **SMUI にある部品は、SMUI を使います。** 容量は、ページごとの JavaScript の上限で守ります。上限は [3.1](03-quality.md#31-目標値) のとおりです。部品の CSS は使うページだけで読まれるので、部品を足しても、ほかのページは重くなりません
+  - ただし、選択欄は SMUI の `@smui/select` を使わず、ブラウザの `<select>` のまま、見た目だけ SMUI の入力欄にそろえます。SMUI の選択欄はブラウザの `<select>` ではないので、スマホで OS の選択の画面が出なくなり、選択肢の多い欄 (学期、有効期限など) が選びにくくなるためです。SMUI の部品の中で JavaScript がいちばん重く (1 ページあたり約 31 KB)、フォームで送るのに hidden の input も要ります
 
 ## 4.3 使っているパッケージ
 
