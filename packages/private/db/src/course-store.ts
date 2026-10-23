@@ -74,6 +74,8 @@ export interface CourseStore {
 	isRegistered(userId: string, subjectId: number): boolean;
 	listRegistrations(userId: string): { subjectId: number; hopeCourseUrl: string | null }[];
 	slotsOf(subjectId: number): StoredSlot[];
+	/** その曜日と時限に共有の枠を持つ科目の ID */
+	subjectsAt(weekday: number, period: number): number[];
 }
 
 export function createCourseStore(database: Database): CourseStore {
@@ -256,6 +258,16 @@ export function createCourseStore(database: Database): CourseStore {
 				.where(eq(timetableSlots.subjectId, subjectId))
 				.orderBy(asc(timetableSlots.weekday), asc(timetableSlots.period))
 				.all();
+		},
+
+		subjectsAt(weekday, period) {
+			return db
+				.select({ subjectId: timetableSlots.subjectId })
+				.from(timetableSlots)
+				.where(and(eq(timetableSlots.weekday, weekday), eq(timetableSlots.period, period)))
+				.orderBy(asc(timetableSlots.subjectId))
+				.all()
+				.map((row) => row.subjectId);
 		},
 	};
 }
