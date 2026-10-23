@@ -84,6 +84,7 @@ export {
 export {
 	createClassChangeStore,
 	type AssignedClassChange,
+	type ListedClassChange,
 	type ClassChangeStore,
 	type SubjectClassChange,
 } from './class-change-store.ts';

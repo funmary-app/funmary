@@ -23,6 +23,11 @@ export interface ClassChangeStore {
 	 * 取り消されたものは除く
 	 */
 	listAssignedBetween(start: string, end: string): AssignedClassChange[];
+	/**
+	 * start から end まで (両端を含む) の休講などを、科目が決まっていないものも含めて、日付と時限の順に返す
+	 * (休講などの一覧の画面に使う)。取り消されたものは除く
+	 */
+	listBetween(start: string, end: string): ListedClassChange[];
 	/** まだ科目が決まっていない授業名を、重なりなく名前の順に返す */
 	unassignedLessonNames(): string[];
 	/** 科目が決まっていない、その授業名の行に科目を入れ、変えた行の数を返す。決まっている行は変えない */
@@ -56,6 +61,13 @@ export interface AssignedClassChange {
 	/** ポータルの休講などのコメント */
 	readonly comment: string | null;
 	readonly makeupPlan: TrackedChange['makeupPlan'];
+}
+
+export interface ListedClassChange extends Omit<AssignedClassChange, 'subjectId'> {
+	/** 照合できた科目。まだ決まっていなければ null */
+	readonly subjectId: number | null;
+	/** ポータルの表記のままの授業名 */
+	readonly lessonName: string;
 }
 
 type Row = typeof classChanges.$inferSelect;
@@ -184,6 +196,24 @@ export function createClassChangeStore(database: Database): ClassChangeStore {
 				.orderBy(classChanges.date, classChanges.period, classChanges.id)
 				.all()
 				.flatMap(({ subjectId, ...rest }) => (subjectId === null ? [] : [{ ...rest, subjectId }]));
+		},
+		listBetween(start, end) {
+			return db
+				.select({
+					kind: classChanges.kind,
+					subjectId: classChanges.subjectId,
+					lessonName: classChanges.lessonName,
+					date: classChanges.date,
+					period: classChanges.period,
+					room: classChanges.room,
+					fromRoom: classChanges.fromRoom,
+					comment: classChanges.comment,
+					makeupPlan: classChanges.makeupPlan,
+				})
+				.from(classChanges)
+				.where(and(between(classChanges.date, start, end), isNull(classChanges.withdrawnAt)))
+				.orderBy(classChanges.date, classChanges.period, classChanges.id)
+				.all();
 		},
 		unassignedLessonNames() {
 			return db
