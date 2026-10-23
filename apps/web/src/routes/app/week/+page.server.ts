@@ -81,6 +81,7 @@ export const load: ServerLoad = ({ cookies, locals, url }) => {
 				period: number,
 				start: period?.start ?? null,
 				end: period?.end ?? null,
+				editable: number <= DEFAULT_PERIODS.length,
 				cells: days.map((day) => ({
 					date: day,
 					lessons: cells.get(`${day}|${number}`) ?? [],

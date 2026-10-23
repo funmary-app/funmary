@@ -200,3 +200,33 @@ thead th {
 	display: block;
 	font-size: 0.875rem;
 }
+
+// コマ全体を、そのコマの画面へのリンクにする。中身はリンクの上に重ね、中のリンクだけを押せるようにする
+td.slot {
+	position: relative;
+}
+.slot-link {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--fm-text-muted);
+}
+.slot-link:hover {
+	background: color-mix(in srgb, var(--fm-primary) 8%, transparent);
+}
+.slot-link:focus-visible {
+	outline: 2px solid var(--fm-primary);
+	outline-offset: -2px;
+}
+.slot .event,
+.slot .lesson {
+	position: relative;
+	pointer-events: none;
+}
+.slot .event a,
+.slot .lesson a {
+	width: fit-content;
+	pointer-events: auto;
+}

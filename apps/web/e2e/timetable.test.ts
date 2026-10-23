@@ -54,6 +54,37 @@ test.describe('今日と週の時間割', () => {
 			insertChange.run('makeup', subjectId, '2026-10-08', 5, null, null);
 		});
 
+	/** 水曜 6 限に共有の枠がある、まだ履修していない後期の科目と、水曜 5 限の科目を入れる */
+	const seedSlotSubjects = () =>
+		seedSubjects((database) => {
+			const subjects = createSubjectStore(database);
+			const subject = (syllabusId: string, name: string) =>
+				subjects.upsert(
+					{
+						academicYear: 2026,
+						syllabusId,
+						name,
+						teacher: null,
+						credits: 2,
+						term: 'fall',
+						attributes: {},
+						syllabus: {},
+						syllabusUrl: null,
+					},
+					new Date(),
+				);
+			const target = subject('900004', '架空のコマ演習');
+			const other = subject('900005', '架空のほかのコマ演習');
+			createCourseStore(database).addSharedSlots(
+				[
+					{ subjectId: target, weekday: 3, period: 6, room: '495' },
+					{ subjectId: other, weekday: 3, period: 5, room: null },
+				],
+				{ source: 'pdf', createdBy: null },
+				new Date(),
+			);
+		});
+
 	// /app の下は、すべて同じ仕組み (/app のレイアウト) でログインを求めるので、1 つの画面で確かめる
 	test('ログインしていなければ、週の時間割はログインの画面に移る', async ({ page }) => {
 		await page.goto('/app/week');
@@ -153,6 +184,96 @@ test.describe('今日と週の時間割', () => {
 
 		await table.getByRole('link', { name: '架空の時間割演習' }).first().click();
 		await expect(page.getByRole('heading', { level: 1 })).toHaveText('架空の時間割演習');
+	});
+
+	test('週の時間割のコマを押すと、そのコマに枠のある科目を登録でき、取り消せる', async ({
+		page,
+	}) => {
+		await loginAs(page);
+		seedSlotSubjects();
+
+		await page.goto('/app/week?date=2026-10-07');
+		const table = page.getByRole('table');
+		await table.getByRole('link', { name: '10/7 (水) 6 限のコマ' }).click();
+		await expect(page).toHaveURL('/app/week/2026-10-07/6');
+		await expect(page.getByRole('heading', { level: 1 })).toHaveText('10/7 (水) 6 限');
+
+		const candidates = page.getByRole('region', { name: 'このコマの科目を登録する' });
+		// 同じ曜日のほかの時限の科目は出さない
+		await expect(candidates).not.toContainText('架空のほかのコマ演習');
+		const target = candidates.getByRole('listitem').filter({ hasText: '架空のコマ演習' });
+		await target.getByRole('button', { name: '登録する' }).click();
+		await expect(page.getByRole('status')).toHaveText('架空のコマ演習 を履修科目に登録しました。');
+
+		const registered = page.getByRole('region', { name: '登録した科目', exact: true });
+		await expect(registered).toContainText('架空のコマ演習');
+		await expect(candidates).not.toContainText('架空のコマ演習');
+
+		await page.getByRole('link', { name: '時間割に戻る' }).click();
+		await expect(page).toHaveURL('/app/week?date=2026-10-07');
+		const sixth = table
+			.getByRole('row')
+			.filter({ has: page.getByRole('rowheader', { name: /^6 限/ }) });
+		await expect(sixth).toContainText('架空のコマ演習');
+
+		// 登録した科目のあるコマからも、同じ画面に移り、取り消せる。キーボードでも移れる
+		await table.getByRole('link', { name: '10/7 (水) 6 限のコマ' }).focus();
+		await page.keyboard.press('Enter');
+		await expect(page).toHaveURL('/app/week/2026-10-07/6');
+		await registered
+			.getByRole('listitem')
+			.filter({ hasText: '架空のコマ演習' })
+			.getByRole('button', { name: '登録を取り消す' })
+			.click();
+		await answerConfirm(page, true);
+		await expect(page.getByRole('status')).toHaveText('架空のコマ演習 の登録を取り消しました。');
+		await expect(candidates).toContainText('架空のコマ演習');
+		await expect(registered).toContainText('このコマに登録した科目はありません。');
+	});
+
+	test('登録した科目を、自分だけの曜日と時限として週の時間割のコマに足し、外せる', async ({
+		page,
+	}) => {
+		await loginAs(page);
+		seedSlotSubjects();
+		const table = page.getByRole('table');
+		const registered = page.getByRole('region', { name: '登録した科目', exact: true });
+
+		// 水曜 5 限の科目を登録してから、6 限のコマに足す
+		await page.goto('/app/week/2026-10-07/5');
+		await page
+			.getByRole('region', { name: 'このコマの科目を登録する' })
+			.getByRole('listitem')
+			.filter({ hasText: '架空のほかのコマ演習' })
+			.getByRole('button', { name: '登録する' })
+			.click();
+		await expect(page.getByRole('status')).toHaveText(
+			'架空のほかのコマ演習 を履修科目に登録しました。',
+		);
+
+		await page.goto('/app/week/2026-10-07/6');
+		const personal = page.getByRole('region', { name: '登録した科目をこのコマに足す' });
+		await personal.getByLabel('科目').selectOption({ label: '架空のほかのコマ演習' });
+		await personal.getByRole('textbox', { name: /^教室/ }).fill('364');
+		await personal.getByRole('button', { name: '足す' }).click();
+		await expect(page.getByRole('status')).toHaveText('自分だけに使う曜日と時限を登録しました。');
+		await expect(registered).toContainText('架空のほかのコマ演習');
+
+		await page.getByRole('link', { name: '時間割に戻る' }).click();
+		const sixth = table
+			.getByRole('row')
+			.filter({ has: page.getByRole('rowheader', { name: /^6 限/ }) });
+		await expect(sixth).toContainText('架空のほかのコマ演習');
+		await expect(sixth).toContainText('364');
+
+		await page.goto('/app/week/2026-10-07/6');
+		await registered
+			.getByRole('listitem')
+			.filter({ hasText: '架空のほかのコマ演習' })
+			.getByRole('button', { name: 'このコマから外す' })
+			.click();
+		await expect(page.getByRole('status')).toHaveText('自分だけの曜日と時限を消しました。');
+		await expect(registered).not.toContainText('架空のほかのコマ演習');
 	});
 
 	test('画面の色は、自動、ライト、ダークの順に切り替わり、読み込み直しても保たれる', async ({
