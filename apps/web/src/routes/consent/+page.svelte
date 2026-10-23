@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import CheckboxField from '#lib/components/CheckboxField.svelte';
 	import Button, { Label } from '@smui/button';
 	import FormNotice from '#lib/components/FormNotice.svelte';
@@ -35,11 +36,12 @@
 
 	<ul class="documents">
 		<li>
-			<a href="/terms" target="_blank" rel="noopener noreferrer">利用規約</a>
+			<a href={resolve('terms')} target="_blank" rel="noopener noreferrer">利用規約</a>
 			(最終更新日: {data.termsUpdatedAt})
 		</li>
 		<li>
-			<a href="/privacy" target="_blank" rel="noopener noreferrer">プライバシーポリシー</a>
+			<a href={resolve('privacy')} target="_blank" rel="noopener noreferrer">プライバシーポリシー</a
+			>
 			(最終更新日: {data.privacyUpdatedAt})
 		</li>
 	</ul>
