@@ -1,4 +1,5 @@
 <script lang="ts">
+	import TextField from '#lib/components/TextField.svelte';
 	import RadioField from '#lib/components/RadioField.svelte';
 	import CheckboxField from '#lib/components/CheckboxField.svelte';
 	import Button, { Label } from '@smui/button';
@@ -90,10 +91,12 @@
 						class="stack"
 					>
 						<input type="hidden" name="id" value={webhook.id} />
-						<label class="field">
-							名前 (任意)
-							<input type="text" name="label" value={webhook.label ?? ''} maxlength="40" />
-						</label>
+						<TextField
+							label="名前 (任意)"
+							name="label"
+							value={webhook.label ?? ''}
+							maxlength={40}
+						/>
 						<fieldset>
 							<legend>届ける通知</legend>
 							{#each data.kindOptions as option (option.kind)}
@@ -192,30 +195,25 @@
 				class="stack"
 			>
 				<input type="hidden" name="kind" value={newKind} />
-				<label class="field">
-					Webhook の URL
-					<input
-						type="url"
-						name="url"
-						bind:value={newUrl}
-						required
-						autocomplete="off"
-						spellcheck="false"
-						placeholder={newKind === 'discord'
-							? 'https://discord.com/api/webhooks/...'
-							: 'https://example.com/webhooks/funmary'}
-					/>
-				</label>
-				<label class="field">
-					名前 (任意)
-					<input
-						type="text"
-						name="label"
-						bind:value={newLabel}
-						maxlength="40"
-						placeholder="例: 友人と共有のサーバー"
-					/>
-				</label>
+				<TextField
+					label="Webhook の URL"
+					type="url"
+					name="url"
+					bind:value={newUrl}
+					required
+					autocomplete="off"
+					spellcheck="false"
+					placeholder={newKind === 'discord'
+						? 'https://discord.com/api/webhooks/...'
+						: 'https://example.com/webhooks/funmary'}
+				/>
+				<TextField
+					label="名前 (任意)"
+					name="label"
+					bind:value={newLabel}
+					maxlength={40}
+					placeholder="例: 友人と共有のサーバー"
+				/>
 				<fieldset>
 					<legend>届ける通知</legend>
 					{#each data.kindOptions as option (option.kind)}
@@ -308,18 +306,6 @@
 	.actions {
 		@include mixins.wrap-row(0.5rem);
 		margin-top: 1rem;
-	}
-
-	.field {
-		@include mixins.stack(0.25rem);
-		width: 100%;
-	}
-
-	.field input {
-		min-height: 44px;
-		padding: 0 0.75rem;
-		box-sizing: border-box;
-		font: inherit;
 	}
 
 	fieldset {

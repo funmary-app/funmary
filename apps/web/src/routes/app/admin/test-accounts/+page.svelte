@@ -1,4 +1,5 @@
 <script lang="ts">
+	import TextField from '#lib/components/TextField.svelte';
 	import Button, { Label } from '@smui/button';
 	import { enhance } from '$app/forms';
 	import { confirmSubmit } from '#lib/actions/confirm-submit.ts';
@@ -39,8 +40,14 @@
 
 	<h2>足す</h2>
 	<form method="POST" action="?/add" use:enhance class="add">
-		<label for="email">Google アカウントのメールアドレス (1 人 {data.limit} 個まで)</label>
-		<input id="email" name="email" type="email" required autocomplete="off" spellcheck="false" />
+		<TextField
+			label="Google アカウントのメールアドレス (1 人 {data.limit} 個まで)"
+			name="email"
+			type="email"
+			required
+			autocomplete="off"
+			spellcheck="false"
+		/>
 		<div><Button type="submit" variant="outlined"><Label>足す</Label></Button></div>
 	</form>
 	<p class="muted">

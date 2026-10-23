@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Button, { Label } from '@smui/button';
 	import type { CopyState } from '#lib/clipboard.svelte.ts';
+	import TextField from '#lib/components/TextField.svelte';
 
 	let {
 		id,
@@ -18,24 +19,17 @@
 		flexBasis?: string;
 	} = $props();
 
-	let field: HTMLInputElement | undefined = $state();
+	let row: HTMLDivElement | undefined = $state();
 
 	async function copy() {
 		const ok = await copyState.copy(value);
 		// コピーできないときは、欄を選んで、手でコピーしてもらう
-		if (!ok) field?.select();
+		if (!ok) row?.querySelector('input')?.select();
 	}
 </script>
 
-<label for={id}>{label}</label>
-<div class="copy-row" style:--copy-field-basis={flexBasis}>
-	<input
-		{id}
-		bind:this={field}
-		readonly
-		{value}
-		onfocus={(event) => event.currentTarget.select()}
-	/>
+<div class="copy-row" style:--copy-field-basis={flexBasis} bind:this={row}>
+	<TextField class="copy-field" {id} {label} readonly {value} selectOnFocus />
 	<Button type="button" {variant} onclick={copy}>
 		<Label>コピー</Label>
 	</Button>
@@ -44,22 +38,17 @@
 <style lang="scss">
 	@use 'mixins';
 
-	label {
-		display: block;
-		margin-top: 1rem;
-		font-size: 0.875rem;
-	}
-
 	.copy-row {
 		@include mixins.wrap-row(0.5rem);
-		margin-top: 0.25rem;
+		align-items: center;
+		margin-top: 1rem;
 
-		input {
+		:global(.copy-field) {
 			flex: 1 1 var(--copy-field-basis);
 			min-width: 0;
-			min-height: 40px;
-			padding: 0 0.5rem;
-			font: inherit;
+		}
+
+		:global(.copy-field .mdc-text-field__input) {
 			font-family: ui-monospace, monospace;
 			font-size: 0.875rem;
 		}

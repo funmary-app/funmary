@@ -65,12 +65,8 @@
 	gap: 0.5rem 1rem;
 	width: 100%;
 
-	label {
-		display: flex;
+	:global(.grant-email) {
 		flex: 1 1 14rem;
-		flex-direction: column;
-		gap: 0.25rem;
-		font-size: 0.875rem;
 	}
 }
 

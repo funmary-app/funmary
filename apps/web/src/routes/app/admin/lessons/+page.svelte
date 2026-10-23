@@ -1,4 +1,5 @@
 <script lang="ts">
+	import TextField from '#lib/components/TextField.svelte';
 	import RadioField from '#lib/components/RadioField.svelte';
 	import Button, { Label } from '@smui/button';
 	import { enhance } from '$app/forms';
@@ -73,10 +74,12 @@
 			{:else}
 				<p>似た名前の科目はありません。</p>
 			{/each}
-			<label>
-				候補にないときは、シラバスの番号
-				<input name="syllabusId" inputmode="numeric" autocomplete="off" />
-			</label>
+			<TextField
+				label="候補にないときは、シラバスの番号"
+				name="syllabusId"
+				inputmode="numeric"
+				autocomplete="off"
+			/>
 		</fieldset>
 		<Button type="submit" variant="unelevated"><Label>{label}</Label></Button>
 	</form>
@@ -113,10 +116,13 @@
 							<summary>シラバスにない授業として、科目を作って紐付ける</summary>
 							<form method="POST" action="?/createSubject" use:enhance class="create">
 								<input type="hidden" name="lessonName" value={lesson.lessonName} />
-								<label>
-									授業の名前
-									<input name="name" maxlength="100" required value={lesson.lessonName} />
-								</label>
+								<TextField
+									label="授業の名前"
+									name="name"
+									maxlength={100}
+									required
+									value={lesson.lessonName}
+								/>
 								<label>
 									学期
 									<select name="term" required value={data.defaultTerm}>
@@ -125,10 +131,7 @@
 										{/each}
 									</select>
 								</label>
-								<label>
-									教員 (任意)
-									<input name="teacher" maxlength="100" />
-								</label>
+								<TextField label="教員 (任意)" name="teacher" maxlength={100} />
 								<Button type="submit" variant="outlined"><Label>作って紐付ける</Label></Button>
 							</form>
 						</details>

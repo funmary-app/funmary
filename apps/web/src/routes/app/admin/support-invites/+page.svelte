@@ -1,4 +1,5 @@
 <script lang="ts">
+	import TextField from '#lib/components/TextField.svelte';
 	import CheckboxField from '#lib/components/CheckboxField.svelte';
 	import Button, { Label } from '@smui/button';
 	import { enhance } from '$app/forms';
@@ -82,8 +83,15 @@
 					</select>
 				</div>
 				<div class="field">
-					<label for="max-uses">使える回数 (0 は制限なし)</label>
-					<input id="max-uses" type="number" name="maxUses" min="0" max="100" value="0" required />
+					<TextField
+						label="使える回数 (0 は制限なし)"
+						type="number"
+						name="maxUses"
+						min={0}
+						max={100}
+						value="0"
+						required
+					/>
 				</div>
 				{#if data.roles.length > 0}
 					<fieldset>
@@ -99,8 +107,7 @@
 				{/if}
 				<CheckboxField name="public"><span>公開する</span></CheckboxField>
 				<div class="field">
-					<label for="issue-note">メモ (任意)</label>
-					<input id="issue-note" type="text" name="note" maxlength="100" />
+					<TextField label="メモ (任意)" name="note" maxlength={100} />
 				</div>
 				<Button type="submit" variant="unelevated"><Label>発行する</Label></Button>
 			</form>
@@ -111,9 +118,8 @@
 		<h2 id="register-heading">自分で作った招待を登録する</h2>
 		<form method="POST" action="?/register" use:enhance class="entry">
 			<div class="field">
-				<label for="url">招待の URL</label>
-				<input
-					id="url"
+				<TextField
+					label="招待の URL"
 					type="url"
 					name="url"
 					placeholder="https://discord.gg/..."
@@ -127,8 +133,7 @@
 			</div>
 			<CheckboxField name="public"><span>公開する</span></CheckboxField>
 			<div class="field">
-				<label for="register-note">メモ (任意)</label>
-				<input id="register-note" type="text" name="note" maxlength="100" />
+				<TextField label="メモ (任意)" name="note" maxlength={100} />
 			</div>
 			<Button type="submit" variant="unelevated"><Label>登録する</Label></Button>
 		</form>

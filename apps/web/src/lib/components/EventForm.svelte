@@ -1,6 +1,7 @@
 <script lang="ts">
 	import CheckboxField from '#lib/components/CheckboxField.svelte';
 	import RadioField from '#lib/components/RadioField.svelte';
+	import TextField from '#lib/components/TextField.svelte';
 	import Button, { Label } from '@smui/button';
 	import { enhance } from '$app/forms';
 	import FormNotice from '#lib/components/FormNotice.svelte';
@@ -52,30 +53,27 @@
 <form method="POST" {action} use:enhance class="event-form">
 	<FormNotice {error} />
 
-	<label class="field">
-		予定の名前
-		<input name="title" required maxlength="100" value={values.title} />
-	</label>
-	<label class="field">
-		場所 (任意)
-		<input name="location" maxlength="100" value={values.location} />
-	</label>
-	<label class="field">
-		メモ (任意)
-		<textarea name="notes" maxlength="1000" rows="3">{values.notes}</textarea>
-	</label>
+	<TextField label="予定の名前" name="title" required maxlength={100} value={values.title} />
+	<TextField label="場所 (任意)" name="location" maxlength={100} value={values.location} />
+	<TextField
+		label="メモ (任意)"
+		textarea
+		name="notes"
+		maxlength={1000}
+		rows={3}
+		value={values.notes}
+	/>
 
 	<fieldset>
 		<legend>日付</legend>
 		<div class="row">
-			<label class="field">
-				開始日
-				<input type="date" name="startDate" required value={values.startDate} />
-			</label>
-			<label class="field">
-				終了日 (数日にわたるときだけ)
-				<input type="date" name="endDate" value={values.endDate} />
-			</label>
+			<TextField label="開始日" type="date" name="startDate" required value={values.startDate} />
+			<TextField
+				label="終了日 (数日にわたるときだけ)"
+				type="date"
+				name="endDate"
+				value={values.endDate}
+			/>
 		</div>
 	</fieldset>
 
@@ -103,14 +101,8 @@
 		</div>
 		{#if timeKind === 'time'}
 			<div class="row">
-				<label class="field">
-					始まり
-					<input type="time" name="startTime" required value={values.startTime} />
-				</label>
-				<label class="field">
-					終わり
-					<input type="time" name="endTime" required value={values.endTime} />
-				</label>
+				<TextField label="始まり" type="time" name="startTime" required value={values.startTime} />
+				<TextField label="終わり" type="time" name="endTime" required value={values.endTime} />
 			</div>
 		{:else if timeKind === 'period'}
 			<div class="row">
@@ -153,10 +145,16 @@
 		</label>
 
 		{#if repeat !== 'none'}
-			<label class="field narrow">
-				間隔 (何{UNITS[repeat]}ごとか)
-				<input type="number" name="interval" min="1" max="99" required value={values.interval} />
-			</label>
+			<TextField
+				class="narrow"
+				label="間隔 (何{UNITS[repeat]}ごとか)"
+				type="number"
+				name="interval"
+				min={1}
+				max={99}
+				required
+				value={values.interval}
+			/>
 
 			{#if repeat === 'weekly'}
 				<fieldset class="inner">
@@ -207,15 +205,25 @@
 					onchange={() => (chosen.endKind = 'count')}>回数まで</RadioField
 				>
 				{#if endKind === 'until'}
-					<label class="field narrow">
-						終わりの日
-						<input type="date" name="untilDate" required value={values.untilDate} />
-					</label>
+					<TextField
+						class="narrow"
+						label="終わりの日"
+						type="date"
+						name="untilDate"
+						required
+						value={values.untilDate}
+					/>
 				{:else if endKind === 'count'}
-					<label class="field narrow">
-						繰り返す回数
-						<input type="number" name="count" min="1" max="999" required value={values.count} />
-					</label>
+					<TextField
+						class="narrow"
+						label="繰り返す回数"
+						type="number"
+						name="count"
+						min={1}
+						max={999}
+						required
+						value={values.count}
+					/>
 				{/if}
 			</fieldset>
 
@@ -281,11 +289,16 @@
 		@include mixins.stack(0.25rem);
 		font-size: 0.875rem;
 	}
-	.field.narrow {
+	.event-form :global(.narrow) {
 		max-width: 12rem;
 	}
 	.row {
 		@include mixins.wrap-row(0.5rem 1rem);
+
+		// ラベルが欄の枠に収まる幅にする
+		> :global(.mdc-text-field) {
+			flex: 1 1 14rem;
+		}
 	}
 	.choices {
 		@include mixins.wrap-row(0.25rem 1rem);

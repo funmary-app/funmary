@@ -1,4 +1,5 @@
 <script lang="ts">
+	import TextField from '#lib/components/TextField.svelte';
 	import Button, { Label } from '@smui/button';
 	import { enhance } from '$app/forms';
 	import FormNotice from '#lib/components/FormNotice.svelte';
@@ -38,39 +39,29 @@
 			({ update }) =>
 				update({ reset: false })}
 	>
-		<label class="field">
-			1 人あたりの上限 (0 から {data.max})
-			<input
-				type="number"
-				name="limit"
-				min="0"
-				max={data.max}
-				step="1"
-				value={data.limit}
-				required
-			/>
-		</label>
+		<TextField
+			class="limit"
+			label="1 人あたりの上限 (0 から {data.max})"
+			type="number"
+			name="limit"
+			min={0}
+			max={data.max}
+			step={1}
+			value={data.limit}
+			required
+		/>
 		<Button type="submit" variant="unelevated"><Label>保存する</Label></Button>
 	</form>
 </div>
 
 <style lang="scss">
 	@use 'forms';
-	@use 'mixins';
 
 	form {
 		@include forms.column;
-	}
 
-	.field {
-		@include mixins.stack(0.25rem);
-	}
-
-	.field input {
-		min-height: 44px;
-		width: 8rem;
-		padding: 0 0.75rem;
-		box-sizing: border-box;
-		font: inherit;
+		:global(.limit) {
+			width: 16rem;
+		}
 	}
 </style>

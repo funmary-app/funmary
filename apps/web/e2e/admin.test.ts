@@ -708,7 +708,7 @@ test.describe('招待コード', () => {
 		await expect(page).toHaveURL('/app/settings/invites');
 		await expect(page.getByRole('navigation', { name: 'パンくず' })).toContainText('設定');
 		await page.getByLabel('使用回数').fill('2');
-		await page.getByLabel(/^メモ/).fill('E2E の研究室');
+		await page.getByRole('textbox', { name: /^メモ/ }).fill('E2E の研究室');
 		await page.getByRole('button', { name: '招待コードを発行する' }).click();
 
 		const url = page.getByLabel('登録の URL');

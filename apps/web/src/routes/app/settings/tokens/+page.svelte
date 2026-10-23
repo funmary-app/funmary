@@ -1,4 +1,5 @@
 <script lang="ts">
+	import TextField from '#lib/components/TextField.svelte';
 	import CheckboxField from '#lib/components/CheckboxField.svelte';
 	import Button, { Label } from '@smui/button';
 	import { enhance } from '$app/forms';
@@ -78,16 +79,13 @@
 	<section aria-labelledby="issue-heading">
 		<h2 id="issue-heading">発行する</h2>
 		<form method="POST" action="?/issue" use:enhance class="entry">
-			<label class="field">
-				名前 (どこで使うかのメモ)
-				<input
-					type="text"
-					name="name"
-					maxlength="50"
-					required
-					placeholder="例: 手元の Claude Desktop"
-				/>
-			</label>
+			<TextField
+				label="名前 (どこで使うかのメモ)"
+				name="name"
+				maxlength={50}
+				required
+				placeholder="例: 手元の Claude Desktop"
+			/>
 			<fieldset>
 				<legend>読める範囲</legend>
 				{#each data.scopeOptions.filter((option) => !option.write) as option (option.scope)}

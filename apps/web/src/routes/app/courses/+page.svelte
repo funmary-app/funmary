@@ -1,4 +1,5 @@
 <script lang="ts">
+	import TextField from '#lib/components/TextField.svelte';
 	import Tab, { Label as TabLabel } from '@smui/tab';
 	import TabBar from '@smui/tab-bar';
 	import Button, { Label } from '@smui/button';
@@ -221,10 +222,13 @@
 		>
 			<form method="GET" role="search" data-sveltekit-keepfocus data-sveltekit-noscroll>
 				<input type="hidden" name="tab" value="search" />
-				<label>
-					科目名、教員、シラバスの番号
-					<input type="search" name="q" value={data.query} maxlength="100" />
-				</label>
+				<TextField
+					label="科目名、教員、シラバスの番号"
+					type="search"
+					name="q"
+					value={data.query}
+					maxlength={100}
+				/>
 				<Button type="submit" variant="unelevated"><Label>探す</Label></Button>
 			</form>
 
@@ -264,10 +268,14 @@
 					足した授業は、ほかの利用者も探して登録できます。同じ名前の科目があれば、足さずにそちらを案内します。足した授業は、あなたと管理者が直したり消したりできます。
 				</p>
 				<form method="POST" action="?/createSubject" use:enhance class="slot-form">
-					<label>
-						授業の名前 (クラスも含めて、例: キャリアガイダンス)
-						<input name="name" maxlength="100" required autocomplete="off" value={data.query} />
-					</label>
+					<TextField
+						label="授業の名前 (クラスも含めて、例: キャリアガイダンス)"
+						name="name"
+						maxlength={100}
+						required
+						autocomplete="off"
+						value={data.query}
+					/>
 					<label>
 						学期
 						<select name="term" required value={data.defaultTerm}>
@@ -276,10 +284,7 @@
 							{/each}
 						</select>
 					</label>
-					<label>
-						教員 (任意)
-						<input name="teacher" maxlength="100" autocomplete="off" />
-					</label>
+					<TextField label="教員 (任意)" name="teacher" maxlength={100} autocomplete="off" />
 					<Button type="submit" variant="unelevated"><Label>足して登録する</Label></Button>
 				</form>
 			</details>

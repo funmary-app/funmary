@@ -1,4 +1,5 @@
 <script lang="ts">
+	import TextField from '#lib/components/TextField.svelte';
 	import CheckboxField from '#lib/components/CheckboxField.svelte';
 	import RadioField from '#lib/components/RadioField.svelte';
 	import Button, { Label } from '@smui/button';
@@ -46,10 +47,13 @@
 					<form method="POST" action="?/replace" use:enhance class="replace">
 						<input type="hidden" name="kind" value={kind} />
 						<input type="hidden" name="name" value={item.name} />
-						<label>
-							既存の{kind === 'channel' ? 'チャンネル' : 'ロール'}の ID
-							<input name="id" inputmode="numeric" autocomplete="off" required />
-						</label>
+						<TextField
+							label="既存の{kind === 'channel' ? 'チャンネル' : 'ロール'}の ID"
+							name="id"
+							inputmode="numeric"
+							autocomplete="off"
+							required
+						/>
 						<Button type="submit" variant="outlined"><Label>置き換える</Label></Button>
 					</form>
 				</details>
@@ -229,10 +233,13 @@
 				をコピー」で得られます。
 			</p>
 			<form method="POST" action="?/role" use:enhance class="grant">
-				<label>
-					Discord のユーザーの ID
-					<input name="userId" inputmode="numeric" autocomplete="off" required />
-				</label>
+				<TextField
+					label="Discord のユーザーの ID"
+					name="userId"
+					inputmode="numeric"
+					autocomplete="off"
+					required
+				/>
 				<label>
 					ロール
 					<select name="name" required>
@@ -295,11 +302,6 @@
 		flex-wrap: wrap;
 		align-items: end;
 		gap: 0.5rem 1rem;
-
-		label {
-			@include mixins.stack(0.25rem);
-			font-size: 0.875rem;
-		}
 	}
 	.grant {
 		display: flex;
@@ -319,9 +321,6 @@
 	.join-role fieldset {
 		@include mixins.stack(0.5rem);
 		@include surfaces.outlined($margin: 0);
-	}
-	.join-role fieldset label {
-		@include forms.choice-row;
 	}
 	.join-role > label {
 		@include mixins.stack(0.25rem);

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import TextField from '#lib/components/TextField.svelte';
 	import Button, { Label } from '@smui/button';
 	import { enhance } from '$app/forms';
 	import { resolve } from '$app/paths';
@@ -47,10 +48,7 @@
 				このリンクを知っている、Funmary
 				にログインした人が、この予定を見て、自分の時間割に加えられます。リンクを作り直すと、前のリンクは使えなくなります。公開範囲を変えても、使えなくなります。
 			</p>
-			<label class="field">
-				リンク
-				<input readonly value={data.shareUrl} onfocus={(event) => event.currentTarget.select()} />
-			</label>
+			<TextField class="share-url" label="リンク" readonly value={data.shareUrl} selectOnFocus />
 			<form method="POST" action="?/rotate" use:enhance>
 				<Button type="submit" variant="outlined"><Label>リンクを作り直す</Label></Button>
 			</form>
@@ -66,10 +64,15 @@
 				に登録されているかどうかにかかわらず、同じ案内を出します。自動では時間割に加わりません。
 			</p>
 			<form method="POST" action="?/grantAccess" use:enhance class="grant-form">
-				<label class="field">
-					メールアドレス
-					<input type="email" name="email" maxlength="200" required autocomplete="off" />
-				</label>
+				<TextField
+					class="grant-email"
+					label="メールアドレス"
+					type="email"
+					name="email"
+					maxlength={200}
+					required
+					autocomplete="off"
+				/>
 				<Button type="submit" variant="outlined"><Label>招待する</Label></Button>
 			</form>
 			{#if data.grantedEmails.length > 0}
@@ -115,10 +118,9 @@
 	h2 {
 		font-size: 1.1rem;
 	}
-	.field {
-		@include mixins.stack(0.25rem);
+	section > :global(.share-url) {
+		width: 100%;
 		margin-bottom: 0.75rem;
-		font-size: 0.875rem;
 	}
 	.grant-form {
 		display: flex;
@@ -127,9 +129,8 @@
 		gap: 0.5rem 1rem;
 		width: 100%;
 
-		.field {
+		:global(.grant-email) {
 			flex: 1 1 14rem;
-			margin-bottom: 0;
 		}
 	}
 	.grants {
