@@ -32,7 +32,6 @@
   - `_surfaces.scss`: 線で囲んだ入れ物 (`outlined()`)、薄い背景の入れ物 (`muted-panel`)、秘密の値の枠 (`secret-box`)
   - `_text.scss`: 補足の小さな文字 (`muted()`)、一覧の 1 件の名前 (`item-title`)、状態の札 (`badge`)
   - `_touch.scss`: 押せる高さのリンク (`target()`)、`<details>` の見出し (`summary`)
-  - `_tables.scss`: 管理画面の表 (`data`)
   - `_chrome.scss`、`_header-action.scss`: レイアウトのロゴとフッター、上のバーの操作
 - ページ本文の幅は `.page` (既定 44rem)。広い表だけ `.page-w-<rem>` で広げる
 - SMUI にある部品は SMUI を使う。`@smui/<部品>` を import すれば、その部品の CSS は自動で読まれる。SMUI の見た目を変えるときは `smui-overrides.scss` に書く (CSS のレイヤーで、部品より強くなる)
@@ -42,6 +41,7 @@
   - 必須の印 (`*`) は出さない。任意の欄のラベルに「(任意)」と書く
   - ファイルの欄は SMUI に部品がないので、ブラウザの標準のまま
 - 選択欄は `SelectField`。スマホで OS の選択の画面を出すため、ブラウザの `<select>` のまま、枠とラベルを `TextField` と同じ見た目にする。`label` に名前を渡し、`<option>` を中に書く。`name` などは `<select>` に付く
+- 管理画面の表は SMUI の data-table (`@smui/data-table`)。見た目は `smui-overrides.scss` でそろえ、日時や回数の列は `Cell` に `class="numeric"` を付けて折り返さない。週の時間割の表は、見出しの固定や 1 日ずつの横送りなど独自の作りが多いので、SMUI にしない
 - 中身の表示を替えるものは SMUI のタブ (`@smui/tab-bar`、科目の画面、バスの平日と休日)、見せ方を選ぶものは SMUI の切り替えのボタン (`@smui/segmented-button`、週の時間割の見せ方、取り込みの方法)
 - 補助の文字は `.muted`、画面の外に隠す文字は `.visually-hidden`
 - 破壊的な操作の前の確認は、フォームに `use:confirmSubmit={'…よろしいですか?'}` を付ける。最上位のレイアウトの SMUI のダイアログ (`ConfirmDialog`) が出て、「続ける」で送る

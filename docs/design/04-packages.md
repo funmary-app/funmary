@@ -45,7 +45,7 @@ SMUI を使うにあたって、次のように決めています。
   - 画面幅の区切りは、`apps/web/src/lib/styles/_breakpoints.scss` の mixin だけで書きます。区切りの数字をコンポーネントに直接書きません。CSS 変数は `@media` の中で使えないので、ここは Sass で共有します
   - 色と余白の段階は、CSS 変数で書きます。Sass の変数はビルドのときに値が固まるので、色に使うとダークモードに切り替えても変わらないためです
   - コンポーネントの中で SMUI の Sass (`@material/*`) を `@use` しません。部品の CSS がコンポーネントごとに重ねて出力され、容量が増えるためです。SMUI の見た目を変えたいときは、テーマのファイルか、上書き用の `smui-overrides.scss` で変えます
-  - 共有する Sass のファイルには、mixin と関数だけを置き、CSS を出力する規則は書きません。どのコンポーネントから `@use` しても CSS が増えないようにするためです。2 つ以上の画面に同じ形で書くスタイルは、`apps/web/src/lib/styles/` に役割ごとのパーシャル (フォーム、入れ物、文字、押せる範囲、表など) を分けて置き、mixin にします
+  - 共有する Sass のファイルには、mixin と関数だけを置き、CSS を出力する規則は書きません。どのコンポーネントから `@use` しても CSS が増えないようにするためです。2 つ以上の画面に同じ形で書くスタイルは、`apps/web/src/lib/styles/` に役割ごとのパーシャル (フォーム、入れ物、文字、押せる範囲など) を分けて置き、mixin にします
 - **色は大学の公式サイトとロゴの赤を基調にします。**
 - **テーマは Sass で書き、自前のスクリプトで CSS にします。** ライト用とダーク用のテーマを `apps/web/src/theme/` に置き、`apps/web/scripts/build-theme.js` が CSS にします。どのページでも読む `generated/smui.css` には、色の CSS 変数とダーク用だけを入れます。部品のスタイルは `generated/smui/<部品>.css` に分け、`@smui/<部品>` を import したモジュールに、Vite のプラグイン (`scripts/smui-styles.js`) がその CSS の import を足します。部品の CSS は、その部品を使うページだけで読まれます。ダーク用は、色の CSS 変数だけを `@media (prefers-color-scheme: dark)` で囲んで出し、部品のスタイルを 2 回出しません。この変換は `pnpm dev`、`pnpm build`、`pnpm typecheck` の前に動きます。SMUI 公式の `smui-theme` の compile は、pnpm の置き方では入れた部品のスタイルを見つけられないので使いません
 - **パッケージは部品ごとに入れます。** まとめ役の `svelte-material-ui` は入れず、`@smui/button` のように、使う部品だけを入れます。使っていない部品の CSS と JavaScript は入りません

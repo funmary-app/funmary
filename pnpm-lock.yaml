@@ -352,6 +352,9 @@ importers:
       '@smui/checkbox':
         specifier: ^9.0.6
         version: 9.0.6
+      '@smui/data-table':
+        specifier: ^9.0.6
+        version: 9.0.6
       '@smui/dialog':
         specifier: ^9.0.6
         version: 9.0.6
@@ -1814,6 +1817,9 @@ packages:
   '@smui/common@9.0.6':
     resolution: {integrity: sha512-wWQ+4ixA0PjlHGlF9rTD8UKOxbyZlMGz0IKIwDqgo2189v9LOJFIHoqXfZO8b0YXcK0pO82M85xsvcUXkTcv1g==}
 
+  '@smui/data-table@9.0.6':
+    resolution: {integrity: sha512-kUwWGUQm9gsVE+1DvYkvpPrmN6JfR5Pp1DIM9cSCi/7jFTY7HAd2qTuLod8iNMhMxObqESOdfboausM/1XFNGQ==}
+
   '@smui/dialog@9.0.6':
     resolution: {integrity: sha512-MokL/uGGarO841KEDPA6HhvXpQfMCZFDIyNdaBn7zR1kn4uLp7T5T/hUTerZ7LmBk2Pj8D3n3pfTPc53omKzLw==}
 
@@ -1829,6 +1835,18 @@ packages:
   '@smui/line-ripple@9.0.6':
     resolution: {integrity: sha512-ZHOZ72RTJ9cneejlZS7lPJEdIYg2FY1yVWYpPTJgHzG1AekGY1og5w7inDg7nVTAcRYFtS7H5Fav5GMgHNb58A==}
 
+  '@smui/linear-progress@9.0.6':
+    resolution: {integrity: sha512-882SQVqLWw0wiY88YpNiqa9YVAz1koKePAvYkRMPMy794cujhaxMl5UThpHSrRYaLal1oTGj40OWmJu1NAfgDg==}
+
+  '@smui/list@9.0.6':
+    resolution: {integrity: sha512-Vs8JEhL/+GPEZNxEsjkxQUEiEF/3yW4gbhT+xgLVqfnaNdXOrxUpng/U+8bfHvDGrpt+/EpaBjUW197soEk7NA==}
+
+  '@smui/menu-surface@9.0.6':
+    resolution: {integrity: sha512-MaE7jvkLyaoJxV8H7g7AwG8mer4TmsLKGrx7V5gVZK1S2eDhBheP4w+rJ5J78k14XAUm9csId3Mi1otrPgsspw==}
+
+  '@smui/menu@9.0.6':
+    resolution: {integrity: sha512-iaUuFoC4CmLpVRvf090oP6Wqdj38ASsjpAv1DL4aihwAl4x7TFvLISgGuC5zs4i439hbCbkLzjbW980FGt2PKg==}
+
   '@smui/notched-outline@9.0.6':
     resolution: {integrity: sha512-6LfgoecaEqOm7y3OSG0uJzulOOjOHPEhTrOp0n8IxH5aMllL4pQY1VL2tN6E0koe0esp08zctaSHCQ8db068nA==}
 
@@ -1840,6 +1858,9 @@ packages:
 
   '@smui/segmented-button@9.0.6':
     resolution: {integrity: sha512-XwRHsc7X3OB8va2ulIAmg/75C0fw0oSFFOAI2x4esLaH7wtBalTW1nj3N7IL22WPt7owP8wtLdEjAD7dxAwumQ==}
+
+  '@smui/select@9.0.6':
+    resolution: {integrity: sha512-7k3jjZQaJpqsZ7bWAEb/RAwsLh+QatPzoJG5YGUHyJ5dkmimzcMGwDol1EVZVlA/t0i+J5F9fBGYZuddD0yKOg==}
 
   '@smui/snackbar@9.0.6':
     resolution: {integrity: sha512-Vvbm9J45IEgbkvdK+9tUyu3QS01hG/dyS8uFWOeuswxL0Zzrrq63/VatZPOsrzNmkG0sqgx8TG10On94Ju9bvQ==}
@@ -5158,6 +5179,18 @@ snapshots:
     dependencies:
       safevalues: 1.2.0
 
+  '@smui/data-table@9.0.6':
+    dependencies:
+      '@smui/checkbox': 9.0.6
+      '@smui/common': 9.0.6
+      '@smui/icon-button': 9.0.6
+      '@smui/linear-progress': 9.0.6
+      '@smui/list': 9.0.6
+      '@smui/menu': 9.0.6
+      '@smui/ripple': 9.0.6
+      '@smui/select': 9.0.6
+      '@smui/touch-target': 9.0.6
+
   '@smui/dialog@9.0.6':
     dependencies:
       '@smui/button': 9.0.6
@@ -5185,6 +5218,26 @@ snapshots:
     dependencies:
       '@smui/common': 9.0.6
 
+  '@smui/linear-progress@9.0.6':
+    dependencies:
+      '@smui/common': 9.0.6
+
+  '@smui/list@9.0.6':
+    dependencies:
+      '@smui/common': 9.0.6
+      '@smui/ripple': 9.0.6
+
+  '@smui/menu-surface@9.0.6':
+    dependencies:
+      '@smui/common': 9.0.6
+
+  '@smui/menu@9.0.6':
+    dependencies:
+      '@smui/common': 9.0.6
+      '@smui/list': 9.0.6
+      '@smui/menu-surface': 9.0.6
+      '@smui/ripple': 9.0.6
+
   '@smui/notched-outline@9.0.6':
     dependencies:
       '@smui/common': 9.0.6
@@ -5203,6 +5256,18 @@ snapshots:
   '@smui/segmented-button@9.0.6':
     dependencies:
       '@smui/common': 9.0.6
+      '@smui/ripple': 9.0.6
+      '@smui/touch-target': 9.0.6
+
+  '@smui/select@9.0.6':
+    dependencies:
+      '@smui/common': 9.0.6
+      '@smui/floating-label': 9.0.6
+      '@smui/line-ripple': 9.0.6
+      '@smui/list': 9.0.6
+      '@smui/menu': 9.0.6
+      '@smui/menu-surface': 9.0.6
+      '@smui/notched-outline': 9.0.6
       '@smui/ripple': 9.0.6
       '@smui/touch-target': 9.0.6
 

@@ -28,6 +28,7 @@
 		"@funmary/sources": "workspace:*",
 		"@smui/button": "^9.0.6",
 		"@smui/checkbox": "^9.0.6",
+		"@smui/data-table": "^9.0.6",
 		"@smui/dialog": "^9.0.6",
 		"@smui/form-field": "^9.0.6",
 		"@smui/radio": "^9.0.6",
