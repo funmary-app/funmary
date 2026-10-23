@@ -7,8 +7,17 @@ const MAKEUP_PLAN_LABELS = {
 	undecided: '補講未定',
 } as const;
 
+/** 休講などの種類ごとの、StatusBadge に渡す状態 */
+export const CHANGE_STATUS = {
+	cancellation: 'cancelled',
+	makeup: 'makeup',
+	roomChange: 'roomChanged',
+} as const;
+
 /** 休講などの、画面に出すラベル (色だけで伝えないため、必ず文字で出す) と、添える説明 */
-export function describeClassChange(change: SubjectClassChange): {
+export function describeClassChange(
+	change: Pick<SubjectClassChange, 'kind' | 'room' | 'fromRoom' | 'makeupPlan'>,
+): {
 	label: string;
 	detail: string | null;
 } {
