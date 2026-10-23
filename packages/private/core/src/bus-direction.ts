@@ -33,6 +33,23 @@ export const BRANCH_JUNCTION_STOP: BusStop = { id: '14013', name: '亀田支所�
 /** 全角と半角、空白の違いを無視して比べるための形 */
 const normalize = (text: string) => text.normalize('NFKC').replace(/\s+/g, '');
 
+/**
+ * 停留所の名前が同じか (全角と半角、空白の違いは無視する)。向きごとに別のバス停コードを持つ停留所 (昭和営業所前など) は、
+ * 同じ名前の別のコードとして一覧に並ぶ
+ */
+export const sameStopName = (a: string, b: string): boolean => normalize(a) === normalize(b);
+
+/** 同じ名前の停留所を、はじめの 1 つだけ残す (選ぶ一覧に、同じ名前を 2 度出さない) */
+export function uniqueStopsByName<T extends BusStop>(stops: readonly T[]): T[] {
+	const seen = new Set<string>();
+	return stops.filter((stop) => {
+		const key = normalize(stop.name);
+		if (seen.has(key)) return false;
+		seen.add(key);
+		return true;
+	});
+}
+
 /** 経由や行き先の文に、停留所の名前 (または呼び名) が入っているか */
 export function mentionsStop(
 	text: string | undefined,

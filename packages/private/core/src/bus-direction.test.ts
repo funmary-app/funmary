@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import type { BusPlatformTimetable, BusStopTimetable } from './bus.ts';
-import { filterByDirection, matchArrivals, mentionsStop } from './bus-direction.ts';
+import {
+	filterByDirection,
+	matchArrivals,
+	mentionsStop,
+	sameStopName,
+	uniqueStopsByName,
+} from './bus-direction.ts';
 
 const timesOf = (result: ReturnType<typeof filterByDirection>, day = 'weekday') =>
 	result?.timetables.filter((t) => t.day === day).flatMap((t) => t.departures.map((d) => d.time)) ??
@@ -204,5 +210,28 @@ describe('filterByDirection: 未来大の北側と南側', () => {
 			'08:00',
 			'09:00',
 		]);
+	});
+});
+
+describe('uniqueStopsByName', () => {
+	it('同じ名前の停留所 (向きごとに分かれたコード) は、はじめの 1 つだけ残す。全角と半角、空白の違いは同じ名前とする', () => {
+		expect(
+			uniqueStopsByName([
+				{ id: '21001', name: '昭和営業所前' },
+				{ id: '11003', name: '函館駅前' },
+				{ id: '21002', name: '昭和営業所前' },
+				{ id: '21003', name: '昭和 営業所前' },
+			]),
+		).toEqual([
+			{ id: '21001', name: '昭和営業所前' },
+			{ id: '11003', name: '函館駅前' },
+		]);
+	});
+});
+
+describe('sameStopName', () => {
+	it('全角と半角、空白の違いを無視して比べる', () => {
+		expect(sameStopName('昭和１丁目', '昭和 1丁目')).toBe(true);
+		expect(sameStopName('昭和1丁目', '昭和2丁目')).toBe(false);
 	});
 });

@@ -152,6 +152,8 @@ export {
 	filterByDirection,
 	matchArrivals,
 	mentionsStop,
+	sameStopName,
+	uniqueStopsByName,
 	type BusDirection,
 	type BusUniversityStop,
 	type DirectionalTimetables,
