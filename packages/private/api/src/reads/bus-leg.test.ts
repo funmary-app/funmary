@@ -275,3 +275,54 @@ describe('getBusLeg: 亀田支所前から路線が分かれるとき', () => {
 		expect(leg?.departures.map((d) => d.from.name)).toEqual(['亀田支所前', '亀田支所前']);
 	});
 });
+
+describe('getBusLeg: 向きごとにバス停コードが違う停留所', () => {
+	// 昭和営業所前は、未来大へ向かう便のコードと、反対へ向かう便のコードが分かれている
+	const towardStop = { id: '21001', name: '昭和営業所前' };
+	const awayStop = { id: '21002', name: '昭和営業所前' };
+
+	function seededSplitStop(): BusSources {
+		const bus = createBusStore(database);
+		bus.saveCatalog({ ...catalog, stops: [...catalog.stops, towardStop, awayStop] }, null, CHECKED);
+		bus.saveTimetable(
+			timetable(towardStop, [{ time: '07:40', destination: '赤川', via: 'はこだて未来大学' }]),
+			null,
+			CHECKED,
+		);
+		bus.saveTimetable(
+			timetable(awayStop, [{ time: '08:40', destination: '昭和ターミナル' }]),
+			null,
+			CHECKED,
+		);
+		bus.saveTimetable(
+			timetable(catalog.stops[1]!, [
+				{ time: '08:00', destination: '赤川' },
+				{ time: '08:25', destination: '昭和ターミナル' },
+			]),
+			null,
+			CHECKED,
+		);
+		return { bus, holidays: createHolidayStore(database), estimateHolidays: () => [] };
+	}
+
+	it('どちらのコードを選んでも、未来大へ向かう便と、未来大から来る便の両方が出る', () => {
+		const sources = seededSplitStop();
+		for (const stopId of [towardStop.id, awayStop.id]) {
+			const to = getBusLeg(sources, MONDAY_8AM, { stopId, direction: 'toUniversity' });
+			const from = getBusLeg(sources, MONDAY_8AM, { stopId, direction: 'fromUniversity' });
+			expect(
+				to?.departures.map((d) => d.time),
+				stopId,
+			).toEqual(['07:40']);
+			expect(
+				from?.departures.map((d) => d.time),
+				stopId,
+			).toEqual(['08:25']);
+			// 到着は、反対の向きのコードの発車表から結ぶ (08:40 の昭和ターミナル行き)
+			expect(
+				from?.departures.map((d) => d.arrivalTime),
+				stopId,
+			).toEqual(['08:40']);
+		}
+	});
+});
