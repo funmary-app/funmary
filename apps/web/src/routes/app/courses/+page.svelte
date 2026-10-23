@@ -74,7 +74,7 @@
 		if (tab === activeTab) return;
 		const url = new URL(page.url.href);
 		url.searchParams.set('tab', tab);
-		void goto(url, { replace: true, reset: false });
+		void goto(resolve(`app/courses?${url.searchParams}`), { replace: true, reset: false });
 	}
 </script>
 

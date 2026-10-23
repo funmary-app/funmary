@@ -49,7 +49,7 @@
 		};
 	} = $props();
 
-	const weekUrl = (date: string) => `${resolve('app/week')}?date=${date}`;
+	const weekUrl = (date: string) => resolve(`app/week?date=${date}`);
 
 	/** 見せ方の選び方。自動は、狭い画面では 1 日ずつ、広い画面では週を並べる */
 	const VIEW_LABELS: Record<WeekView, { text: string; title: string }> = {

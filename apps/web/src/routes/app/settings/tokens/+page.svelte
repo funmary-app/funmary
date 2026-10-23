@@ -54,8 +54,10 @@
 		信用できるものだけにしてください。
 	</p>
 	<p>
-		<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- Funmary の画面の経路ではなく、Hono が配る API の文書 -->
-		<a href={data.docsUrl} target="_blank" rel="noopener noreferrer">API の文書 (Swagger UI)</a>
+		<!-- API の文書は SvelteKit の外 (Hono が配る) なので、external で画面の中の移動にしない -->
+		<a href={data.docsUrl} target="_blank" rel="external noopener noreferrer"
+			>API の文書 (Swagger UI)</a
+		>
 	</p>
 
 	<FormNotice error={form?.error} message={form?.message} />
@@ -202,7 +204,7 @@
 		<h3>REST API</h3>
 		<p>
 			<code>{data.apiBase}</code> の下にあります。トークンを同じヘッダで付けて呼びます。仕様は
-			<a href={data.docsUrl} target="_blank" rel="noopener noreferrer">API の文書</a>
+			<a href={data.docsUrl} target="_blank" rel="external noopener noreferrer">API の文書</a>
 			にあります。
 		</p>
 	</section>
