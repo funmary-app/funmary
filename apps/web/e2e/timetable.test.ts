@@ -145,8 +145,11 @@ test.describe('今日と週の時間割', () => {
 		await dateInput.fill('2026-11-04');
 		await expect(page).toHaveURL('/app/week?date=2026-11-04');
 		await expect(page.getByRole('heading', { level: 1 })).toHaveText('11/2 (月) からの週');
-		for (let i = 0; i < 3; i++) await page.getByRole('link', { name: '前の週' }).click();
-		await expect(page.getByRole('heading', { level: 1 })).toHaveText('10/12 (月) からの週');
+		// 移り終わる前に押すと、古い週のリンクを押すことがあるので、1 週ずつ待つ
+		for (const monday of ['10/26', '10/19', '10/12']) {
+			await page.getByRole('link', { name: '前の週' }).click();
+			await expect(page.getByRole('heading', { level: 1 })).toHaveText(`${monday} (月) からの週`);
+		}
 
 		await table.getByRole('link', { name: '架空の時間割演習' }).first().click();
 		await expect(page.getByRole('heading', { level: 1 })).toHaveText('架空の時間割演習');
