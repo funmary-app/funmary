@@ -265,12 +265,14 @@
 			<h2 id="create-heading">シラバスにない授業を足す</h2>
 			<details>
 				<summary>公開シラバスに載っていない授業を、科目として足す</summary>
-				<p class="note">
-					足した授業は、ほかの利用者も探して登録できます。同じ名前の科目があれば、足さずにそちらを案内します。足した授業は、あなたと管理者が直したり消したりできます。
+				<p class="note" id="create-name-note">
+					授業の名前は、クラスも含めて書きます (例:
+					キャリアガイダンス)。足した授業は、ほかの利用者も探して登録できます。同じ名前の科目があれば、足さずにそちらを案内します。足した授業は、あなたと管理者が直したり消したりできます。
 				</p>
 				<form method="POST" action="?/createSubject" use:enhance class="slot-form">
 					<TextField
-						label="授業の名前 (クラスも含めて、例: キャリアガイダンス)"
+						label="授業の名前"
+						aria-describedby="create-name-note"
 						name="name"
 						maxlength={100}
 						required

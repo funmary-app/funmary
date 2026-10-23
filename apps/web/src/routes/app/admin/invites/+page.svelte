@@ -103,7 +103,7 @@
 				<!-- 無効の欄は送られない。サーバーはいまの上限を残す -->
 				<TextField
 					class="monthly-limit"
-					label="管理者でない人が 1 か月に発行できる数"
+					label="1 か月に発行できる数"
 					type="number"
 					name="monthlyLimit"
 					min={0}
@@ -118,6 +118,7 @@
 					aria-describedby="monthly-limit-note"
 				/>
 				<p id="monthly-limit-note" class="muted">
+					管理者でない人が、1 か月に発行できる招待コードの数です。
 					{#if limitUsed}
 						管理者でない人のコードは、1 回だけ使えて、30
 						日で期限が切れます。管理者は制限なく発行できます。
@@ -225,7 +226,7 @@
 		}
 
 		:global(.monthly-limit) {
-			width: 24rem;
+			width: 16rem;
 		}
 	}
 
