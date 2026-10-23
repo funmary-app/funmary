@@ -283,10 +283,10 @@
 	.row {
 		@include mixins.wrap-row(0.5rem 1rem);
 
-		// ラベルが欄の枠に収まる幅にする
-		> :global(.mdc-text-field),
+		// 欄はラベルが収まる幅より狭くせず、並べきれなければ折り返す
+		> :global(.text-field),
 		> :global(.select-field) {
-			flex: 1 1 14rem;
+			flex: 1 1 auto;
 		}
 	}
 	.choices {

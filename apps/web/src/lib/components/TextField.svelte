@@ -69,16 +69,41 @@
 	}
 </script>
 
-<Textfield
-	bind:value
-	use={[attach]}
-	variant="outlined"
-	class={className}
-	{label}
-	{type}
-	{textarea}
-	{required}
-	{disabled}
-	{...ALWAYS_FLOAT_TYPES.has(type) ? { label$floatAbove: true } : {}}
-	{...inputProps}
-/>
+<div class="text-field {className}">
+	<Textfield
+		bind:value
+		use={[attach]}
+		variant="outlined"
+		{label}
+		{type}
+		{textarea}
+		{required}
+		{disabled}
+		{...ALWAYS_FLOAT_TYPES.has(type) ? { label$floatAbove: true } : {}}
+		{...inputProps}
+	/>
+	<!-- SMUI の欄の幅は中の input の既定の幅で決まり、長いラベルが枠からはみ出す。ラベルの幅を欄の幅に入れる -->
+	<span class="sizer" aria-hidden="true">{label}</span>
+</div>
+
+<style lang="scss">
+	.text-field {
+		display: inline-grid;
+		max-width: 100%;
+
+		> :global(.mdc-text-field),
+		> .sizer {
+			grid-area: 1 / 1;
+		}
+	}
+
+	// 狭い画面では、欄の幅をラベルより狭くできる (ラベルは省略の印で切る)
+	.sizer {
+		height: 0;
+		padding: 0 20px;
+		overflow: hidden;
+		font-size: 1rem;
+		white-space: nowrap;
+		visibility: hidden;
+	}
+</style>
