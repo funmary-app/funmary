@@ -176,11 +176,6 @@ dialog {
 	align-items: end;
 	gap: 0.5rem 0.75rem;
 
-	label {
-		@include mixins.stack(0.25rem);
-		font-size: 0.875rem;
-	}
-
 	span {
 		align-self: center;
 		font-size: 0.875rem;

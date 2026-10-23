@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SelectField from '#lib/components/SelectField.svelte';
 	import Button, { Label } from '@smui/button';
 	import TextField from '#lib/components/TextField.svelte';
 	import { tick } from 'svelte';
@@ -197,14 +198,11 @@
 		{:else}
 			<form method="POST" action="?/saveSubstituteDay" use:enhance={closeOnSuccess} class="row">
 				<input type="hidden" name="date" value={selected} />
-				<label>
-					行う授業の曜日
-					<select name="weekday" value={String(defaultSubstitute)}>
-						{#each WEEKDAY_LABELS as day (day.weekday)}
-							<option value={String(day.weekday)}>{day.label}曜</option>
-						{/each}
-					</select>
-				</label>
+				<SelectField label="行う授業の曜日" name="weekday" value={String(defaultSubstitute)}>
+					{#each WEEKDAY_LABELS as day (day.weekday)}
+						<option value={String(day.weekday)}>{day.label}曜</option>
+					{/each}
+				</SelectField>
 				<Button type="submit" variant="unelevated"><Label>振替授業日にする</Label></Button>
 			</form>
 		{/if}
@@ -233,14 +231,11 @@
 		<h4>学期の期間</h4>
 		<form method="POST" action="?/setTermEdge" use:enhance={closeOnSuccess} class="row">
 			<input type="hidden" name="date" value={selected} />
-			<label>
-				学期
-				<select name="term" bind:value={termChoice}>
-					{#each TERM_CHOICES as term (term)}
-						<option value={term}>{formatTerm(term)}</option>
-					{/each}
-				</select>
-			</label>
+			<SelectField label="学期" name="term" bind:value={termChoice}>
+				{#each TERM_CHOICES as term (term)}
+					<option value={term}>{formatTerm(term)}</option>
+				{/each}
+			</SelectField>
 			<Button type="submit" name="edge" value="start" variant="outlined">
 				<Label>この日を始まりにする</Label>
 			</Button>

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SelectField from '#lib/components/SelectField.svelte';
 	import TextField from '#lib/components/TextField.svelte';
 	import Tab, { Label as TabLabel } from '@smui/tab';
 	import TabBar from '@smui/tab-bar';
@@ -276,14 +277,11 @@
 						autocomplete="off"
 						value={data.query}
 					/>
-					<label>
-						学期
-						<select name="term" required value={data.defaultTerm}>
-							{#each TERMS as term (term)}
-								<option value={term}>{formatTerm(term)}</option>
-							{/each}
-						</select>
-					</label>
+					<SelectField label="学期" name="term" required value={data.defaultTerm}>
+						{#each TERMS as term (term)}
+							<option value={term}>{formatTerm(term)}</option>
+						{/each}
+					</SelectField>
 					<TextField label="教員 (任意)" name="teacher" maxlength={100} autocomplete="off" />
 					<Button type="submit" variant="unelevated"><Label>足して登録する</Label></Button>
 				</form>

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SelectField from '#lib/components/SelectField.svelte';
 	import TextField from '#lib/components/TextField.svelte';
 	import RadioField from '#lib/components/RadioField.svelte';
 	import Button, { Label } from '@smui/button';
@@ -123,14 +124,11 @@
 									required
 									value={lesson.lessonName}
 								/>
-								<label>
-									学期
-									<select name="term" required value={data.defaultTerm}>
-										{#each TERMS as term (term)}
-											<option value={term}>{formatTerm(term)}</option>
-										{/each}
-									</select>
-								</label>
+								<SelectField label="学期" name="term" required value={data.defaultTerm}>
+									{#each TERMS as term (term)}
+										<option value={term}>{formatTerm(term)}</option>
+									{/each}
+								</SelectField>
 								<TextField label="教員 (任意)" name="teacher" maxlength={100} />
 								<Button type="submit" variant="outlined"><Label>作って紐付ける</Label></Button>
 							</form>
@@ -207,11 +205,6 @@
 		flex-wrap: wrap;
 		align-items: end;
 		gap: 0.5rem 1rem;
-
-		label {
-			@include mixins.stack(0.25rem);
-			font-size: 0.875rem;
-		}
 	}
 	.lessons > li {
 		@include surfaces.outlined;

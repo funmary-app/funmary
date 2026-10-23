@@ -21,11 +21,6 @@
 	padding: 1rem;
 	border-radius: 0.75rem;
 	background: var(--fm-surface-muted);
-
-	label {
-		@include mixins.stack(0.25rem);
-		font-size: 0.875rem;
-	}
 }
 
 .visibility {
