@@ -1,0 +1,33 @@
+name: CI を飛ばす頼み
+
+# PR のコメントに !ignore_ci と書かれたら、その PR の CI を動かし直す。動かし直した CI の skip ジョブが、
+# 書いた人が所有者かメンテナーかを確かめて、重い検査を飛ばす。
+# issue_comment のワークフローは main のものが動くので、PR の変更でこの処理は書き換えられない
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+
+jobs:
+  rerun:
+    name: CI の動かし直し
+    if: github.event.issue.pull_request && contains(github.event.comment.body, '!ignore_ci')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      # CI の実行を止めて、動かし直すため
+      actions: write
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup
+        with:
+          install: false
+      - env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.issue.number }}
+          COMMENTER: ${{ github.event.comment.user.login }}
+        run: node scripts/workflows/ci/rerun-ci.js
