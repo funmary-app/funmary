@@ -11,6 +11,7 @@
 
 [![CI](https://github.com/funmary-app/funmary/actions/workflows/ci.yml/badge.svg)](https://github.com/funmary-app/funmary/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-BSD--3--Clause%20OR%20Apache--2.0-blue)](#ライセンス)
+[![GitHub](https://img.shields.io/badge/GitHub-funmary--app-181717?logo=github&logoColor=white)](https://github.com/funmary-app)
 [![Twitter](https://img.shields.io/badge/Twitter-@funmary__app-1DA1F2?logo=twitter&logoColor=white)](https://x.com/funmary_app)
 [![note](https://img.shields.io/badge/note-funmary-41C9B4?logo=note&logoColor=white)](https://note.com/funmary)
 
