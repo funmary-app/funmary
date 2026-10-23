@@ -34,9 +34,31 @@ const smuiPackages = [...dependencyNames('dependencies'), ...dependencyNames('de
  * @param {string} dir
  */
 const storeOf = (dir) => dirname(dirname(realpathSync(dir)));
-const stores = [
-	...new Set(smuiPackages.map((name) => storeOf(join(webRoot, 'node_modules', name)))),
-];
+/**
+ * 部品のスタイルは、依存する部品のスタイルを読む (@smui/data-table が @smui/select を読み、@smui/select が
+ * @smui/menu-surface を読む)。依存の依存は、依存の実体の隣にしかないので、依存をたどって置き場所を集める
+ * @param {string} dir パッケージの場所
+ * @param {Set<string>} found 集めた置き場所
+ */
+const collectStores = (dir, found) => {
+	const store = storeOf(dir);
+	if (found.has(store)) return;
+	found.add(store);
+	/** @type {unknown} */
+	const pkg = JSON.parse(readFileSync(join(realpathSync(dir), 'package.json'), 'utf8'));
+	const dependencies =
+		typeof pkg === 'object' && pkg !== null && 'dependencies' in pkg ? pkg.dependencies : undefined;
+	const names =
+		typeof dependencies === 'object' && dependencies !== null ? Object.keys(dependencies) : [];
+	for (const name of names) {
+		if (name.startsWith('@smui/') || name.startsWith('@smui-extra/'))
+			collectStores(join(store, name), found);
+	}
+};
+/** @type {Set<string>} */
+const found = new Set();
+for (const name of smuiPackages) collectStores(join(webRoot, 'node_modules', name), found);
+const stores = [...found];
 // @smui/common は部品の依存で、apps/web からは直接見えない。どの部品からも同じ @smui/common を読むよう、先頭に置く
 // (テーマの設定 (with) は、同じ場所から読んだモジュールにだけ効くため)
 const commonStore = storeOf(join(stores[0] ?? '', '@smui/common'));
@@ -51,14 +73,17 @@ function compile(theme, packages) {
 		`@use '${theme}';`,
 		...packages.map((name) => `@use '${name}/style' as ${name.replace(/\W/g, '_')};`),
 	].join('\n');
-	return sass.compileString(source, {
-		loadPaths,
-		url: new URL(`file:///${webRoot.replaceAll('\\', '/')}/src/theme/entry.scss`),
-		style: 'compressed',
-		// SMUI 9 の Sass が使う古い書き方の警告。直すのは SMUI 側なので、変換の出力には出さない
-		silenceDeprecations: ['if-function', 'import', 'global-builtin'],
-		quietDeps: true,
-	}).css;
+	return sass
+		.compileString(source, {
+			loadPaths,
+			url: new URL(`file:///${webRoot.replaceAll('\\', '/')}/src/theme/entry.scss`),
+			style: 'compressed',
+			// SMUI 9 の Sass が使う古い書き方の警告。直すのは SMUI 側なので、変換の出力には出さない
+			silenceDeprecations: ['if-function', 'import', 'global-builtin'],
+			quietDeps: true,
+			// 圧縮した出力は、ASCII でない文字を含むと先頭に BOM が付き、テーマの CSS と先頭がそろわなくなる
+		})
+		.css.replace(/^\uFEFF/, '');
 }
 
 const light = compile('smui-theme', []);
