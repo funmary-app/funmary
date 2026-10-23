@@ -1,4 +1,5 @@
 <script lang="ts">
+	import DataTable, { Body, Cell, Head, Row } from '@smui/data-table';
 	import SelectField from '#lib/components/SelectField.svelte';
 	import TextField from '#lib/components/TextField.svelte';
 	import CheckboxField from '#lib/components/CheckboxField.svelte';
@@ -211,25 +212,25 @@
 
 	<section aria-labelledby="terms-heading">
 		<h2 id="terms-heading">学期の期間</h2>
-		<table>
-			<thead>
-				<tr>
-					<th scope="col">学期</th>
-					<th scope="col">期間と出どころ</th>
-					<th scope="col"><span class="visually-hidden">操作</span></th>
-				</tr>
-			</thead>
-			<tbody>
+		<DataTable>
+			<Head>
+				<Row>
+					<Cell>学期</Cell>
+					<Cell>期間と出どころ</Cell>
+					<Cell><span class="visually-hidden">操作</span></Cell>
+				</Row>
+			</Head>
+			<Body>
 				{#each data.terms as row (row.term)}
-					<tr class={{ estimated: row.source === 'estimated' || row.source === null }}>
-						<th scope="row">{formatTerm(row.term)}</th>
-						<td>
+					<Row class={row.source === 'estimated' || row.source === null ? 'estimated' : ''}>
+						<th scope="row" class="mdc-data-table__cell">{formatTerm(row.term)}</th>
+						<Cell>
 							<span class="numeric">
 								{#if row.start && row.end}{row.start} から {row.end}{:else}-{/if}
 							</span>
 							<span class="source">{sourceLabel(row)}</span>
-						</td>
-						<td>
+						</Cell>
+						<Cell>
 							{#if row.source === 'manual' || row.source === 'auto'}
 								<form
 									method="POST"
@@ -243,11 +244,11 @@
 									</Button>
 								</form>
 							{/if}
-						</td>
-					</tr>
+						</Cell>
+					</Row>
 				{/each}
-			</tbody>
-		</table>
+			</Body>
+		</DataTable>
 
 		<details>
 			<summary>日付を入れて学期の期間を入力する</summary>
@@ -438,26 +439,8 @@
 		}
 	}
 
-	table {
-		width: 100%;
-		border-collapse: collapse;
-	}
-
-	th,
-	td {
-		padding: 0.25rem 0.5rem;
-		border-bottom: 1px dashed var(--fm-divider);
-		text-align: left;
-		vertical-align: middle;
-	}
-
-	thead th {
-		color: var(--fm-text-muted);
-		font-size: 0.875rem;
-		font-weight: 400;
-	}
-
-	.estimated td {
+	// 推定の期間 (学年暦から読んでいない学期) は、薄い文字にする
+	section :global(.estimated .mdc-data-table__cell) {
 		color: var(--fm-text-muted);
 	}
 
@@ -467,7 +450,7 @@
 		font-size: 0.8125rem;
 	}
 
-	tbody th {
+	th {
 		white-space: nowrap;
 	}
 

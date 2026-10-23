@@ -1,4 +1,5 @@
 <script lang="ts">
+	import DataTable, { Body, Cell, Head, Row } from '@smui/data-table';
 	import Button, { Label } from '@smui/button';
 	import { enhance } from '$app/forms';
 	import type { ResponseTimeSummary } from '#lib/server/response-times.ts';
@@ -152,31 +153,29 @@
 		{#if data.runs.length === 0}
 			<p>まだ記録がありません。</p>
 		{:else}
-			<div class="scroll">
-				<table>
-					<thead>
-						<tr>
-							<th scope="col">始まり</th>
-							<th scope="col">処理</th>
-							<th scope="col">結果</th>
-							<th scope="col">かかった時間</th>
-						</tr>
-					</thead>
-					<tbody>
-						{#each data.runs as run (run.id)}
-							<tr>
-								<td class="numeric">{run.startedAt}</td>
-								<td>{run.job}</td>
-								<td>
-									<span class={['run', run.status]}>{RUN_LABELS[run.status]}</span>
-									{#if run.message}<span class="message">{run.message}</span>{/if}
-								</td>
-								<td class="numeric">{run.seconds === null ? '-' : `${run.seconds} 秒`}</td>
-							</tr>
-						{/each}
-					</tbody>
-				</table>
-			</div>
+			<DataTable>
+				<Head>
+					<Row>
+						<Cell>始まり</Cell>
+						<Cell>処理</Cell>
+						<Cell>結果</Cell>
+						<Cell>かかった時間</Cell>
+					</Row>
+				</Head>
+				<Body>
+					{#each data.runs as run (run.id)}
+						<Row>
+							<Cell class="numeric">{run.startedAt}</Cell>
+							<Cell>{run.job}</Cell>
+							<Cell>
+								<span class={['run', run.status]}>{RUN_LABELS[run.status]}</span>
+								{#if run.message}<span class="message">{run.message}</span>{/if}
+							</Cell>
+							<Cell class="numeric">{run.seconds === null ? '-' : `${run.seconds} 秒`}</Cell>
+						</Row>
+					{/each}
+				</Body>
+			</DataTable>
 		{/if}
 	</section>
 
@@ -189,35 +188,33 @@
 		{#if data.failedDeliveries.length === 0}
 			<p>まだ記録がありません。</p>
 		{:else}
-			<div class="scroll">
-				<table>
-					<thead>
-						<tr>
-							<th scope="col">失敗の時刻</th>
-							<th scope="col">利用者</th>
-							<th scope="col">送り先</th>
-							<th scope="col">通知</th>
-							<th scope="col">試した回数</th>
-							<th scope="col">理由</th>
-						</tr>
-					</thead>
-					<tbody>
-						{#each data.failedDeliveries as delivery (delivery.id)}
-							<tr>
-								<td class="numeric">{delivery.failedAt ?? '-'}</td>
-								<td>{delivery.userEmail}</td>
-								<td>{delivery.channelKind}</td>
-								<td>
-									<span class="badge">{delivery.notificationKind}</span>
-									{delivery.title}
-								</td>
-								<td class="numeric">{delivery.attempts} 回</td>
-								<td class="error-text">{delivery.lastError ?? '-'}</td>
-							</tr>
-						{/each}
-					</tbody>
-				</table>
-			</div>
+			<DataTable>
+				<Head>
+					<Row>
+						<Cell>失敗の時刻</Cell>
+						<Cell>利用者</Cell>
+						<Cell>送り先</Cell>
+						<Cell>通知</Cell>
+						<Cell>試した回数</Cell>
+						<Cell>理由</Cell>
+					</Row>
+				</Head>
+				<Body>
+					{#each data.failedDeliveries as delivery (delivery.id)}
+						<Row>
+							<Cell class="numeric">{delivery.failedAt ?? '-'}</Cell>
+							<Cell>{delivery.userEmail}</Cell>
+							<Cell>{delivery.channelKind}</Cell>
+							<Cell>
+								<span class="badge">{delivery.notificationKind}</span>
+								{delivery.title}
+							</Cell>
+							<Cell class="numeric">{delivery.attempts} 回</Cell>
+							<Cell><span class="error-text">{delivery.lastError ?? '-'}</span></Cell>
+						</Row>
+					{/each}
+				</Body>
+			</DataTable>
 		{/if}
 	</section>
 
@@ -242,36 +239,35 @@
 				<dt>99% の応答</dt>
 				<dd class="numeric">{quantile(data.responseTimes.p99)}</dd>
 			</dl>
-			<table class="histogram">
+			<DataTable class="histogram">
 				<caption class="visually-hidden">応答時間の分布</caption>
-				<thead>
-					<tr>
-						<th scope="col">応答時間</th>
-						<th scope="col">件数</th>
-						<th scope="col"><span class="visually-hidden">割合</span></th>
-					</tr>
-				</thead>
-				<tbody>
+				<Head>
+					<Row>
+						<Cell>応答時間</Cell>
+						<Cell>件数</Cell>
+						<Cell><span class="visually-hidden">割合</span></Cell>
+					</Row>
+				</Head>
+				<Body>
 					{#each data.responseTimes.buckets as bucket (bucket.upTo)}
-						<tr>
-							<td class="numeric"
-								>{bucket.upTo === null ? '2500 ms 超' : `${bucket.upTo} ms 以内`}</td
+						<Row>
+							<Cell class="numeric"
+								>{bucket.upTo === null ? '2500 ms 超' : `${bucket.upTo} ms 以内`}</Cell
 							>
-							<td class="numeric">{bucket.count}</td>
-							<td class="bar-cell">
+							<Cell class="numeric">{bucket.count}</Cell>
+							<Cell class="bar-cell">
 								<span class="bar" style:inline-size={`${(bucket.count / maxBucket) * 100}%`}></span>
-							</td>
-						</tr>
+							</Cell>
+						</Row>
 					{/each}
-				</tbody>
-			</table>
+				</Body>
+			</DataTable>
 		{/if}
 	</section>
 </div>
 
 <style lang="scss">
 	@use 'mixins';
-	@use 'tables';
 	@use 'text';
 
 	.sources {
@@ -356,14 +352,6 @@
 		white-space: nowrap;
 	}
 
-	.scroll {
-		overflow-x: auto;
-	}
-
-	table {
-		@include tables.data;
-	}
-
 	.jobs {
 		margin: 0;
 		padding: 0;
@@ -377,12 +365,12 @@
 		}
 	}
 
-	.histogram {
+	section :global(.histogram) {
 		max-width: 32rem;
 		margin-top: 0.75rem;
 	}
 
-	.bar-cell {
+	section :global(.bar-cell) {
 		width: 50%;
 	}
 

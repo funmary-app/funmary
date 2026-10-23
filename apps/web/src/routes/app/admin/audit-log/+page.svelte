@@ -1,4 +1,5 @@
 <script lang="ts">
+	import DataTable, { Body, Cell, Head, Row } from '@smui/data-table';
 	import { resolve } from '$app/paths';
 	import SettingsBreadcrumb from '#lib/components/SettingsBreadcrumb.svelte';
 	import type { SubjectPathParams } from '#lib/subject-path.ts';
@@ -30,47 +31,33 @@
 	{#if data.entries.length === 0}
 		<p>まだ記録がありません。</p>
 	{:else}
-		<div class="scroll">
-			<table>
-				<thead>
-					<tr>
-						<th scope="col">日時</th>
-						<th scope="col">行った人</th>
-						<th scope="col">操作</th>
-						<th scope="col">内容</th>
-					</tr>
-				</thead>
-				<tbody>
-					{#each data.entries as entry (entry.id)}
-						<tr>
-							<td class="numeric">{entry.at}</td>
-							<td>{entry.actorEmail ?? '(退会済み)'}</td>
-							<td>{entry.action}</td>
-							<td>
-								{#if entry.subjectPath}
-									<a href={resolve('/app/subjects/[year]/[code]', entry.subjectPath)}
-										>{entry.summary}</a
-									>
-								{:else}
-									{entry.summary}
-								{/if}
-							</td>
-						</tr>
-					{/each}
-				</tbody>
-			</table>
-		</div>
+		<DataTable>
+			<Head>
+				<Row>
+					<Cell>日時</Cell>
+					<Cell>行った人</Cell>
+					<Cell>操作</Cell>
+					<Cell>内容</Cell>
+				</Row>
+			</Head>
+			<Body>
+				{#each data.entries as entry (entry.id)}
+					<Row>
+						<Cell class="numeric">{entry.at}</Cell>
+						<Cell>{entry.actorEmail ?? '(退会済み)'}</Cell>
+						<Cell>{entry.action}</Cell>
+						<Cell>
+							{#if entry.subjectPath}
+								<a href={resolve('/app/subjects/[year]/[code]', entry.subjectPath)}
+									>{entry.summary}</a
+								>
+							{:else}
+								{entry.summary}
+							{/if}
+						</Cell>
+					</Row>
+				{/each}
+			</Body>
+		</DataTable>
 	{/if}
 </div>
-
-<style lang="scss">
-	@use 'tables';
-
-	.scroll {
-		overflow-x: auto;
-	}
-
-	table {
-		@include tables.data;
-	}
-</style>

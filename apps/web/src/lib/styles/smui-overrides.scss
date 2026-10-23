@@ -200,4 +200,49 @@
 	.mdc-floating-label--required::after {
 		content: none;
 	}
+
+	// 管理画面の表。SMUI の既定の線と見出しの色は黒の半透明で、ダークで見えないので、テーマの色にする。
+	// 理由やメモなど長い文は折り返し、列の幅は中身に合わせる (SMUI の既定は 1 行で、列の幅がそろう)
+	.mdc-data-table {
+		--mdc-shape-medium: 0.5rem;
+		width: 100%;
+		border-color: var(--fm-divider);
+		background-color: var(--fm-surface);
+	}
+
+	.mdc-data-table__table {
+		table-layout: auto;
+		white-space: normal;
+	}
+
+	.mdc-data-table__header-row {
+		height: 48px;
+	}
+
+	.mdc-data-table__row {
+		height: auto;
+	}
+
+	.mdc-data-table__header-cell,
+	.mdc-data-table__cell {
+		padding: 0.5rem 1rem;
+		border-bottom-color: var(--fm-divider);
+		color: var(--fm-text);
+		font-size: 0.875rem;
+	}
+
+	.mdc-data-table__header-cell {
+		background-color: var(--fm-surface);
+		color: var(--fm-text-muted);
+		white-space: nowrap;
+	}
+
+	.mdc-data-table__row:not(.mdc-data-table__row--selected):hover {
+		background-color: var(--fm-surface-muted);
+	}
+
+	// 日時や回数の列は、折り返さない
+	.mdc-data-table__cell.numeric {
+		white-space: nowrap;
+	}
 }
