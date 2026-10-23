@@ -93,3 +93,8 @@ export function resolveAcademicTerms(
 		a.start !== b.start ? (a.start < b.start ? -1 : 1) : a.end < b.end ? 1 : a.end > b.end ? -1 : 0,
 	);
 }
+
+/** その日を期間に含む学期 */
+export function termsOn(terms: readonly TermPeriod[], date: CalendarDate): Term[] {
+	return terms.filter((term) => term.start <= date && date <= term.end).map((term) => term.term);
+}

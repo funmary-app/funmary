@@ -177,6 +177,38 @@ describe('CourseStore.addSharedSlots', () => {
 	});
 });
 
+describe('CourseStore.subjectsAt', () => {
+	it('その曜日と時限に共有の枠を持つ科目を返す', () => {
+		const { subjectId, courses } = setup();
+		const otherId = createSubjectStore(database).upsert(
+			{
+				academicYear: 2026,
+				syllabusId: '100003',
+				name: '架空の科目C',
+				teacher: null,
+				credits: 2,
+				term: 'fall',
+				attributes: {},
+				syllabus: {},
+				syllabusUrl: null,
+			},
+			T0,
+		);
+		courses.addSharedSlots(
+			[
+				{ subjectId: otherId, weekday: 2, period: 3, room: null },
+				{ subjectId, weekday: 2, period: 3, room: '363' },
+				{ subjectId, weekday: 4, period: 3, room: '363' },
+			],
+			{ source: 'pdf', createdBy: null },
+			T0,
+		);
+		expect(courses.subjectsAt(2, 3)).toEqual([subjectId, otherId].sort((a, b) => a - b));
+		expect(courses.subjectsAt(4, 3)).toEqual([subjectId]);
+		expect(courses.subjectsAt(2, 4)).toEqual([]);
+	});
+});
+
 describe('register と unregister', () => {
 	it('科目を履修登録し、取り消せる。取り消しても共有の枠は残る', () => {
 		const { alice, subjectId, courses } = setup();

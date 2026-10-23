@@ -12,6 +12,7 @@ export { findNextLesson, type NextLesson } from './next-lesson.ts';
 export {
 	estimateAcademicTerms,
 	resolveAcademicTerms,
+	termsOn,
 	type ResolvedTerm,
 	type StoredTerm,
 	type TermSource,
