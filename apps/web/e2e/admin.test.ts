@@ -5,8 +5,6 @@ import { openDatabase } from '@funmary/db';
 import { E2E_DATA_DIR } from '../e2e-data-dir.ts';
 import { oidc, signIn, useMockOidc, seedSubjects, signInAs, answerConfirm } from './support.ts';
 
-// サーバーの状態 (次にログインする人) を共有するので、テストは 1 つずつ動かす
-test.describe.configure({ mode: 'serial' });
 useMockOidc();
 
 test.describe('管理画面', () => {
@@ -290,7 +288,7 @@ test.describe('学年暦の管理', () => {
 
 	test('管理者でなければ、学年暦の画面は見つからないことにする', async ({ page }) => {
 		const email = 'e2e-not-admin@fun.ac.jp';
-		oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
+		await oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
 		await signIn(page);
 		const response = await page.goto('/app/admin/calendar');
 		expect(response?.status()).toBe(404);
@@ -442,7 +440,7 @@ test.describe('サポートサーバーの招待', () => {
 		page,
 	}) => {
 		const email = 'e2e-admin@fun.ac.jp';
-		oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
+		await oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
 		await signIn(page);
 		await page.goto('/app/settings');
 		await page.getByRole('link', { name: 'サポートサーバーの招待' }).click();
@@ -490,7 +488,7 @@ test.describe('サポートサーバーの招待', () => {
 
 	test('管理者でなければ、見つからないことにする', async ({ page }) => {
 		const email = 'e2e-not-admin@fun.ac.jp';
-		oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
+		await oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
 		await signIn(page);
 		const response = await page.goto('/app/admin/support-invites');
 		expect(response?.status()).toBe(404);
@@ -507,7 +505,7 @@ test.describe('学内のネットワーク', () => {
 	test.afterAll(clearRanges);
 
 	const openPage = async (page: Page) => {
-		oidc.setIdentity({
+		await oidc.setIdentity({
 			sub: 'e2e-admin@fun.ac.jp',
 			email: 'e2e-admin@fun.ac.jp',
 			email_verified: true,
@@ -590,7 +588,7 @@ test.describe('学内のネットワーク', () => {
 
 	test('管理者でなければ、見つからないことにする', async ({ page }) => {
 		const email = 'e2e-not-admin@fun.ac.jp';
-		oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
+		await oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
 		await signIn(page);
 		const response = await page.goto('/app/admin/campus-network');
 		expect(response?.status()).toBe(404);
@@ -629,7 +627,7 @@ test.describe('取得元と実行履歴', () => {
 
 	test('管理者は、取得元の状態と実行履歴を見られる', async ({ page }) => {
 		const email = 'e2e-admin@fun.ac.jp';
-		oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
+		await oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
 		await signIn(page);
 		await page.goto('/app/settings');
 		await page.getByRole('link', { name: '取得元と実行履歴' }).click();
@@ -651,7 +649,7 @@ test.describe('取得元と実行履歴', () => {
 
 	test('管理者は、定期処理を今すぐ動かせる。応答時間の分布も見られる', async ({ page }) => {
 		const email = 'e2e-admin@fun.ac.jp';
-		oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
+		await oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
 		await signIn(page);
 		await page.goto('/app/admin/status');
 
@@ -681,7 +679,7 @@ test.describe('取得元と実行履歴', () => {
 
 	test('管理者でなければ、見つからないことにする', async ({ page }) => {
 		const email = 'e2e-not-admin@fun.ac.jp';
-		oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
+		await oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
 		await signIn(page);
 		const response = await page.goto('/app/admin/status');
 		expect(response?.status()).toBe(404);
@@ -813,12 +811,16 @@ test.describe('テストアカウント', () => {
 		// 用意していない Google アカウントは、断られる
 		const guest = await browser.newContext();
 		const guestPage = await guest.newPage();
-		oidc.setIdentity({ sub: 'e2e-stranger', email: 'stranger@gmail.com', email_verified: true });
+		await oidc.setIdentity({
+			sub: 'e2e-stranger',
+			email: 'stranger@gmail.com',
+			email_verified: true,
+		});
 		await guestPage.goto('/auth/google/test');
 		await expect(guestPage).toHaveURL(/\/login\?error=/);
 
 		// 用意したアカウントでは、入れる (規約への同意から)
-		oidc.setIdentity({ sub: tester, email: tester, email_verified: true });
+		await oidc.setIdentity({ sub: tester, email: tester, email_verified: true });
 		await guestPage.goto('/auth/google/test');
 		await expect(guestPage).toHaveURL(/\/consent/);
 		await guestPage.getByLabel('利用規約とプライバシーポリシーに同意します').check();

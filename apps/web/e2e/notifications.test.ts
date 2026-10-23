@@ -2,8 +2,6 @@
 import { expect, test } from '@playwright/test';
 import { oidc, signIn, useMockOidc, seedSubjects, answerConfirm } from './support.ts';
 
-// サーバーの状態 (次にログインする人) を共有するので、テストは 1 つずつ動かす
-test.describe.configure({ mode: 'serial' });
 useMockOidc();
 
 test.describe('通知欄', () => {
@@ -15,7 +13,7 @@ test.describe('通知欄', () => {
 	test('履修している科目の休講が通知欄に入り、ベルに未読数が出る。開くと授業の画面へ移り、既読になる', async ({
 		page,
 	}) => {
-		oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
+		await oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
 		await signIn(page);
 		await page.goto('/app');
 		await expect(page.getByRole('link', { name: '通知', exact: true }).first()).toBeVisible();
@@ -42,7 +40,7 @@ test.describe('通知欄', () => {
 
 		// 管理者が、休講などを通知欄に入れる定期処理を今すぐ動かす
 		const admin = 'e2e-admin@fun.ac.jp';
-		oidc.setIdentity({ sub: admin, email: admin, email_verified: true, hd: 'fun.ac.jp' });
+		await oidc.setIdentity({ sub: admin, email: admin, email_verified: true, hd: 'fun.ac.jp' });
 		await signIn(page);
 		await page.goto('/app/admin/status');
 		await page
@@ -53,7 +51,7 @@ test.describe('通知欄', () => {
 			.click();
 		await expect(page.getByRole('status').first()).toContainText('休講などの通知を');
 
-		oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
+		await oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
 		await signIn(page);
 		await page.goto('/app');
 		await page.getByRole('link', { name: '通知 (未読 1 件)' }).first().click();
@@ -92,7 +90,7 @@ test.describe('カレンダーの購読', () => {
 	test('購読の URL を発行して ICS を取れ、再発行と無効化で前の URL が使えなくなる', async ({
 		page,
 	}) => {
-		oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
+		await oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
 		await signIn(page);
 		await page
 			.getByRole('navigation', { name: 'メニュー' })
@@ -152,17 +150,20 @@ test.describe('お知らせのフィード', () => {
 	test('購読の URL を発行して RSS、Atom、JSON Feed を取れ、載せる種類を絞れる', async ({
 		page,
 	}) => {
-		oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
+		await oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
 		await signIn(page);
 		await page.goto('/app/settings/feed');
 
 		await page.getByRole('button', { name: '購読の URL を発行する' }).click();
+		// 発行した URL は、欄が描かれたあとに入るので、入るのを待ってから読む
+		await expect(page.getByLabel('RSS (RSS 2.0)')).toHaveValue(/\/feed\/[\w-]{43}\/rss\.xml$/);
+		await expect(page.getByLabel('Atom (Atom 1.0)')).toHaveValue(/\/feed\/[\w-]{43}\/atom\.xml$/);
+		await expect(page.getByLabel('JSON Feed (JSON Feed 1.1)')).toHaveValue(
+			/\/feed\/[\w-]{43}\/feed\.json$/,
+		);
 		const rss = await page.getByLabel('RSS (RSS 2.0)').inputValue();
 		const atom = await page.getByLabel('Atom (Atom 1.0)').inputValue();
 		const json = await page.getByLabel('JSON Feed (JSON Feed 1.1)').inputValue();
-		expect(rss).toMatch(/\/feed\/[\w-]{43}\/rss\.xml$/);
-		expect(atom).toMatch(/\/feed\/[\w-]{43}\/atom\.xml$/);
-		expect(json).toMatch(/\/feed\/[\w-]{43}\/feed\.json$/);
 
 		const rssResponse = await page.request.get(rss);
 		expect(rssResponse.status()).toBe(200);
@@ -198,7 +199,7 @@ test.describe('Webhook', () => {
 	test('Discord の Webhook の登録、保存、無効化、削除ができる。URL は末尾を伏せて出す', async ({
 		page,
 	}) => {
-		oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
+		await oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
 		await signIn(page);
 		await page.goto('/app/settings');
 		await page.getByRole('link', { name: 'Webhook' }).first().click();
@@ -245,7 +246,7 @@ test.describe('Webhook', () => {
 		page,
 	}) => {
 		const genericEmail = `e2e-webhook-generic-${Date.now()}@fun.ac.jp`;
-		oidc.setIdentity({
+		await oidc.setIdentity({
 			sub: genericEmail,
 			email: genericEmail,
 			email_verified: true,
@@ -282,7 +283,7 @@ test.describe('Webhook', () => {
 
 	test('管理者が上限を 0 にすると、新しく登録できない。戻すと登録できる', async ({ page }) => {
 		const admin = 'e2e-admin@fun.ac.jp';
-		oidc.setIdentity({ sub: admin, email: admin, email_verified: true, hd: 'fun.ac.jp' });
+		await oidc.setIdentity({ sub: admin, email: admin, email_verified: true, hd: 'fun.ac.jp' });
 		await signIn(page);
 		// 画面が動き出す前に入れた値は、動き出したときに元に戻ることがある。保存の結果で確かめ、戻っていたらやり直す
 		await expect(async () => {

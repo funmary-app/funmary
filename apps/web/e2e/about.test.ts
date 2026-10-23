@@ -3,8 +3,6 @@ import { expect, test, type Page } from '@playwright/test';
 import { REPOSITORY_URL } from '../src/lib/repository.ts';
 import { useMockOidc, signInAs, answerConfirm } from './support.ts';
 
-// サーバーの状態 (次にログインする人) を共有するので、テストは 1 つずつ動かす
-test.describe.configure({ mode: 'serial' });
 useMockOidc();
 
 test.describe('このアプリについて', () => {

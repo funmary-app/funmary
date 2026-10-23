@@ -2,8 +2,6 @@
 import { expect, test } from '@playwright/test';
 import { oidc, seedBus, signInAs, useMockOidc } from './support.ts';
 
-// サーバーの状態 (次にログインする人) を共有するので、テストは 1 つずつ動かす
-test.describe.configure({ mode: 'serial' });
 useMockOidc();
 
 test.describe('バス', () => {
@@ -313,7 +311,7 @@ test.describe('バス', () => {
 	});
 
 	test('ログインしていなければ、バスの画面は開けない', async ({ page }) => {
-		oidc.setIdentity({ sub: 'nobody', email: 'nobody@fun.ac.jp', email_verified: true });
+		await oidc.setIdentity({ sub: 'nobody', email: 'nobody@fun.ac.jp', email_verified: true });
 		await page.context().clearCookies();
 		await page.goto('/app/bus');
 		await expect(page).not.toHaveURL(/\/app\/bus/);

@@ -2,13 +2,11 @@
 import { expect, test, type Page } from '@playwright/test';
 import { oidc, signIn, useMockOidc, seedSubjects, signInAs, answerConfirm } from './support.ts';
 
-// サーバーの状態 (次にログインする人) を共有するので、テストは 1 つずつ動かす
-test.describe.configure({ mode: 'serial' });
 useMockOidc();
 
 test.describe('ポータルの時間割の取り込み', () => {
 	const loginAs = async (page: Page) => {
-		oidc.setIdentity({
+		await oidc.setIdentity({
 			sub: 'e2e-import',
 			email: 'import@fun.ac.jp',
 			email_verified: true,
@@ -204,7 +202,12 @@ test.describe('履修科目の登録', () => {
 		// ほかの利用者は探して登録できるが、直せない
 		const other = await (await browser.newContext()).newPage();
 		const otherEmail = `e2e-other-${Date.now()}@fun.ac.jp`;
-		oidc.setIdentity({ sub: otherEmail, email: otherEmail, email_verified: true, hd: 'fun.ac.jp' });
+		await oidc.setIdentity({
+			sub: otherEmail,
+			email: otherEmail,
+			email_verified: true,
+			hd: 'fun.ac.jp',
+		});
 		await signIn(other);
 		await other.goto(`/app/courses?q=${encodeURIComponent(name)}`);
 		await other.getByRole('link', { name }).click();
@@ -261,7 +264,12 @@ test.describe('履修科目の登録', () => {
 
 		const other = await (await browser.newContext()).newPage();
 		const otherEmail = `e2e-visibility-${Date.now()}@fun.ac.jp`;
-		oidc.setIdentity({ sub: otherEmail, email: otherEmail, email_verified: true, hd: 'fun.ac.jp' });
+		await oidc.setIdentity({
+			sub: otherEmail,
+			email: otherEmail,
+			email_verified: true,
+			hd: 'fun.ac.jp',
+		});
 		await signIn(other);
 
 		// 既定 (全体公開) では、ほかの利用者も探して見つけられる

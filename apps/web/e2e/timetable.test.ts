@@ -3,8 +3,6 @@ import { expect, test, type Page, type Locator } from '@playwright/test';
 import { createCourseStore, createSubjectStore } from '@funmary/db';
 import { oidc, signIn, useMockOidc, seedSubjects, answerConfirm } from './support.ts';
 
-// サーバーの状態 (次にログインする人) を共有するので、テストは 1 つずつ動かす
-test.describe.configure({ mode: 'serial' });
 useMockOidc();
 
 test.describe('今日と週の時間割', () => {
@@ -13,7 +11,7 @@ test.describe('今日と週の時間割', () => {
 	const email = `${sub}@fun.ac.jp`;
 
 	const loginAs = async (page: Page) => {
-		oidc.setIdentity({ sub, email, email_verified: true, hd: 'fun.ac.jp' });
+		await oidc.setIdentity({ sub, email, email_verified: true, hd: 'fun.ac.jp' });
 		await signIn(page);
 		await expect(page).toHaveURL('/app');
 	};
@@ -345,7 +343,7 @@ test.describe('自分の予定', () => {
 	const owner = `e2e-events-${Date.now()}@fun.ac.jp`;
 	const other = `e2e-events-other-${Date.now()}@fun.ac.jp`;
 	const login = async (page: Page, email: string) => {
-		oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
+		await oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
 		await signIn(page);
 		await expect(page).toHaveURL('/app');
 	};
@@ -514,8 +512,8 @@ test.describe('自分の予定', () => {
 			.getByRole('link', { name: /^編集/ })
 			.click();
 		const linkField = page.getByLabel('リンク', { exact: true });
+		await expect(linkField).toHaveValue(/\/app\/events\/shared\/[\w-]{43}$/);
 		const firstLink = await linkField.inputValue();
-		expect(firstLink).toMatch(/\/app\/events\/shared\/[\w-]{43}$/);
 		await page.goto('/app/events');
 		await page
 			.getByRole('listitem')
@@ -587,7 +585,7 @@ test.describe('時間割だけの略称表示', () => {
 		}, testInfo) => {
 			await page.setViewportSize(viewport);
 			const email = `e2e-abbreviation-${viewport.width}-${Date.now()}@fun.ac.jp`;
-			oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
+			await oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
 			await signIn(page);
 			await expect(page).toHaveURL('/app');
 			seedSubjects((database, subjectId) => {
@@ -686,7 +684,7 @@ test.describe('時間割だけの略称表示', () => {
 		test(`${width}pxでも略称表示の操作部が画面内に収まる`, async ({ page }, testInfo) => {
 			await page.setViewportSize({ width, height: 844 });
 			const email = `e2e-abbreviation-narrow-${width}-${Date.now()}@fun.ac.jp`;
-			oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
+			await oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
 			await signIn(page);
 			await page.goto('/app/week?date=2026-10-05');
 			await expect(page.getByRole('switch', { name: '略称表示' })).toBeVisible();
@@ -716,7 +714,7 @@ test.describe('時間割だけの略称表示', () => {
 		const stamp = Date.now();
 		const login = async (target: import('@playwright/test').Page, suffix: string) => {
 			const email = `e2e-abbreviation-${stamp}-${suffix}@fun.ac.jp`;
-			oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
+			await oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
 			await signIn(target);
 			await expect(target).toHaveURL('/app');
 			seedSubjects((database, subjectId) => {
