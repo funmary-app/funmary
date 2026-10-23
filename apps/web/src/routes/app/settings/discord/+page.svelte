@@ -7,6 +7,7 @@
 	import { confirmSubmit } from '#lib/actions/confirm-submit.ts';
 	import { DAILY_DIGEST_STEP_MINUTES, type DailyDigestSettings } from '@funmary/core';
 	import FormNotice from '#lib/components/FormNotice.svelte';
+	import { serverChoice } from '#lib/server-choice.svelte.ts';
 	import SettingsBreadcrumb from '#lib/components/SettingsBreadcrumb.svelte';
 
 	type Destination = 'thread' | 'dm' | 'both';
@@ -40,8 +41,8 @@
 	);
 
 	let initialDestination = $state<'thread' | 'dm'>('thread');
-	// 保存すると data が読み直されるので、保存した値に戻る
-	let timing = $derived(data.digest?.timing ?? 'evening');
+	// ほかのフォームを送って data が読み直されても、保存する前の選び直しを残す
+	const timing = serverChoice(() => data.digest?.timing ?? 'evening');
 
 	let bulkDestination = $state<Destination>('thread');
 	let bulkMention = $state(false);
@@ -230,19 +231,21 @@
 					>
 					<fieldset>
 						<legend>届ける時刻</legend>
-						<RadioField name="timing" value="evening" bind:group={timing}
+						<RadioField name="timing" value="evening" bind:group={timing.value}
 							>前日の 20:30 に、明日の予定を届ける</RadioField
 						>
-						<RadioField name="timing" value="morning" bind:group={timing}
+						<RadioField name="timing" value="morning" bind:group={timing.value}
 							>当日の 06:30 に、今日の予定を届ける</RadioField
 						>
-						<RadioField name="timing" value="custom" bind:group={timing}>時刻を選ぶ</RadioField>
+						<RadioField name="timing" value="custom" bind:group={timing.value}
+							>時刻を選ぶ</RadioField
+						>
 						<div class="custom">
 							<SelectField
 								label="時"
 								name="customHour"
 								value={data.digest.customTime.slice(0, 2)}
-								disabled={timing !== 'custom'}
+								disabled={timing.value !== 'custom'}
 							>
 								{#each HOURS as hour (hour)}<option value={hour}>{Number(hour)}</option>{/each}
 							</SelectField>
@@ -250,7 +253,7 @@
 								label="分"
 								name="customMinute"
 								value={data.digest.customTime.slice(3, 5)}
-								disabled={timing !== 'custom'}
+								disabled={timing.value !== 'custom'}
 							>
 								{#each MINUTES as minute (minute)}<option value={minute}>{minute}</option>{/each}
 							</SelectField>
@@ -258,7 +261,7 @@
 								label="届ける予定"
 								name="customDay"
 								value={data.digest.customDay}
-								disabled={timing !== 'custom'}
+								disabled={timing.value !== 'custom'}
 							>
 								<option value="today">その日の予定</option>
 								<option value="tomorrow">翌日の予定</option>
