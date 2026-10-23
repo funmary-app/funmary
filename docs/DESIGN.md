@@ -37,6 +37,10 @@
 - ページ本文の幅は `.page` (既定 44rem)。広い表だけ `.page-w-<rem>` で広げる
 - SMUI にある部品は SMUI を使う。`@smui/<部品>` を import すれば、その部品の CSS は自動で読まれる。SMUI の見た目を変えるときは `smui-overrides.scss` に書く (CSS のレイヤーで、部品より強くなる)
 - チェックボックスとラジオボタンは `CheckboxField` と `RadioField` (SMUI の部品とラベルを包んだもの)。フォームはブラウザの標準のまま送る。ラジオの組は、同じ変数を `bind:group` (変えないなら `group`) に渡す
+- 入力欄は `TextField` (SMUI の outlined の欄とラベルを包んだもの)。`label` に名前を渡し、`name` や `maxlength` などは中の input に付くので、フォームはブラウザの標準のまま送る。複数行は `textarea`、読むだけでコピーしてもらう欄は `readonly` と `selectOnFocus`
+  - ラベルは欄の枠に乗り、長いと切れるので短くする。説明は欄の外の文にし、`aria-describedby` で欄と結ぶ
+  - 必須の印 (`*`) は出さない。任意の欄のラベルに「(任意)」と書く
+  - ファイルの欄は SMUI に部品がないので、ブラウザの標準のまま
 - 中身の表示を替えるものは SMUI のタブ (`@smui/tab-bar`、科目の画面、バスの平日と休日)、見せ方を選ぶものは SMUI の切り替えのボタン (`@smui/segmented-button`、週の時間割の見せ方、取り込みの方法)
 - 補助の文字は `.muted`、画面の外に隠す文字は `.visually-hidden`
 - 破壊的な操作の前の確認は、フォームに `use:confirmSubmit={'…よろしいですか?'}` を付ける。最上位のレイアウトの SMUI のダイアログ (`ConfirmDialog`) が出て、「続ける」で送る
