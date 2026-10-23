@@ -1,4 +1,5 @@
 <script lang="ts">
+	import TextField from '#lib/components/TextField.svelte';
 	import Button, { Label } from '@smui/button';
 	import { enhance } from '$app/forms';
 	import FormNotice from '#lib/components/FormNotice.svelte';
@@ -80,10 +81,8 @@
 		<h2 id="register-heading">範囲を入力して登録する</h2>
 		<form method="POST" action="?/register" use:enhance class="entry">
 			<div class="field">
-				<label for="range">アドレスか範囲</label>
-				<input
-					id="range"
-					type="text"
+				<TextField
+					label="アドレスか範囲"
 					name="range"
 					placeholder="202.231.20.0/24"
 					inputmode="decimal"
@@ -96,8 +95,7 @@
 				</p>
 			</div>
 			<div class="field">
-				<label for="label">メモ (任意)</label>
-				<input id="label" type="text" name="label" maxlength="100" />
+				<TextField label="メモ (任意)" name="label" maxlength={100} />
 			</div>
 			<Button type="submit" variant="unelevated"><Label>登録する</Label></Button>
 		</form>

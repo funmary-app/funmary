@@ -150,20 +150,20 @@ test.describe('アカウントの管理', () => {
 		expect(file.suggestedFilename()).toMatch(/^funmary-data-\d{4}-\d{2}-\d{2}\.json$/);
 
 		// メールアドレスが違えば、消さない
-		await page.getByLabel(/確かめのため/).fill('someone@fun.ac.jp');
+		await page.getByRole('textbox', { name: 'メールアドレス' }).fill('someone@fun.ac.jp');
 		await page.getByRole('button', { name: '退会する' }).click();
 		await answerConfirm(page, true);
 		await expect(page.getByRole('alert')).toContainText('一致しません');
 
 		// キャンセルすれば、消さない
-		await page.getByLabel(/確かめのため/).fill(email);
+		await page.getByRole('textbox', { name: 'メールアドレス' }).fill(email);
 		await page.getByRole('button', { name: '退会する' }).click();
 		await answerConfirm(page, false);
 		await page.goto('/app');
 		await expect(page).toHaveURL('/app');
 
 		await page.goto('/app/settings/account');
-		await page.getByLabel(/確かめのため/).fill(email);
+		await page.getByRole('textbox', { name: 'メールアドレス' }).fill(email);
 		await page.getByRole('button', { name: '退会する' }).click();
 		await answerConfirm(page, true);
 		await expect(page).toHaveURL('/');

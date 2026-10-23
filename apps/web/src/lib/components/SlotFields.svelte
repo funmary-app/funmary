@@ -2,6 +2,7 @@
 	// 曜日と時限を登録するフォームの欄 (曜日、時限、教室)。共有の登録と、自分だけの登録で同じ欄を使う
 	import { DEFAULT_PERIODS } from '@funmary/core';
 	import { WEEKDAY_LABELS } from '#lib/term-label.ts';
+	import TextField from '#lib/components/TextField.svelte';
 </script>
 
 <label>
@@ -20,10 +21,7 @@
 		{/each}
 	</select>
 </label>
-<label>
-	教室 (分からなければ空のまま)
-	<input name="room" maxlength="100" autocomplete="off" />
-</label>
+<TextField label="教室 (分からなければ空のまま)" name="room" maxlength={100} autocomplete="off" />
 
 <style lang="scss">
 	@use 'mixins';

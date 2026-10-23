@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Button, { Label } from '@smui/button';
+	import TextField from '#lib/components/TextField.svelte';
 	import { tick } from 'svelte';
 	import { enhance } from '$app/forms';
 	import { confirmSubmit } from '#lib/actions/confirm-submit.ts';
@@ -224,10 +225,7 @@
 		{:else}
 			<form method="POST" action="?/saveNoClassDay" use:enhance={closeOnSuccess} class="row">
 				<input type="hidden" name="date" value={selected} />
-				<label>
-					行事名 (任意)
-					<input type="text" name="label" maxlength="100" />
-				</label>
+				<TextField label="行事名 (任意)" name="label" maxlength={100} />
 				<Button type="submit" variant="unelevated"><Label>全学の休講日にする</Label></Button>
 			</form>
 		{/if}

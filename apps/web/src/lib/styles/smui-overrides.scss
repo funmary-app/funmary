@@ -118,4 +118,86 @@
 	.mdc-segmented-button__segment--selected {
 		border-color: var(--fm-primary);
 	}
+
+	// 入力欄 (outlined)。SMUI の既定の枠、ラベル、文字の色は黒の半透明で、ダークで見えないので、テーマの色にする。
+	// 角の丸みは、ボタンと同じにする
+	.mdc-text-field {
+		--mdc-theme-primary: var(--fm-primary);
+		--mdc-theme-error: var(--fm-error);
+		--mdc-shape-small: 0.5rem;
+		max-width: 100%;
+	}
+
+	// 全体の入力欄への指定 (base.scss) の高さが、SMUI の欄の中の input に効かないようにする
+	input.mdc-text-field__input {
+		min-height: 0;
+	}
+
+	.mdc-text-field:not(.mdc-text-field--disabled) .mdc-text-field__input {
+		color: var(--fm-text);
+	}
+
+	.mdc-text-field:not(.mdc-text-field--disabled) .mdc-floating-label {
+		color: var(--fm-text-muted);
+	}
+
+	.mdc-text-field--focused:not(.mdc-text-field--disabled) .mdc-floating-label {
+		color: var(--fm-primary);
+	}
+
+	.mdc-text-field--invalid:not(.mdc-text-field--disabled) .mdc-floating-label {
+		color: var(--fm-error);
+	}
+
+	.mdc-text-field--outlined:not(.mdc-text-field--disabled) {
+		.mdc-notched-outline__leading,
+		.mdc-notched-outline__notch,
+		.mdc-notched-outline__trailing {
+			border-color: var(--fm-outline);
+		}
+	}
+
+	.mdc-text-field--outlined:not(.mdc-text-field--disabled):not(.mdc-text-field--focused):hover
+		.mdc-notched-outline {
+		.mdc-notched-outline__leading,
+		.mdc-notched-outline__notch,
+		.mdc-notched-outline__trailing {
+			border-color: var(--fm-text);
+		}
+	}
+
+	.mdc-text-field--outlined:not(.mdc-text-field--disabled).mdc-text-field--focused {
+		.mdc-notched-outline__leading,
+		.mdc-notched-outline__notch,
+		.mdc-notched-outline__trailing {
+			border-color: var(--fm-primary);
+		}
+	}
+
+	.mdc-text-field--outlined.mdc-text-field--invalid:not(.mdc-text-field--disabled) {
+		.mdc-notched-outline__leading,
+		.mdc-notched-outline__notch,
+		.mdc-notched-outline__trailing {
+			border-color: var(--fm-error);
+		}
+	}
+
+	// 無効の欄も、ダークで読めるよう、薄い文字と区切りの色の枠にする
+	.mdc-text-field--disabled {
+		.mdc-text-field__input,
+		.mdc-floating-label {
+			color: var(--fm-text-muted);
+		}
+
+		.mdc-notched-outline__leading,
+		.mdc-notched-outline__notch,
+		.mdc-notched-outline__trailing {
+			border-color: var(--fm-divider);
+		}
+	}
+
+	// 必須の欄のラベルに付く "*" は出さない。任意の欄を「(任意)」で示しているのと重なり、読み上げの名前にも入るため
+	.mdc-floating-label--required::after {
+		content: none;
+	}
 }

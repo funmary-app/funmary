@@ -11,6 +11,7 @@
 	import BrandLogo from '#lib/components/BrandLogo.svelte';
 	import LessonRoom from '#lib/components/LessonRoom.svelte';
 	import StatusBadge from '#lib/components/StatusBadge.svelte';
+	import TextField from '#lib/components/TextField.svelte';
 	import { resolve } from '$app/paths';
 	import { OFFICIAL_ACCOUNTS } from '#lib/official-accounts.ts';
 
@@ -106,16 +107,17 @@
 
 					{#if registration === 'invite'}
 						<form method="GET" action="/signup" class="invite" data-sveltekit-reload>
-							<label for="invite-code">はじめての方は、招待コードで登録します</label>
+							<p class="invite-lead">はじめての方は、招待コードで登録します</p>
 							<div class="invite-row">
-								<input
-									id="invite-code"
+								<TextField
+									class="invite-code"
+									label="招待コード"
 									name="code"
 									value={inviteCode ?? ''}
 									required
 									autocomplete="off"
 									spellcheck="false"
-									maxlength="100"
+									maxlength={100}
 								/>
 								<Button type="submit" variant="outlined"><Label>招待コードで登録</Label></Button>
 							</div>

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import TextField from '#lib/components/TextField.svelte';
 	import Button, { Label } from '@smui/button';
 	import { enhance } from '$app/forms';
 	import { confirmSubmit } from '#lib/actions/confirm-submit.ts';
@@ -50,8 +51,16 @@
 			use:confirmSubmit={'アカウントとデータをすべて消します。元に戻せません。よろしいですか?'}
 			use:enhance
 		>
-			<label for="email">確かめのため、メールアドレス ({data.email}) を入力してください</label>
-			<input id="email" name="email" type="email" required autocomplete="off" spellcheck="false" />
+			<p id="delete-email-note">確かめのため、メールアドレス ({data.email}) を入力してください</p>
+			<TextField
+				label="メールアドレス"
+				aria-describedby="delete-email-note"
+				name="email"
+				type="email"
+				required
+				autocomplete="off"
+				spellcheck="false"
+			/>
 			<div class="actions">
 				<Button type="submit" variant="outlined"><Label>退会する</Label></Button>
 			</div>
@@ -69,6 +78,10 @@
 	form {
 		@include mixins.stack(0.5rem);
 		max-width: 28rem;
+	}
+
+	form p {
+		margin: 0;
 	}
 
 	.actions {

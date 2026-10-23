@@ -1,4 +1,5 @@
 <script lang="ts">
+	import TextField from '#lib/components/TextField.svelte';
 	import CheckboxField from '#lib/components/CheckboxField.svelte';
 	import RadioField from '#lib/components/RadioField.svelte';
 	import Button, { Label } from '@smui/button';
@@ -130,16 +131,14 @@
 	<details>
 		<summary>略称を編集する</summary>
 		<form method="POST" action="?/saveAbbreviation" use:enhance class="edit">
-			<label>
-				略称名
-				<input
-					name="abbreviation"
-					value={data.abbreviation}
-					maxlength="100"
-					autocomplete="off"
-					aria-describedby="abbreviation-help"
-				/>
-			</label>
+			<TextField
+				label="略称名"
+				name="abbreviation"
+				value={data.abbreviation}
+				maxlength={100}
+				autocomplete="off"
+				aria-describedby="abbreviation-help"
+			/>
 			<Button type="submit" variant="unelevated"><Label>保存する</Label></Button>
 		</form>
 		<p class="note" id="abbreviation-help">
@@ -202,10 +201,13 @@
 			<h2 id="edit-heading">この授業を直す</h2>
 			<p class="note">足した人と管理者だけが直したり消したりできます。</p>
 			<form method="POST" action="?/updateSubject" use:enhance class="edit">
-				<label>
-					授業の名前
-					<input name="name" maxlength="100" required value={data.subject.name} />
-				</label>
+				<TextField
+					label="授業の名前"
+					name="name"
+					maxlength={100}
+					required
+					value={data.subject.name}
+				/>
 				<label>
 					学期
 					<select name="term" required value={data.subject.term}>
@@ -214,10 +216,12 @@
 						{/each}
 					</select>
 				</label>
-				<label>
-					教員 (任意)
-					<input name="teacher" maxlength="100" value={data.subject.teacher ?? ''} />
-				</label>
+				<TextField
+					label="教員 (任意)"
+					name="teacher"
+					maxlength={100}
+					value={data.subject.teacher ?? ''}
+				/>
 				<Button type="submit" variant="unelevated"><Label>直す</Label></Button>
 			</form>
 			<form method="POST" action="?/setVisibility" use:enhance class="edit visibility">
@@ -240,10 +244,15 @@
 						に登録されているかどうかにかかわらず、同じ案内を出します。自動では時間割に加わりません。
 					</p>
 					<form method="POST" action="?/grantAccess" use:enhance class="grant-form">
-						<label>
-							メールアドレス
-							<input type="email" name="email" maxlength="200" required autocomplete="off" />
-						</label>
+						<TextField
+							class="grant-email"
+							label="メールアドレス"
+							type="email"
+							name="email"
+							maxlength={200}
+							required
+							autocomplete="off"
+						/>
 						<Button type="submit" variant="outlined"><Label>招待する</Label></Button>
 					</form>
 					{#if data.grantedEmails.length > 0}

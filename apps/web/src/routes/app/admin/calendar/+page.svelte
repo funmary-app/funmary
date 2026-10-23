@@ -1,4 +1,5 @@
 <script lang="ts">
+	import TextField from '#lib/components/TextField.svelte';
 	import CheckboxField from '#lib/components/CheckboxField.svelte';
 	import Button, { Label } from '@smui/button';
 	import { enhance } from '$app/forms';
@@ -258,14 +259,22 @@
 						{/each}
 					</select>
 				</label>
-				<label>
-					始まりの日
-					<input type="date" name="start" min={data.range.start} max={data.range.end} required />
-				</label>
-				<label>
-					終わりの日 (最後の授業日)
-					<input type="date" name="end" min={data.range.start} max={data.range.end} required />
-				</label>
+				<TextField
+					label="始まりの日"
+					type="date"
+					name="start"
+					min={data.range.start}
+					max={data.range.end}
+					required
+				/>
+				<TextField
+					label="終わりの日 (最後の授業日)"
+					type="date"
+					name="end"
+					min={data.range.start}
+					max={data.range.end}
+					required
+				/>
 				<Button type="submit" variant="unelevated"><Label>学期の期間を保存する</Label></Button>
 			</form>
 		</details>
@@ -305,10 +314,14 @@
 		<details>
 			<summary>日付を入れて振替授業日を入力する</summary>
 			<form method="POST" action="?/saveSubstituteDay" use:enhance class="entry">
-				<label>
-					日付
-					<input type="date" name="date" min={data.range.start} max={data.range.end} required />
-				</label>
+				<TextField
+					label="日付"
+					type="date"
+					name="date"
+					min={data.range.start}
+					max={data.range.end}
+					required
+				/>
 				<label>
 					行う授業の曜日
 					<select name="weekday" required>
@@ -354,14 +367,15 @@
 		<details>
 			<summary>日付を入れて全学の休講日を入力する</summary>
 			<form method="POST" action="?/saveNoClassDay" use:enhance class="entry">
-				<label>
-					日付
-					<input type="date" name="date" min={data.range.start} max={data.range.end} required />
-				</label>
-				<label>
-					行事名 (任意)
-					<input type="text" name="label" maxlength="100" />
-				</label>
+				<TextField
+					label="日付"
+					type="date"
+					name="date"
+					min={data.range.start}
+					max={data.range.end}
+					required
+				/>
+				<TextField label="行事名 (任意)" name="label" maxlength={100} />
 				<Button type="submit" variant="unelevated"><Label>全学の休講日を保存する</Label></Button>
 			</form>
 		</details>

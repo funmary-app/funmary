@@ -1,4 +1,5 @@
 <script lang="ts">
+	import TextField from '#lib/components/TextField.svelte';
 	import Button, { Label } from '@smui/button';
 	import type { InviteIssuance } from '@funmary/core';
 	import { enhance } from '$app/forms';
@@ -97,19 +98,30 @@
 				class="entry"
 			>
 				{#if data.issuance.kind === 'admin'}
-					<label>
-						使用回数
-						<input type="number" name="uses" min="1" max="100" value="1" required />
-					</label>
-					<label>
-						期限 (日数。空なら期限なし)
-						<input type="number" name="days" min="1" max="365" value="30" />
-					</label>
+					<TextField
+						label="使用回数"
+						type="number"
+						name="uses"
+						min={1}
+						max={100}
+						value="1"
+						required
+					/>
+					<TextField
+						label="期限 (日数。空なら期限なし)"
+						type="number"
+						name="days"
+						min={1}
+						max={365}
+						value="30"
+					/>
 				{/if}
-				<label>
-					メモ (誰に渡したか。自分と管理者だけが見られます)
-					<input type="text" name="note" maxlength="100" autocomplete="off" />
-				</label>
+				<TextField
+					label="メモ (誰に渡したか。自分と管理者だけが見られます)"
+					name="note"
+					maxlength={100}
+					autocomplete="off"
+				/>
 				<Button type="submit" variant="unelevated"><Label>招待コードを発行する</Label></Button>
 			</form>
 		{/if}
@@ -151,10 +163,5 @@
 		padding: 1rem;
 		border-radius: 0.75rem;
 		background: var(--fm-surface-muted);
-
-		label {
-			@include mixins.stack(0.25rem);
-			font-size: 0.875rem;
-		}
 	}
 </style>

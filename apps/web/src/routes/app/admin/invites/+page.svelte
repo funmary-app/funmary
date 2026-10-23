@@ -1,4 +1,5 @@
 <script lang="ts">
+	import TextField from '#lib/components/TextField.svelte';
 	import RadioField from '#lib/components/RadioField.svelte';
 	import Button, { Label } from '@smui/button';
 	import type { InviteIssuers, InviteSettings } from '@funmary/core';
@@ -98,17 +99,20 @@
 					</RadioField>
 				{/each}
 			</fieldset>
-			<div class="limit" class:unused={!limitUsed}>
-				<label for="monthly-limit">管理者でない人が 1 か月に発行できる数</label>
+			<div class="limit">
 				<!-- 無効の欄は送られない。サーバーはいまの上限を残す -->
-				<input
-					id="monthly-limit"
+				<TextField
+					class="monthly-limit"
+					label="管理者でない人が 1 か月に発行できる数"
 					type="number"
 					name="monthlyLimit"
-					min="0"
-					max="100"
-					value={monthlyLimit}
-					oninput={(event) => (edited.monthlyLimit = event.currentTarget.value)}
+					min={0}
+					max={100}
+					bind:value={
+						() => monthlyLimit,
+						// 空の欄は、SMUI が NaN にする
+						(value) => (edited.monthlyLimit = Number.isNaN(value) ? '' : String(value ?? ''))
+					}
 					disabled={!limitUsed}
 					required
 					aria-describedby="monthly-limit-note"
@@ -212,25 +216,17 @@
 
 	.limit {
 		@include mixins.stack(0.25rem);
+		min-width: 0;
+		max-width: 100%;
 		font-size: 0.875rem;
 
 		p {
 			margin: 0;
 		}
 
-		input {
-			width: 8rem;
+		:global(.monthly-limit) {
+			width: 24rem;
 		}
-
-		input:disabled {
-			opacity: 0.45;
-			cursor: not-allowed;
-		}
-	}
-
-	.limit.unused label {
-		color: var(--fm-text-muted);
-		opacity: 0.7;
 	}
 
 	.actions {

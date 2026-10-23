@@ -1,4 +1,5 @@
 <script lang="ts">
+	import TextField from '#lib/components/TextField.svelte';
 	import CheckboxField from '#lib/components/CheckboxField.svelte';
 	import Button, { Label } from '@smui/button';
 	import { enhance } from '$app/forms';
@@ -120,10 +121,15 @@
 				授業時間割の PDF
 				<input type="file" name="pdf" accept="application/pdf,.pdf" required />
 			</label>
-			<label>
-				年度 (空なら PDF の表題から読む)
-				<input type="number" name="year" min="2020" max="2100" inputmode="numeric" />
-			</label>
+			<TextField
+				class="year"
+				label="年度 (空なら PDF の表題から読む)"
+				type="number"
+				name="year"
+				min={2020}
+				max={2100}
+				inputmode="numeric"
+			/>
 			<Button type="submit" variant="unelevated" disabled={busy}>
 				<Label>{busy ? '読み取っています' : '読み取る'}</Label>
 			</Button>
@@ -170,8 +176,8 @@
 			font-size: 0.875rem;
 		}
 
-		input[type='number'] {
-			width: 8rem;
+		:global(.year) {
+			width: 18rem;
 		}
 	}
 

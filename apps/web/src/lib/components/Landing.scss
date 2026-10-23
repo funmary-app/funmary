@@ -87,16 +87,18 @@ h1 {
 	margin-top: 1.25rem;
 	padding-top: 1.25rem;
 	border-top: 1px dashed var(--fm-divider);
+}
 
-	label {
-		font-size: 0.875rem;
-	}
+.invite-lead {
+	margin: 0;
+	font-size: 0.875rem;
 }
 
 .invite-row {
 	@include mixins.wrap-row(0.5rem);
+	align-items: center;
 
-	input {
+	:global(.invite-code) {
 		flex: 1 1 10rem;
 	}
 }
