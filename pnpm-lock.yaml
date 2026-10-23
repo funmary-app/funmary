@@ -373,6 +373,9 @@ importers:
       '@smui/tab-bar':
         specifier: ^9.0.6
         version: 9.0.6
+      '@smui/textfield':
+        specifier: ^9.0.6
+        version: 9.0.6
       better-sqlite3:
         specifier: 'catalog:'
         version: 13.0.3
@@ -1814,11 +1817,20 @@ packages:
   '@smui/dialog@9.0.6':
     resolution: {integrity: sha512-MokL/uGGarO841KEDPA6HhvXpQfMCZFDIyNdaBn7zR1kn4uLp7T5T/hUTerZ7LmBk2Pj8D3n3pfTPc53omKzLw==}
 
+  '@smui/floating-label@9.0.6':
+    resolution: {integrity: sha512-mTVZaIEKE3psbWnrveLjeOK0e1AHk54f+b4phCuNOojgKHwMwTcrAu5PvkHqxMsZl9DdzPNhxIXUX4pG4vBVjw==}
+
   '@smui/form-field@9.0.6':
     resolution: {integrity: sha512-dfVmdDsPBglrqGC+3qKD2GTh3Ef/JTKDeQZFe12IVk7hV21c2daUSdbugjPYjnPYuUNVksmC7CQ1KFovBCYwhg==}
 
   '@smui/icon-button@9.0.6':
     resolution: {integrity: sha512-r6KSosdkBzuRW4NOx0ur+UbQLITX6ZFi4UibrAfQgLTyzd9VTFUf0xDF0oSs/l5DTKRZ976bnJiuwlCkJDXomA==}
+
+  '@smui/line-ripple@9.0.6':
+    resolution: {integrity: sha512-ZHOZ72RTJ9cneejlZS7lPJEdIYg2FY1yVWYpPTJgHzG1AekGY1og5w7inDg7nVTAcRYFtS7H5Fav5GMgHNb58A==}
+
+  '@smui/notched-outline@9.0.6':
+    resolution: {integrity: sha512-6LfgoecaEqOm7y3OSG0uJzulOOjOHPEhTrOp0n8IxH5aMllL4pQY1VL2tN6E0koe0esp08zctaSHCQ8db068nA==}
 
   '@smui/radio@9.0.6':
     resolution: {integrity: sha512-nGzprTNtT7Ni79aRvwp5zNEJWOk6DIAP7DjqSK9ZitcTJm9z4acKtR6k5q4vTCrezySUssl5Mh46BFXrLoM0PA==}
@@ -1843,6 +1855,9 @@ packages:
 
   '@smui/tab@9.0.6':
     resolution: {integrity: sha512-+3LHFTRVRJ2Msclr7wsbuMtQdLwnZ3+GPNq9OgqCdtJpdCx6FaCxEguvyat/lm2tWo2bwvsrn7eQjrtJAdeAkg==}
+
+  '@smui/textfield@9.0.6':
+    resolution: {integrity: sha512-gZYeApawj36aA5tfGs5dx2d9Tyh7PcdaOyrEk5TExqYdZYYAJP/HwHtuDNwfJ7XSYAI6QMR+EwBJnMRd4EDlFA==}
 
   '@smui/touch-target@9.0.6':
     resolution: {integrity: sha512-MF3dc7XRYvVofCURlppNhTQdJjfGRVM9B9YDRUhxloIIMmDFWPJvAqGlAbF2sFizZ67TwjMvoLtEBRVcwvEWaQ==}
@@ -5151,6 +5166,10 @@ snapshots:
       '@smui/ripple': 9.0.6
       '@smui/touch-target': 9.0.6
 
+  '@smui/floating-label@9.0.6':
+    dependencies:
+      '@smui/common': 9.0.6
+
   '@smui/form-field@9.0.6':
     dependencies:
       '@smui/common': 9.0.6
@@ -5161,6 +5180,15 @@ snapshots:
       '@smui/common': 9.0.6
       '@smui/ripple': 9.0.6
       '@smui/touch-target': 9.0.6
+
+  '@smui/line-ripple@9.0.6':
+    dependencies:
+      '@smui/common': 9.0.6
+
+  '@smui/notched-outline@9.0.6':
+    dependencies:
+      '@smui/common': 9.0.6
+      '@smui/floating-label': 9.0.6
 
   '@smui/radio@9.0.6':
     dependencies:
@@ -5206,6 +5234,14 @@ snapshots:
       '@smui/common': 9.0.6
       '@smui/ripple': 9.0.6
       '@smui/tab-indicator': 9.0.6
+
+  '@smui/textfield@9.0.6':
+    dependencies:
+      '@smui/common': 9.0.6
+      '@smui/floating-label': 9.0.6
+      '@smui/line-ripple': 9.0.6
+      '@smui/notched-outline': 9.0.6
+      '@smui/ripple': 9.0.6
 
   '@smui/touch-target@9.0.6':
     dependencies:
