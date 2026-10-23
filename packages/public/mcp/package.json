@@ -39,8 +39,8 @@
 	},
 	"dependencies": {
 		"@funmary/client": "workspace:*",
-		"@modelcontextprotocol/sdk": "^1.32.0",
-		"zod": "^4.6.5"
+		"@modelcontextprotocol/sdk": "^1.32.1",
+		"zod": "^4.6.7"
 	},
 	"devDependencies": {
 		"tsdown": "catalog:"

@@ -39,7 +39,7 @@
 		"@funmary/api": "workspace:*",
 		"@types/node": "catalog:",
 		"@typescript/native": "npm:typescript@^7.0.2",
-		"es-module-lexer": "^3.0.2",
+		"es-module-lexer": "^3.0.4",
 		"eslint": "catalog:",
 		"eslint-config-prettier": "catalog:",
 		"eslint-plugin-svelte": "catalog:",

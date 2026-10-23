@@ -44,17 +44,17 @@
 		"valibot": "catalog:"
 	},
 	"devDependencies": {
-		"@iconify-json/material-symbols": "^1.2.93",
+		"@iconify-json/material-symbols": "^1.2.95",
 		"@playwright/test": "catalog:",
 		"@sveltejs/adapter-node": "catalog:",
 		"@sveltejs/kit": "catalog:",
 		"@sveltejs/vite-plugin-svelte": "catalog:",
-		"sass": "^1.105.1",
+		"sass": "^1.106.1",
 		"svelte": "catalog:",
 		"svelte-check": "catalog:",
 		"tsdown": "catalog:",
 		"unplugin-icons": "^24.0.0",
-		"vite": "8.3.3"
+		"vite": "8.3.5"
 	},
 	"imports": {
 		"#lib": "./src/lib/index.js",
