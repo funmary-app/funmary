@@ -1,7 +1,7 @@
 // バス停の選択。「A から未来大へ」の A にする停留所を、一覧から選ぶ。選ぶと、Cookie に残して、バスの画面に戻る。
 import { error, fail, redirect, type Actions, type ServerLoad } from '@sveltejs/kit';
 import { listBusStops } from '@funmary/api';
-import { UNIVERSITY_STOP } from '@funmary/core';
+import { UNIVERSITY_STOP, sameStopName, uniqueStopsByName } from '@funmary/core';
 import { BUS_STOP_COOKIE } from '#lib/bus-state.ts';
 import { requireSignedIn } from '#lib/server/admin.ts';
 import { getServices } from '#lib/server/services.ts';
@@ -17,12 +17,21 @@ const selectableStops = () => {
 
 export const load: ServerLoad = ({ locals, cookies }) => {
 	requireSignedIn(locals);
-	return {
-		// 一覧は、事業者のコードの順 (函館駅前の側から赤川の側へ、ほぼ路線の順に並ぶ)
-		stops: selectableStops()
+	const all = selectableStops();
+	// 一覧は、事業者のコードの順 (函館駅前の側から赤川の側へ、ほぼ路線の順に並ぶ)。
+	// 向きごとにコードが分かれた停留所は、同じ名前で 2 つ並ぶので、1 つにする (どちらのコードでも、両方の向きの便が出る)
+	const stops = uniqueStopsByName(
+		all
 			.map((stop) => ({ id: stop.id, name: stop.name }))
 			.toSorted((a, b) => a.id.localeCompare(b.id)),
-		selectedStopId: cookies.get(BUS_STOP_COOKIE) ?? null,
+	);
+	const saved = all.find((stop) => stop.id === cookies.get(BUS_STOP_COOKIE));
+	return {
+		stops,
+		// 覚えているのが一覧から外したコードでも、同じ名前の停留所を選んでいることにする
+		selectedStopId: saved
+			? (stops.find((stop) => sameStopName(stop.name, saved.name))?.id ?? null)
+			: null,
 	};
 };
 

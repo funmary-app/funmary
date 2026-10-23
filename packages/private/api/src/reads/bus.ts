@@ -10,6 +10,7 @@ import {
 	generationForDate,
 	jstDateTime,
 	resolveHolidays,
+	sameStopName,
 	UNIVERSITY_STOP,
 	upcomingDepartures,
 	type BusDayType,
@@ -346,7 +347,22 @@ export function getBusLeg(
 	const generation = generationForDate(stored.catalog.generations, current.date);
 	const timetableOf = (stopId: string) =>
 		generation ? (sources.bus?.getTimetable(stopId, generation.code) ?? null) : null;
-	const stopTimetable = timetableOf(stop.id);
+	// 同じ名前で、向きごとに別のバス停コードを持つ停留所がある (昭和営業所前など)。1 つのコードの発車表には、
+	// 片方の向きの便しかないので、同じ名前のコードの発車表をまとめて、1 つの停留所として向きを決める
+	const sameStop = stored.catalog.stops.filter(
+		(candidate) => candidate.id !== university.id && sameStopName(candidate.name, stop.name),
+	);
+	const sameStopTimetables = sameStop
+		.map((candidate) => timetableOf(candidate.id))
+		.filter((stored) => stored !== null);
+	const ownTimetable = timetableOf(stop.id) ?? sameStopTimetables[0];
+	const stopTimetable = ownTimetable && {
+		...ownTimetable,
+		timetable: {
+			...ownTimetable.timetable,
+			timetables: sameStopTimetables.flatMap((stored) => stored.timetable.timetables),
+		},
+	};
 	const universityTimetable = timetableOf(university.id);
 	const toUniversity = options.direction === 'toUniversity';
 
@@ -365,7 +381,10 @@ export function getBusLeg(
 	const sourcesOfLeg: LegSource[] = [own];
 
 	// A が通らない系統の便を、亀田支所前と未来大の間の便として足す
-	const junctionTimetable = junction && junction.id !== stop.id ? timetableOf(junction.id) : null;
+	const junctionTimetable =
+		junction && !sameStop.some((candidate) => candidate.id === junction.id)
+			? timetableOf(junction.id)
+			: null;
 	// A の発車表がないときは、足さない (A が何も通らないのか、まだ取り込めていないのか、区別できないため)
 	if (stopTimetable && junction && junctionTimetable && universityTimetable) {
 		const viaJunction = filterByDirection(
