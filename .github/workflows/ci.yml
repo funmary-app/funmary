@@ -79,6 +79,25 @@ jobs:
           pnpm package-release build-0000000
           node scripts/smoke-release.js build-0000000
 
+  # 次の LTS の Node.js 26 でも動くかを確かめる (#421)。本番を 26 に上げて .nvmrc を変えるまでの間だけ置く。必須の検査にはしない
+  node26:
+    name: Node.js 26 での検査
+    needs: skip
+    if: ${{ !cancelled() && needs.skip.outputs.skip != 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup
+        with:
+          node-version: 26
+      - run: pnpm test
+      - run: pnpm build
+      - name: リリースの起動の確認
+        run: |
+          pnpm package-release build-0000000
+          node scripts/smoke-release.js build-0000000
+
   e2e:
     name: E2E テスト
     needs: skip
