@@ -75,17 +75,6 @@ const PayloadSchema = v.object({
 
 const HOPE_URL = /^https:\/\/hope\.fun\.ac\.jp\/[^\s]*$/;
 
-/**
- * 科目の画面に出す HOPE のリンク。
- * ポータルが返す `idnumber` の URL は、今の HOPE では開けない (HOPE の URL は、数値の `id` で指す)。
- * `id` は公開されていないので、科目名での検索にする。検索では、新しい年度が先に並ぶ。
- * `id` の URL は、利用者が直したものなので、そのまま使う
- */
-export function hopeCourseLink(url: string, subjectName: string): string {
-	if (!url.includes('idnumber=')) return url;
-	return `https://hope.fun.ac.jp/course/search.php?search=${encodeURIComponent(subjectName)}`;
-}
-
 export function parseImportPayload(input: unknown): ImportPayloadResult {
 	const parsed = v.safeParse(PayloadSchema, input);
 	if (!parsed.success) return { kind: 'invalid', reason: '内容の形が違います' };
