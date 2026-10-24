@@ -5,7 +5,7 @@ import { getSubjectDetail, type SubjectDetail } from '@funmary/api';
 import { canEditSubject } from '@funmary/core';
 import { hopeCourseLink } from '@funmary/sources';
 import type { SubjectVisibility } from '@funmary/db';
-import { describeClassChange } from '#lib/class-change-label.ts';
+import { CHANGE_STATUS, describeClassChange } from '#lib/class-change-label.ts';
 import { parseSlotFields } from '#lib/server/course-form.ts';
 import { getServices } from '#lib/server/services.ts';
 import { parseAbbreviation, resolveSubjectAbbreviation } from '#lib/server/subject-abbreviation.ts';
@@ -17,12 +17,6 @@ import { parseSubjectPath, subjectPathParams } from '#lib/subject-path.ts';
 import { requireSignedIn } from '#lib/server/admin.ts';
 
 /** 休講などの種類を、時間割の画面と同じ表示 (StatusBadge) にそろえる */
-const CHANGE_STATUS = {
-	cancellation: 'cancelled',
-	makeup: 'makeup',
-	roomChange: 'roomChanged',
-} as const;
-
 /** 画面に出すリンクは https のものだけにする (javascript: などを href に入れないため) */
 const httpsOnly = (url: string | null) => (url?.startsWith('https://') ? url : null);
 

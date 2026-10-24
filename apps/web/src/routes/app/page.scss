@@ -209,18 +209,3 @@
 	color: var(--fm-text-muted);
 	font-size: 0.875rem;
 }
-
-.stale {
-	display: flex;
-	gap: 0.5rem;
-	margin: 1.5rem 0 0;
-	padding: 0.75rem 1rem;
-	border-radius: 0.5rem;
-	background: var(--fm-room-changed-soft);
-	color: var(--fm-text);
-	font-size: 0.875rem;
-
-	:global(.icon) {
-		color: var(--fm-room-changed);
-	}
-}

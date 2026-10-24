@@ -3,18 +3,18 @@
 	import { resolve } from '$app/paths';
 	import InstallGuide from '#lib/components/InstallGuide.svelte';
 	import LessonRoom from '#lib/components/LessonRoom.svelte';
+	import PortalFreshness from '#lib/components/PortalFreshness.svelte';
 	import StatusBadge from '#lib/components/StatusBadge.svelte';
 	import { formatMinutesUntil } from '#lib/bus-label.ts';
 	import { canLocate, isLocationGranted, locateBusDirection } from '#lib/bus-location.ts';
 	import type { EventView } from '#lib/server/event-view.ts';
 	import type { LessonView } from '#lib/server/lesson-view.ts';
 	import type { DayNote } from '@funmary/api';
-	import { formatDate, formatDayNote, formatFetchedAt } from '#lib/timetable-label.ts';
+	import { formatDate, formatDayNote } from '#lib/timetable-label.ts';
 	import IconBus from '~icons/material-symbols/directions-bus-outline';
 	import IconCalendar from '~icons/material-symbols/calendar-add-on-outline';
 	import IconChevron from '~icons/material-symbols/chevron-right';
 	import IconInfo from '~icons/material-symbols/info-outline';
-	import IconWarning from '~icons/material-symbols/warning-outline';
 
 	interface TodayView {
 		date: string;
@@ -220,21 +220,10 @@
 		</a>
 	{/if}
 
-	{#if today.stale}
-		<p class="stale" role="alert">
-			<IconWarning aria-hidden="true" class="icon" />
-			<span>
-				{#if today.fetchedAt}
-					休講情報の最終取得: {formatFetchedAt(today.fetchedAt, today.date)}。12
-					時間以上更新されていません。休講などが載っていない可能性があります。
-				{:else}
-					休講情報をまだ取得していません。休講などは載っていません。
-				{/if}
-			</span>
-		</p>
-	{:else if today.fetchedAt}
-		<p class="freshness">休講情報の最終取得: {formatFetchedAt(today.fetchedAt, today.date)}</p>
-	{/if}
+	<PortalFreshness fetchedAt={today.fetchedAt} stale={today.stale} today={today.date} />
+	<p class="freshness">
+		<a href={resolve('app/changes')}>休講、補講、教室変更の一覧</a>
+	</p>
 	{#if today.usesEstimatedTerms}
 		<p class="freshness">
 			学期の期間は、大学の学年暦がまだ入っていないため、推定した日付で出しています。

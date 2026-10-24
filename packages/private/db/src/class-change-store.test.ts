@@ -259,3 +259,66 @@ describe('listAssignedBetween', () => {
 		]);
 	});
 });
+
+describe('listBetween', () => {
+	it('期間内の休講などを、科目が決まっていないものも含めて、日付と時限の順に返す。取り消されたものは除く', () => {
+		const subjectId = createSubjectStore(database).upsert(
+			{
+				academicYear: 2026,
+				syllabusId: '100001',
+				name: '線形代数 I',
+				teacher: null,
+				credits: 2,
+				term: 'fall',
+				attributes: {},
+				syllabus: {},
+				syllabusUrl: null,
+			},
+			t1,
+		);
+		const store = createClassChangeStore(database);
+		const result = detectChanges({
+			previous: [],
+			scraped: [
+				item({ date: '2026-10-06', lessonName: 'ほかの科目', comment: '教員の都合' }),
+				item(),
+				item({ kind: 'cancellation', date: '2026-10-08', room: null, fromRoom: null }),
+				item({ date: '2026-10-20' }),
+			],
+			today: '2026-10-01',
+		});
+		if (result.kind !== 'ok') throw new Error('ok のはず');
+		store.apply(result.next, t1);
+		database.sqlite
+			.prepare("UPDATE class_changes SET subject_id = ? WHERE lesson_name = '線形代数 I'")
+			.run(subjectId);
+		database.sqlite
+			.prepare("UPDATE class_changes SET withdrawn_at = 1 WHERE kind = 'cancellation'")
+			.run();
+
+		expect(store.listBetween('2026-10-05', '2026-10-11')).toEqual([
+			{
+				kind: 'roomChange',
+				subjectId,
+				lessonName: '線形代数 I',
+				date: '2026-10-05',
+				period: 3,
+				room: '502',
+				fromRoom: '401',
+				comment: null,
+				makeupPlan: null,
+			},
+			{
+				kind: 'roomChange',
+				subjectId: null,
+				lessonName: 'ほかの科目',
+				date: '2026-10-06',
+				period: 3,
+				room: '502',
+				fromRoom: '401',
+				comment: '教員の都合',
+				makeupPlan: null,
+			},
+		]);
+	});
+});
