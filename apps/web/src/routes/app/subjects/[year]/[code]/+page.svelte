@@ -53,7 +53,6 @@
 			personalSlots: Slot[];
 			slotSharingMode: 'open' | 'moderated' | 'closed';
 			registered: boolean;
-			hopeCourseUrl: string | null;
 			changes: ChangeView[];
 			grantedEmails: string[];
 		};
@@ -179,23 +178,17 @@
 		<p>この科目は、履修科目に登録していません。</p>
 	{/if}
 
-	<ul class="links">
-		{#if data.subject.syllabusUrl}
-			<!-- 大学のサイトへのリンク。サーバーが https のものだけを渡す -->
+	{#if data.subject.syllabusUrl}
+		<!-- 大学のサイトへのリンク。サーバーが https のものだけを渡す -->
+		<ul class="links">
 			<li>
 				<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
 				<a href={data.subject.syllabusUrl} target="_blank" rel="noopener noreferrer"
 					>シラバスの原文 (大学のサイト)</a
 				>
 			</li>
-		{/if}
-		{#if data.hopeCourseUrl}
-			<li>
-				<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-				<a href={data.hopeCourseUrl} target="_blank" rel="noopener noreferrer">HOPE のコース</a>
-			</li>
-		{/if}
-	</ul>
+		</ul>
+	{/if}
 
 	{#if data.canEdit}
 		<section aria-labelledby="edit-heading">

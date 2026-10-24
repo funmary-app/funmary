@@ -3,7 +3,6 @@
 import { error, fail, redirect, type Actions, type ServerLoad } from '@sveltejs/kit';
 import { getSubjectDetail, type SubjectDetail } from '@funmary/api';
 import { canEditSubject } from '@funmary/core';
-import { hopeCourseLink } from '@funmary/sources';
 import type { SubjectVisibility } from '@funmary/db';
 import { CHANGE_STATUS, describeClassChange } from '#lib/class-change-label.ts';
 import { parseSlotFields } from '#lib/server/course-form.ts';
@@ -16,13 +15,8 @@ import { findSameName, parseUserSubjectForm } from '#lib/server/user-subject.ts'
 import { parseSubjectPath, subjectPathParams } from '#lib/subject-path.ts';
 import { requireSignedIn } from '#lib/server/admin.ts';
 
-/** 休講などの種類を、時間割の画面と同じ表示 (StatusBadge) にそろえる */
 /** 画面に出すリンクは https のものだけにする (javascript: などを href に入れないため) */
 const httpsOnly = (url: string | null) => (url?.startsWith('https://') ? url : null);
-
-/** 登録済みの URL も、表示のときに今の HOPE で開ける形にする */
-const hopeLinkOrNull = (url: string | null, subjectName: string) =>
-	url ? hopeCourseLink(url, subjectName) : null;
 
 const VISIBILITIES: readonly SubjectVisibility[] = ['public', 'link', 'private'];
 
@@ -81,7 +75,6 @@ export const load: ServerLoad = ({ locals, params }) => {
 		personalSlots: personalSlots.listForSubject(locals.user.id, subject.id),
 		slotSharingMode: readSlotSharingMode(settings),
 		registered: registration !== undefined,
-		hopeCourseUrl: hopeLinkOrNull(httpsOnly(registration?.hopeCourseUrl ?? null), subject.name),
 		changes: changes.map((change, index) => ({
 			// 照合の結果、同じ日と時限に別の授業名の行が重なりうるので、並びの番号も入れる
 			key: `${change.kind}-${change.date}-${change.period}-${index}`,
