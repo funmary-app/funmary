@@ -20,7 +20,7 @@ describe('届ける通知の種類のフォーム', () => {
 		expect(parseChannelKinds(new FormData())).toBeNull();
 	});
 
-	it('選択肢は 4 つ', () => {
-		expect(CHANNEL_KIND_OPTIONS).toHaveLength(4);
+	it('選択肢は 5 つ', () => {
+		expect(CHANNEL_KIND_OPTIONS).toHaveLength(5);
 	});
 });

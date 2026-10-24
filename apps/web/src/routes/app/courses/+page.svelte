@@ -13,6 +13,7 @@
 	import { TERMS } from '@funmary/core';
 	import type { SubjectPathParams } from '#lib/subject-path.ts';
 	import { formatSlot, formatTerm } from '#lib/term-label.ts';
+	import { formatDate } from '#lib/timetable-label.ts';
 	import SlotFields from '#lib/components/SlotFields.svelte';
 
 	interface Slot {
@@ -53,6 +54,8 @@
 			results: FoundSubject[];
 			defaultTerm: string;
 			slotSharingMode: 'open' | 'moderated' | 'closed';
+			/** 次の学期の科目を登録していないときの案内 */
+			reminder: { label: string; start: string; started: boolean } | null;
 		};
 		form: { error?: string; message?: string } | null;
 	} = $props();
@@ -92,6 +95,18 @@
 		<p>まだシラバスを取り込んでいません。取り込みが済むまで、お待ちください。</p>
 	{:else}
 		<p>{data.academicYear} 年度の科目から登録します。</p>
+
+		{#if data.reminder}
+			{@const { label, start, started } = data.reminder}
+			<p class="reminder">
+				{started
+					? `${label}の授業が始まっています。`
+					: `${label}の授業が ${formatDate(start)} から始まります。`}
+				{label}の科目が、まだ 1 つも登録されていません。
+				<a href={resolve('app/courses/import')}>ポータルの時間割を取り込む</a
+				>か、「科目を探す」から登録してください。
+			</p>
+		{/if}
 
 		<TabBar
 			tabs={TABS}
@@ -323,6 +338,11 @@
 	.inline {
 		display: inline;
 		margin-left: 0.5rem;
+	}
+	.reminder {
+		padding: 0.75rem 1rem;
+		border-radius: 0.5rem;
+		background: var(--fm-room-changed-soft);
 	}
 	.note {
 		padding: 0.5rem 0.75rem;

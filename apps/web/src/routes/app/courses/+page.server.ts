@@ -1,7 +1,12 @@
 // 履修科目の登録。科目を探して登録し、曜日と時限が分からない科目には、利用者が手で枠を足す。
 // 枠は科目ごとに共有するので、既にある枠は上書きしない。教室が食い違えば、管理者に知らせる。
 import { fail, type Actions, type ServerLoad } from '@sveltejs/kit';
-import { isSubjectSearchable, jstDateTime, resolveAcademicTerms } from '@funmary/core';
+import {
+	academicYearOf,
+	isSubjectSearchable,
+	jstDateTime,
+	resolveAcademicTerms,
+} from '@funmary/core';
 import { parseSlotForm } from '#lib/server/course-form.ts';
 import {
 	addPersonalSlot,
@@ -15,6 +20,7 @@ import { readSlotSharingMode } from '#lib/server/slot-permission.ts';
 import { alertSubjectPublished } from '#lib/server/subject-notify.ts';
 import { findSameName, parseUserSubjectForm } from '#lib/server/user-subject.ts';
 import { subjectPathParams } from '#lib/subject-path.ts';
+import { termRegistrationReminder } from '#lib/server/term-reminder.ts';
 import { searchSubjects } from '#lib/subject-search.ts';
 import { requireSignedIn } from '#lib/server/admin.ts';
 
@@ -25,8 +31,9 @@ export const load: ServerLoad = ({ locals, url }) => {
 	const slotSharingMode = readSlotSharingMode(settings);
 	// 新年度のシラバスがまだなければ、前年度の科目を使い続ける
 	const academicYear = subjects.latestYear();
+	const today = jstDateTime(new Date()).date;
 	// シラバスにない授業を足すときの学期の既定。4 月から 8 月は前期、それ以外は後期
-	const month = Number(jstDateTime(new Date()).date.slice(5, 7));
+	const month = Number(today.slice(5, 7));
 	const defaultTerm = month >= 4 && month <= 8 ? 'spring' : 'fall';
 	if (academicYear === null) {
 		return {
@@ -36,6 +43,7 @@ export const load: ServerLoad = ({ locals, url }) => {
 			results: [],
 			defaultTerm,
 			slotSharingMode,
+			reminder: null,
 		};
 	}
 
@@ -84,7 +92,21 @@ export const load: ServerLoad = ({ locals, url }) => {
 		path: subjectPathParams(subject),
 	}));
 
-	return { academicYear, registered, query, results, defaultTerm, slotSharingMode };
+	// 次の学期の科目を登録し忘れていれば、案内する。3 月に 4 月からの前期を案内できるよう、次の年度の学期も見る
+	const thisYear = academicYearOf(today);
+	const calendar = getServices().academicCalendar;
+	const reminder = termRegistrationReminder(
+		[thisYear, thisYear + 1].flatMap((year) =>
+			resolveAcademicTerms(year, calendar.listTerms(year)),
+		),
+		today,
+		courses.listRegistrations(userId).flatMap(({ subjectId }) => {
+			const subject = subjects.findById(subjectId);
+			return subject ? [{ academicYear: subject.academicYear, term: subject.term }] : [];
+		}),
+	);
+
+	return { academicYear, registered, query, results, defaultTerm, slotSharingMode, reminder };
 };
 
 export const actions: Actions = {

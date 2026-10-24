@@ -13,6 +13,7 @@ export const WEBHOOK_EVENT_TYPES = [
 	'class.room_changed',
 	'integration.failed',
 	'notice',
+	'term.started',
 ] as const;
 
 type Schema = NonNullable<NonNullable<Documentation['components']>['schemas']>[string];

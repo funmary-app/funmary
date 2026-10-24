@@ -7,12 +7,13 @@ import type { NotificationKind } from './notification-store.ts';
 import { channels, deliveries, discordLinks } from './schema.ts';
 import type { SecretBox } from './secrets.ts';
 
-/** 送る種類を決めていないチャネルに送る通知の種類。休講など、連携の不具合 */
+/** 送る種類を決めていないチャネルに送る通知の種類。休講など、連携の不具合、学期の始まり */
 export const DEFAULT_CHANNEL_KINDS: readonly NotificationKind[] = [
 	'cancellation',
 	'makeup',
 	'roomChange',
 	'integration',
+	'termStart',
 ];
 
 export type ChannelStatus = 'active' | 'disabled';

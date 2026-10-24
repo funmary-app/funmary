@@ -4,7 +4,7 @@
 	import { resolve } from '$app/paths';
 	import FormNotice from '#lib/components/FormNotice.svelte';
 
-	type Kind = 'cancellation' | 'makeup' | 'roomChange' | 'integration' | 'notice';
+	type Kind = 'cancellation' | 'makeup' | 'roomChange' | 'integration' | 'notice' | 'termStart';
 
 	interface NotificationRow {
 		id: number;
@@ -31,6 +31,7 @@
 		{ kind: 'roomChange', label: '教室変更' },
 		{ kind: 'integration', label: '連携の不具合' },
 		{ kind: 'notice', label: 'お知らせ' },
+		{ kind: 'termStart', label: '学期の始まり' },
 	];
 
 	const unread = $derived(data.notifications.filter((item) => !item.read).length);

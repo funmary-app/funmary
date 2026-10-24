@@ -1,9 +1,9 @@
 // 履修登録と、科目ごとの時間割の枠 (曜日、時限、教室) の保存。
 // 枠は、大学から自動では取れないので、利用者どうしで登録して、同じ科目を取る全員で共有する。
 // 既にある枠は上書きしない。教室が食い違えば、食い違いとして返し、管理者が確かめて直す。
-import { and, asc, eq } from 'drizzle-orm';
+import { and, asc, eq, inArray, notInArray } from 'drizzle-orm';
 import type { Database } from './database.ts';
-import { courseRegistrations, subjects, timetableSlots } from './schema.ts';
+import { courseRegistrations, subjects, timetableSlots, users } from './schema.ts';
 
 /** 利用者のポータルの時間割から読んだ、1 つのコマ (検査を通ったもの) */
 export interface PortalCell {
@@ -76,6 +76,8 @@ export interface CourseStore {
 	slotsOf(subjectId: number): StoredSlot[];
 	/** その曜日と時限に共有の枠を持つ科目の ID */
 	subjectsAt(weekday: number, period: number): number[];
+	/** その年度の、terms のどれかの学期の科目を 1 つも履修していない、利用中の利用者の ID */
+	usersWithoutRegistrationIn(academicYear: number, terms: readonly string[]): string[];
 }
 
 export function createCourseStore(database: Database): CourseStore {
@@ -258,6 +260,21 @@ export function createCourseStore(database: Database): CourseStore {
 				.where(eq(timetableSlots.subjectId, subjectId))
 				.orderBy(asc(timetableSlots.weekday), asc(timetableSlots.period))
 				.all();
+		},
+
+		usersWithoutRegistrationIn(academicYear, terms) {
+			const registered = db
+				.select({ userId: courseRegistrations.userId })
+				.from(courseRegistrations)
+				.innerJoin(subjects, eq(subjects.id, courseRegistrations.subjectId))
+				.where(and(eq(subjects.academicYear, academicYear), inArray(subjects.term, [...terms])));
+			return db
+				.select({ id: users.id })
+				.from(users)
+				.where(and(eq(users.status, 'active'), notInArray(users.id, registered)))
+				.orderBy(asc(users.id))
+				.all()
+				.map((row) => row.id);
 		},
 
 		subjectsAt(weekday, period) {
