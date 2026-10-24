@@ -5,7 +5,9 @@ import type { Database } from './database.ts';
 import { classChanges, courseRegistrations, notifications, subjects } from './schema.ts';
 
 /** 通知の種類。cancellation、makeup、roomChange は休講、補講、教室変更、integration は連携の不具合、notice はお知らせ */
-export type NotificationKind = 'cancellation' | 'makeup' | 'roomChange' | 'integration' | 'notice';
+/** termStart は、前期か後期の始まりに、その学期の履修登録を促すもの */
+export type NotificationKind =
+	'cancellation' | 'makeup' | 'roomChange' | 'integration' | 'notice' | 'termStart';
 
 export interface NewNotification {
 	readonly userId: string;

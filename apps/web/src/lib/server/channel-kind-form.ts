@@ -6,6 +6,7 @@ export const CHANNEL_KIND_OPTIONS: readonly { kind: NotificationKind; label: str
 	{ kind: 'makeup', label: '補講' },
 	{ kind: 'roomChange', label: '教室変更' },
 	{ kind: 'integration', label: '連携の不具合' },
+	{ kind: 'termStart', label: '学期の始まり' },
 ];
 
 /** フォームの複数選択 (name="kinds") から、通知の種類を読む。1 つも選ばれていなければ null */

@@ -14,6 +14,7 @@ const KINDS: readonly NotificationKind[] = [
 	'roomChange',
 	'integration',
 	'notice',
+	'termStart',
 ];
 
 const isKind = (value: string | null): value is NotificationKind =>

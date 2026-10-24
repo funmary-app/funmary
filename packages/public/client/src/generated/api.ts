@@ -482,7 +482,7 @@ export interface webhooks {
                         /** @description 通知の ID。HTTP ヘッダの webhook-id と同じ */
                         id: string;
                         /** @enum {string} */
-                        type: "class.cancelled" | "class.makeup" | "class.room_changed" | "integration.failed" | "notice";
+                        type: "class.cancelled" | "class.makeup" | "class.room_changed" | "integration.failed" | "notice" | "term.started";
                         /** Format: date-time */
                         createdAt: string;
                         data: {

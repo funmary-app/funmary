@@ -15,6 +15,7 @@ const TYPE_NAMES: Readonly<Record<string, string>> = {
 	roomChange: 'class.room_changed',
 	integration: 'integration.failed',
 	notice: 'notice',
+	termStart: 'term.started',
 };
 
 export interface GenericWebhookMessage extends DeliveryMessage {

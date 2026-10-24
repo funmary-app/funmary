@@ -19,6 +19,7 @@ const NOTIFICATION_KIND_LABELS = {
 	roomChange: '教室変更',
 	integration: '連携の不具合',
 	notice: 'お知らせ',
+	termStart: '学期の始まり',
 };
 
 const label = (job: string) => JOB_LABELS.get(job) ?? job;
