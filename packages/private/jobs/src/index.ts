@@ -20,6 +20,11 @@ export {
 	type RemindTimetableImportDeps,
 } from './remind-timetable-import.ts';
 export {
+	createRemindTermRegistrationJob,
+	type RemindTermRegistrationDeps,
+	type TermRegistrationNotification,
+} from './remind-term-registration.ts';
+export {
 	HOLIDAYS_SOURCE,
 	createImportHolidaysJob,
 	type ImportHolidaysDeps,
