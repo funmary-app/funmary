@@ -246,3 +246,40 @@ describe('register と unregister', () => {
 		expect(courses.isRegistered(bob, subjectId)).toBe(false);
 	});
 });
+
+describe('CourseStore.usersWithoutRegistrationIn', () => {
+	it('その年度の、その学期のどれかの科目を履修していない、利用中の利用者を返す', () => {
+		const { auth, alice, bob, subjectId, courses } = setup();
+		const carol = auth.createUser(
+			{ googleSub: 'c', email: 'c@fun.ac.jp', name: null, role: 'user' },
+			T0,
+		);
+		const dave = auth.createUser(
+			{ googleSub: 'd', email: 'd@fun.ac.jp', name: null, role: 'user' },
+			T0,
+		);
+		const springId = createSubjectStore(database).upsert(
+			{
+				academicYear: 2026,
+				syllabusId: '100009',
+				name: '架空の前期の科目',
+				teacher: null,
+				credits: 2,
+				term: 'spring',
+				attributes: {},
+				syllabus: {},
+				syllabusUrl: null,
+			},
+			T0,
+		);
+		// alice は後期の科目、bob は前期の科目だけ、carol は何も履修していない。dave は利用を止められている
+		courses.register(alice, subjectId, T0);
+		courses.register(bob, springId, T0);
+		database.sqlite.prepare("UPDATE users SET status = 'suspended' WHERE id = ?").run(dave);
+
+		expect(courses.usersWithoutRegistrationIn(2026, ['fall', 'q3']).sort()).toEqual(
+			[bob, carol].sort(),
+		);
+		expect(courses.usersWithoutRegistrationIn(2027, ['fall'])).toContain(alice);
+	});
+});
