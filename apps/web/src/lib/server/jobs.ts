@@ -1,9 +1,11 @@
 // 定期処理の組み立て。サーバー (hooks.server.ts) と、管理用コマンドの job run が使う。
 // 管理用コマンドからも読み込むので、$lib を使わずに相対のパスで読み込む
+import { resolveAcademicTerms } from '@funmary/core';
 import {
 	createAcademicCalendarStore,
 	createBusStore,
 	createClassChangeStore,
+	createCourseStore,
 	createHolidayStore,
 	createNotificationStore,
 	createSettingsStore,
@@ -18,6 +20,7 @@ import {
 	createImportSyllabusJob,
 	createNotifyClassChangesJob,
 	createPruneNotificationsJob,
+	createRemindTermRegistrationJob,
 	createRemindTimetableImportJob,
 	createScrapePortalJob,
 	createSyncBusJob,
@@ -48,6 +51,7 @@ export const JOB_LABELS: ReadonlyMap<string, string> = new Map([
 	['deliver-notifications', '通知の送信'],
 	['notify-class-changes', '休講などの通知欄への記録'],
 	['prune-notifications', '古い通知の削除'],
+	['remind-term-registration', '履修登録を促す知らせ'],
 ]);
 
 /**
@@ -155,6 +159,16 @@ export function createJobDefinitions({ config, database, alert }: JobFactoryDeps
 			insert: (entries, now) => notificationStore.insertMany(entries, now),
 		}),
 		createPruneNotificationsJob({ prune: (before) => notificationStore.pruneBefore(before) }),
+	);
+	// 前期か後期の始まりに、その学期の科目を履修していない人へ、履修登録を促す
+	const courseStore = createCourseStore(database);
+	jobs.push(
+		createRemindTermRegistrationJob({
+			terms: (year) => resolveAcademicTerms(year, academicCalendarStore.listTerms(year)),
+			usersWithoutRegistrationIn: (year, terms) =>
+				courseStore.usersWithoutRegistrationIn(year, terms),
+			insert: (entries, now) => notificationStore.insertMany(entries, now),
+		}),
 	);
 	const portal = config.portal;
 	const heartbeatUrl = config.heartbeatUrl;
