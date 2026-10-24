@@ -8,7 +8,7 @@ Funmary を自分の VPS で動かす手順です。この文書だけで、最�
 ## 1. 必要なもの
 
 - Linux の VPS (systemd があるもの。以下は Ubuntu を例にします)
-- Node.js 24 系 (26 系でも動きます)
+- Node.js 24 以上 (24 系か 26 系の LTS)
 - nginx (リバースプロキシ用)
 - 独自ドメインと、その証明書 (Let's Encrypt など)
 - Google Cloud の OAuth クライアント (大学の Google アカウントでログインするため)
@@ -21,6 +21,8 @@ Funmary を自分の VPS で動かす手順です。この文書だけで、最�
 ## 2. サーバーの準備
 
 ### 2.1 Node.js
+
+26 系を入れるときは、`setup_24.x` を `setup_26.x` に読み替えます。
 
 ```sh
 curl -fsSL https://deb.nodesource.com/setup_24.x | sudo -E bash -

@@ -20,7 +20,7 @@
 ![Hono](https://img.shields.io/badge/Hono-E36002?logo=hono&logoColor=white)
 ![SQLite](https://img.shields.io/badge/SQLite-003B57?logo=sqlite&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
-![Node.js](https://img.shields.io/badge/Node.js_24-5FA04E?logo=nodedotjs&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js_24+-5FA04E?logo=nodedotjs&logoColor=white)
 ![pnpm](https://img.shields.io/badge/pnpm-F69220?logo=pnpm&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)
 ![Vitest](https://img.shields.io/badge/Vitest-6E9F18?logo=vitest&logoColor=white)
@@ -65,7 +65,7 @@ Funmary (ファンマリー) は、公立はこだて未来大学の学生向け
 | データ         | SQLite (better-sqlite3、Drizzle ORM)        |
 | 検証           | Valibot                                     |
 | 定期処理       | croner (同じプロセスの中で動かす)           |
-| 実行環境       | Node.js 24 系 (LTS)                         |
+| 実行環境       | Node.js 24 以上 (LTS)                       |
 | パッケージ管理 | pnpm workspace                              |
 | 検査           | TypeScript、ESLint、Prettier、commitlint    |
 | テスト         | Vitest、Playwright                          |

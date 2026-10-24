@@ -71,7 +71,7 @@
 			commitMessageExtra: '',
 		},
 		{
-			// Node.js は 24 系 (LTS) から上げない
+			// 開発と CI の Node.js は、対応の下限の 24 系から上げない
 			matchDepNames: ['node'],
 			matchUpdateTypes: ['major'],
 			enabled: false,
