@@ -2,6 +2,9 @@ name: Node.js と pnpm の準備
 description: .nvmrc の Node.js を入れる。install が true なら、pnpm を入れて依存も入れる。先に actions/checkout を済ませておくこと
 
 inputs:
+  node-version:
+    description: .nvmrc の代わりに入れる Node.js の版。空なら .nvmrc を使う
+    default: ''
   install:
     description: pnpm と依存を入れるか。Node.js だけでよいときは 'false'
     default: 'true'
@@ -13,6 +16,7 @@ runs:
       uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
     - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
       with:
+        node-version: ${{ inputs.node-version }}
         node-version-file: .nvmrc
         # 空文字ならキャッシュを使わない
         cache: ${{ inputs.install == 'true' && 'pnpm' || '' }}
