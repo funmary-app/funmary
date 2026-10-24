@@ -298,6 +298,22 @@ test.describe('今日と週の時間割', () => {
 		expect((await page.context().cookies()).some((c) => c.name === 'fm-theme')).toBe(false);
 	});
 
+	test('週の時間割の見せ方の切り替えは、平らな枠で、選んだボタンの 4 辺を主色にする', async ({
+		page,
+	}) => {
+		await loginAs(page);
+		await page.goto('/app/week');
+		const segments = page.getByRole('group', { name: '時間割の見せ方' }).getByRole('radio');
+		await expect(segments).toHaveCount(3);
+		for (const segment of await segments.all()) {
+			await expect(segment).toHaveCSS('border-top-style', 'solid');
+			await expect(segment).toHaveCSS('border-left-style', 'solid');
+		}
+		// 選んだ「自動」の右の線は、次の「1日」の左の線が描くので、自動の枠と同じ色にする
+		const selected = await segments.nth(0).evaluate((el) => getComputedStyle(el).borderTopColor);
+		await expect(segments.nth(1)).toHaveCSS('border-left-color', selected);
+	});
+
 	test('ボタンは、表示や状態が変わっても、押せる範囲の大きさと位置を変えない', async ({ page }) => {
 		await loginAs(page);
 		const menu = page.getByRole('navigation', { name: 'メニュー' });

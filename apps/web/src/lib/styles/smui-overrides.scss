@@ -107,16 +107,31 @@
 		--mdc-theme-primary: var(--fm-primary);
 	}
 
+	// 枠の種類を solid にする。SMUI は色と太さだけを決めるので、ブラウザの button の既定 (outset) が残り、
+	// 上と左が明るく、下と右が暗い、立体の枠になっていた。角の丸みは、ほかのボタンと同じにする
 	.mdc-segmented-button__segment {
 		height: 48px;
 		padding: 0 1rem;
+		border-style: solid;
 		font-size: 1rem;
 		letter-spacing: 0.02em;
 		text-transform: none;
+
+		&:first-child {
+			border-radius: 0.5rem 0 0 0.5rem;
+		}
+		&:last-child {
+			border-radius: 0 0.5rem 0.5rem 0;
+		}
 	}
 
 	.mdc-segmented-button__segment--selected {
 		border-color: var(--fm-primary);
+	}
+
+	// 選んだボタンの右の線は、次のボタンの左の線が描くので、そこも主色にして、4 辺をそろえる
+	.mdc-segmented-button__segment--selected + .mdc-segmented-button__segment {
+		border-left-color: var(--fm-primary);
 	}
 
 	// 入力欄 (outlined)。SMUI の既定の枠、ラベル、文字の色は黒の半透明で、ダークで見えないので、テーマの色にする。
