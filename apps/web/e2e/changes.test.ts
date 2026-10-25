@@ -79,7 +79,7 @@ test.describe('休講、補講、教室変更の一覧', () => {
 
 		// ホームから移れる
 		await page.goto('/app');
-		await page.getByRole('link', { name: '休講、補講、教室変更の一覧' }).click();
+		await page.getByRole('link', { name: '休講、補講、教室変更', exact: true }).click();
 		await expect(page).toHaveURL('/app/changes');
 		await expect(page.getByRole('heading', { level: 1 })).toHaveText('休講、補講、教室変更');
 		await expect(page.getByText(/^休講情報/)).toBeVisible();

@@ -1,5 +1,5 @@
 // Discord のサポートサーバーの招待リンク (#214)。Bot で発行したものと、管理者が自分で作って登録したものを持つ。
-// 公開にした招待は、「このアプリについて」と Discord 連携の画面に出す。記録は DB の settings に置く
+// 公開にした招待は、「リポジトリと作者」と Discord 連携の画面に出す。記録は DB の settings に置く
 import { randomUUID } from 'node:crypto';
 
 /** 招待の一覧を保存する設定の名前 */

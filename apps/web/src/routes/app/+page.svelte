@@ -222,7 +222,7 @@
 
 	<PortalFreshness fetchedAt={today.fetchedAt} stale={today.stale} today={today.date} />
 	<p class="freshness">
-		<a href={resolve('app/changes')}>休講、補講、教室変更の一覧</a>
+		<a href={resolve('app/changes')}>休講、補講、教室変更</a>
 	</p>
 	{#if today.usesEstimatedTerms}
 		<p class="freshness">
