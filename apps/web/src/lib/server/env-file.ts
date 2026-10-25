@@ -16,6 +16,8 @@ export type Secrets = Record<(typeof SECRET_NAMES)[number], string>;
 export const RETIRED_NAMES = [
 	// 登録の方式は、管理画面の「登録と招待」で変えるようにした
 	'REGISTRATION',
+	// 招待コードを発行できる人と月の上限は、管理画面の「登録と招待」で決める
+	'INVITES_PER_USER',
 ] as const;
 
 /** funmary-admin init が埋める鍵を、新しく作る */
