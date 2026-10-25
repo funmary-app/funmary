@@ -4,7 +4,7 @@
 // アプリの画面は /app の下に移した (紹介の画面を / に置くため)
 const MOVED = ['/week', '/courses', '/subjects', '/admin'];
 
-// 「このアプリについて」の画面は、ログインしていなくても見られるよう、設定の下からルートの下に移した (#223)
+// 「リポジトリと作者」の画面 (/about) は、ログインしていなくても見られるよう、設定の下からルートの下に移した (#223)
 const ABOUT_PAGES = ['about', 'license', 'third-party-licenses', 'contributors'];
 const MOVED_ABOUT = new Map(ABOUT_PAGES.map((name) => [`/app/settings/${name}`, `/${name}`]));
 

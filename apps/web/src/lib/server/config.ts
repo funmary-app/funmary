@@ -59,7 +59,7 @@ export interface Config {
 	readonly operator: { readonly name: string; readonly url: string } | undefined;
 	/** ロゴ、アイコン、OGP の画像を差し替えるディレクトリ (LICENSE-ASSETS)。設定しなければ同梱の画像を使う */
 	readonly brandDir: string | undefined;
-	/** 問い合わせ先のメールアドレス。「このアプリについて」に出す。設定しなければ出さない (リポジトリには書かない) */
+	/** 問い合わせ先のメールアドレス。「リポジトリと作者」の画面に出す。設定しなければ出さない (リポジトリには書かない) */
 	readonly contactEmail: string | undefined;
 }
 

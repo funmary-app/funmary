@@ -11,7 +11,7 @@ describe('legacyAppPath', () => {
 		expect(legacyAppPath('/admin/calendar')).toBe('/app/admin/calendar');
 	});
 
-	it('設定の下にあった「このアプリについて」の画面の URL を、ルートの下の URL にする', () => {
+	it('設定の下にあった「リポジトリと作者」の画面の URL を、ルートの下の URL にする', () => {
 		expect(legacyAppPath('/app/settings/about')).toBe('/about');
 		expect(legacyAppPath('/app/settings/license')).toBe('/license');
 		expect(legacyAppPath('/app/settings/third-party-licenses')).toBe('/third-party-licenses');

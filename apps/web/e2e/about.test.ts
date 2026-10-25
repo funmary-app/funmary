@@ -43,9 +43,10 @@ test.describe('このアプリについて', () => {
 		await expect(repo).toHaveAttribute('rel', 'noopener noreferrer');
 
 		// Contributors の画面は GitHub から取得するので、ここでは開かない
-		await expect(
-			page.getByRole('link', { name: 'コードを書いてくれた人たち', exact: true }),
-		).toHaveAttribute('href', '/contributors');
+		await expect(page.getByRole('link', { name: 'Contributors', exact: true })).toHaveAttribute(
+			'href',
+			'/contributors',
+		);
 		await expect(page.getByRole('link', { name: '設定', exact: true })).toHaveAttribute(
 			'href',
 			'/app/settings',
@@ -81,11 +82,11 @@ test.describe('このアプリについて', () => {
 		).toBeVisible();
 	});
 
-	test('このアプリについての画面は、ログインしていなくても開け、パンくずはトップに戻る', async ({
+	test('リポジトリと作者の画面は、ログインしていなくても開け、パンくずはトップに戻る', async ({
 		page,
 	}) => {
 		await page.goto('/');
-		await page.getByRole('link', { name: 'このアプリについて' }).click();
+		await page.getByRole('link', { name: 'リポジトリと作者' }).click();
 		await expect(page).toHaveURL('/about');
 		await expect(page.getByRole('heading', { name: 'リポジトリと作者', level: 1 })).toBeVisible();
 		await expect(page.getByRole('link', { name: 'トップ', exact: true })).toHaveAttribute(

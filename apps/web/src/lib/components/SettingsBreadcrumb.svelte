@@ -5,10 +5,12 @@
 	let {
 		current,
 		public: isPublic = false,
-
-		/** 設定の下の画面の、現在地の名前 (画面の見出しと同じにする) */
+	}: {
+		/** 設定の下の画面の、現在地の名前。設定の画面のカード、見出し、ページのタイトルと同じ名前にする */
+		current: string;
 		/** ログインしていなくても開ける画面 (#223)。ログインしていなければ、設定の代わりに紹介の画面へ戻す */
-	}: { current: string; public?: boolean } = $props();
+		public?: boolean;
+	} = $props();
 
 	const toTop = $derived(isPublic && page.data['user'] == null);
 </script>

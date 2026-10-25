@@ -1,6 +1,6 @@
 <script lang="ts">
 	// フッターの、ソースコードのリポジトリと、セルフホストの運営者へのリンク (Issue #109)。
-	// 「このアプリについて」は、ログインしていなくても開けるので、ここからたどれるようにする (#223)
+	// 「リポジトリと作者」は、ログインしていなくても開けるので、ここからたどれるようにする (#223)
 	import { resolve } from '$app/paths';
 	import { REPOSITORY_URL } from '#lib/repository.ts';
 
@@ -8,7 +8,7 @@
 </script>
 
 <p class="footer-links">
-	<a href={resolve('about')}>このアプリについて</a>
+	<a href={resolve('about')}>リポジトリと作者</a>
 	<a href={resolve('terms')}>利用規約</a>
 	<a href={resolve('privacy')}>プライバシーポリシー</a>
 	<!-- eslint-disable svelte/no-navigation-without-resolve -- 外部サイトへのリンク -->

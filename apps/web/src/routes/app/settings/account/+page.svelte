@@ -10,13 +10,13 @@
 </script>
 
 <svelte:head>
-	<title>アカウント - Funmary</title>
+	<title>データの書き出しと退会 - Funmary</title>
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
 <div class="page">
-	<SettingsBreadcrumb current="アカウント" />
-	<h1>アカウント</h1>
+	<SettingsBreadcrumb current="データの書き出しと退会" />
+	<h1>データの書き出しと退会</h1>
 	<p class="muted">{data.email}</p>
 
 	<section aria-labelledby="export-heading">

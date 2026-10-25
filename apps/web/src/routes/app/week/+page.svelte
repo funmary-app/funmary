@@ -149,7 +149,7 @@
 {/snippet}
 
 <svelte:head>
-	<title>週の時間割 - Funmary</title>
+	<title>時間割 - Funmary</title>
 </svelte:head>
 
 <div class="page page-w-72">

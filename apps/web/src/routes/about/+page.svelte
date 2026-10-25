@@ -47,7 +47,7 @@
 				</a>
 			</li>
 		{/each}
-		<li><a href={resolve('contributors')}>コードを書いてくれた人たち</a></li>
+		<li><a href={resolve('contributors')}>Contributors</a></li>
 		<li><a href={resolve('license')}>ライセンス</a></li>
 		<li><a href={resolve('third-party-licenses')}>サードパーティライセンス</a></li>
 		<li><a href={resolve('terms')}>利用規約</a></li>
