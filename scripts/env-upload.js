@@ -5,15 +5,18 @@
 // 反映専用の制限された鍵 (funmary-deploy、command= で funmary-update だけに絞ったもの) は使わない。
 // 作者自身の SSH 鍵と sudo を使う (自動デプロイの経路とは別)。
 //
-// 1. リモートの環境変数ファイルを .env.example の並びに揃える (足りない鍵を空のまま足す。値は変えない)
-// 2. 手元の .env にあって、リモートにない値、またはリモートと違う値だけを、1 つずつ上書きするか確認する
+// 1. 使わなくなった鍵 (RETIRED_NAMES) がリモートに残っていれば、消すか確認する
+// 2. リモートの環境変数ファイルを .env.example の並びに揃える (足りない鍵を空のまま足す。値は変えない)
+// 3. 手元の .env にあって、リモートにない値、またはリモートと違う値だけを、1 つずつ上書きするか確認する
 //    (どちらにもない鍵、リモートにしかない鍵には触れない)
-// 3. 値を上書きしたら、いま再起動するか確認し、再起動したら動いているかを確かめる
+// 4. 値を上書きしたら、いま再起動するか確認し、再起動したら動いているかを確かめる
 import { existsSync, readFileSync } from 'node:fs';
 import { createInterface } from 'node:readline/promises';
 import {
 	alignEnvFile,
 	parseEnvValues,
+	removeEnvKeys,
+	RETIRED_NAMES,
 	SECRET_NAMES,
 	setEnvValues,
 } from '../apps/web/src/lib/server/env-file.ts';
@@ -37,8 +40,19 @@ const templateText = readFileSync('.env.example', 'utf8');
 console.log(`${host} の ${remoteFile} を読んでいます…`);
 const remoteText = runSsh(sshConfig, ['sudo', 'cat', quote(remoteFile)]);
 
+// 使わなくなった鍵は、揃える前に消す (揃えると「.env.example にない鍵」として残るため)
+let cleanedText = remoteText;
+const retired = RETIRED_NAMES.filter((name) => parseEnvValues(remoteText).has(name));
+if (retired.length > 0) {
+	console.log(`\n使わなくなった鍵が残っています: ${retired.join(', ')}`);
+	const rl = createInterface({ input: process.stdin, output: process.stdout });
+	const answer = await rl.question('  これらの鍵を消しますか? (y/N): ');
+	rl.close();
+	if (/^y(es)?$/i.test(answer.trim())) cleanedText = removeEnvKeys(remoteText, retired).text;
+}
+
 // まず、リモートの並びと足りない鍵を .env.example に揃える (値のある行の値は変えない)
-const structured = alignEnvFile(remoteText, templateText);
+const structured = alignEnvFile(cleanedText, templateText);
 if (structured.added.length > 0) {
 	console.log(`空のまま足す鍵: ${structured.added.join(', ')}`);
 }

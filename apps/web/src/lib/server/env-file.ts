@@ -12,6 +12,12 @@ export const SECRET_NAMES = [
 
 export type Secrets = Record<(typeof SECRET_NAMES)[number], string>;
 
+/** 使わなくなった鍵。pnpm env:upload が、本番の環境変数ファイルから消すか聞く */
+export const RETIRED_NAMES = [
+	// 登録の方式は、管理画面の「登録と招待」で変えるようにした
+	'REGISTRATION',
+] as const;
+
 /** funmary-admin init が埋める鍵を、新しく作る */
 export function generateSecrets(): Secrets {
 	// プッシュ通知の VAPID の鍵は P-256 (Web Push の決まり)。公開鍵は非圧縮の点 (0x04 と x と y)
@@ -135,6 +141,22 @@ export function parseEnvValues(text: string): Map<string, string> {
 		if (match?.[1]) values.set(match[1], match[2] ?? '');
 	}
 	return values;
+}
+
+/** 指定した鍵の行を消す。コメント、ほかの行、改行の形は変えない */
+export function removeEnvKeys(
+	text: string,
+	names: readonly string[],
+): { text: string; removed: string[] } {
+	const newline = text.includes('\r\n') ? '\r\n' : '\n';
+	const removed = new Set<string>();
+	const lines = text.split(/\r\n|\n/).filter((line) => {
+		const name = ENV_LINE.exec(line)?.[1];
+		if (!name || !names.includes(name)) return true;
+		removed.add(name);
+		return false;
+	});
+	return { text: lines.join(newline), removed: [...removed] };
 }
 
 /**
