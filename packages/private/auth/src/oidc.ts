@@ -61,6 +61,9 @@ export function createGoogleOidcClient(options: OidcOptions): OidcClient {
 				code_challenge_method: 'S256',
 				state,
 				nonce,
+				// 付けないと、Google は前回のアカウントで自動で進む。ログアウトしても Google のログインは残るので、
+				// 別のアカウント (テストアカウントなど) に替えられるよう、選択画面を毎回出させる
+				prompt: 'select_account',
 				...(authorizationOptions.hostedDomainHint !== false && { hd: options.hostedDomain }),
 			});
 			return { url: url.toString(), state, nonce, codeVerifier };
