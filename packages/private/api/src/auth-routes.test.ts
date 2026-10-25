@@ -61,7 +61,7 @@ function makeApi(
 		oidc,
 		store,
 		allowedDomains: ['fun.ac.jp'],
-		registration: options.registration ?? 'open',
+		registration: () => options.registration ?? 'open',
 		adminEmails: [],
 	});
 	return createApi({

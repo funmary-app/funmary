@@ -388,7 +388,7 @@ export const init: ServerInit = () => {
 		}),
 		store,
 		allowedDomains: result.config.allowedEmailDomains,
-		registration: result.config.registration,
+		registration: () => result.config.registration,
 		adminEmails: result.config.adminEmails,
 		isTestAccount: (email) => testAccountStore.isTestAccount(email),
 	});
