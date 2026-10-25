@@ -88,7 +88,6 @@ sudo chmod 600 /etc/funmary/funmary.env
 | `SESSION_SECRET`、`ENCRYPTION_KEY`、`VAPID_PUBLIC_KEY`、`VAPID_PRIVATE_KEY` | 鍵。あとで `funmary-admin init` が生成する                                                                        |
 | `GOOGLE_CLIENT_ID`、`GOOGLE_CLIENT_SECRET`                                  | 2.3 で作った OAuth クライアントの値                                                                               |
 | `ALLOWED_EMAIL_DOMAINS`                                                     | ログインを許すメールアドレスのドメイン。大学のドメインを書く                                                      |
-| `REGISTRATION`                                                              | 新規登録の方式。最初は `invite` (招待コードが要る) を勧める                                                       |
 | `ADMIN_EMAILS`                                                              | 管理者にするメールアドレス (自分のアドレスを書く)                                                                 |
 | `PORTAL_USER_ID`、`PORTAL_PASSWORD`                                         | 2.4 の学生ポータルのアカウント                                                                                    |
 | `ADMIN_DISCORD_WEBHOOK_URL` か `DISCORD_BOT_TOKEN`/`DISCORD_GUILD_ID`       | 管理用の通知の送り先 (任意)                                                                                       |
@@ -174,7 +173,7 @@ sudo certbot --nginx -d funmary.example.com
 curl https://funmary.example.com/healthz
 ```
 
-`{"status":"ok"}` が返れば、起動できています。ブラウザで開き、Google でログインできるかも確かめてください (`REGISTRATION=invite` のままだと、招待コードが要ります。招待コードの発行は 4.3 を参照)。
+`{"status":"ok"}` が返れば、起動できています。ブラウザで開き、Google でログインできるかも確かめてください (登録の方式は、最初は招待制です。招待コードが要ります。招待コードの発行は 4.3 を参照)。
 
 `{"status":"unavailable"}` が返る、または応答がないときは `journalctl -u funmary -n 50` でログを確かめます。
 
@@ -222,7 +221,7 @@ VPS にログインしているなら、`funmary-admin` を直接使います。
 sudo /usr/local/bin/funmary-admin align-env --file=/etc/funmary/funmary.env
 ```
 
-リポジトリの手元の環境からは、`pnpm env:upload` で、SSH で入るだけで済ませられます (並びを揃えたあと、手元の `.env` にあってリモートと値が違う、またはリモートにない鍵があれば、1 つずつ上書きするか確認されます)。接続先は、コマンドの引数ではなく `.env.ssh` に書きます (シェルの履歴に接続先や鍵の場所を残さないため)。
+リポジトリの手元の環境からは、`pnpm env:upload` で、SSH で入るだけで済ませられます (使わなくなった鍵 (`REGISTRATION` など) が残っていれば消すか確認され、並びを揃えたあと、手元の `.env` にあってリモートと値が違う、またはリモートにない鍵があれば、1 つずつ上書きするか確認されます)。接続先は、コマンドの引数ではなく `.env.ssh` に書きます (シェルの履歴に接続先や鍵の場所を残さないため)。
 
 ```sh
 cp .env.ssh.example .env.ssh
@@ -257,7 +256,7 @@ sudo systemctl start funmary
 
 ### 4.3 招待コード
 
-`REGISTRATION=invite` のときは、管理者が招待コードを発行しないと、誰も登録できません。
+登録の方式が招待制 (既定) のときは、管理者が招待コードを発行しないと、誰も登録できません。方式は、管理画面の「登録と招待」で変えられます。
 
 ```sh
 sudo /usr/local/bin/funmary-admin invite create --uses 5 --days 30 --note "テスター向け"

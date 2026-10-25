@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createAuthStore, openDatabase, type AuthStore, type Database } from '@funmary/db';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import type { GoogleClaims } from './sign-in-policy.ts';
+import type { GoogleClaims, Registration } from './sign-in-policy.ts';
 import { createAuthService, FLOW_TTL_MS, type OidcClient } from './service.ts';
 
 let dir: string;
@@ -54,7 +54,7 @@ function fakeOidc(claims: GoogleClaims | Error) {
 function service(
 	over: {
 		claims?: GoogleClaims | Error;
-		registration?: 'invite' | 'open' | 'closed';
+		registration?: Registration;
 		adminEmails?: string[];
 		now?: () => Date;
 	} = {},
@@ -64,7 +64,7 @@ function service(
 		oidc,
 		store,
 		allowedDomains: ['fun.ac.jp'],
-		registration: over.registration ?? 'invite',
+		registration: () => over.registration ?? 'invite',
 		adminEmails: over.adminEmails ?? [],
 		now: over.now ?? (() => T0),
 	});
@@ -141,6 +141,30 @@ describe('completeLogin: 新規登録', () => {
 			reason: 'invite-required',
 		});
 		expect(store.findUserBySub('g-1')).toBeNull();
+	});
+
+	it('登録の方式は、ログインのたびに読む (管理画面で変えると、再起動しなくても効く)', async () => {
+		let registration: Registration = 'invite';
+		const { oidc } = fakeOidc(CLAIMS);
+		const svc = createAuthService({
+			oidc,
+			store,
+			allowedDomains: ['fun.ac.jp'],
+			registration: () => registration,
+			adminEmails: [],
+			now: () => T0,
+		});
+		const first = await svc.startLogin({ inviteCode: null });
+		expect(await svc.completeLogin({ callbackUrl: callback, flow: first.flow })).toMatchObject({
+			kind: 'denied',
+		});
+
+		registration = 'open';
+		const second = await svc.startLogin({ inviteCode: null });
+		expect(await svc.completeLogin({ callbackUrl: callback, flow: second.flow })).toMatchObject({
+			kind: 'signed-in',
+			isNewUser: true,
+		});
 	});
 
 	it('使い切ったコードなら、登録せず、理由を返す', async () => {

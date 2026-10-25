@@ -1,10 +1,11 @@
 // 紹介の画面。ログインしているかどうかにかかわらず出す。アプリは /app の下にある。
 import type { ServerLoad } from '@sveltejs/kit';
 import { parseInviteCodeParam } from '#lib/invite-code-param.ts';
+import { readRegistration } from '#lib/server/registration.ts';
 import { getServices } from '#lib/server/services.ts';
 
 export const load: ServerLoad = ({ locals, url }) => {
-	const registration = getServices().registration;
+	const registration = readRegistration(getServices().settings);
 	return {
 		signedIn: locals.user !== null,
 		registration,

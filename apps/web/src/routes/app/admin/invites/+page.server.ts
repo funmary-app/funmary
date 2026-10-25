@@ -1,4 +1,4 @@
-// 招待コードの管理。発行できる人のモードと月の上限を変え、全員のコードを見て取り消し、
+// 登録と招待の管理。新規登録の方式、招待コードを発行できる人のモードと月の上限を変え、全員のコードを見て取り消し、
 // 利用者ごとに発行の権限を付ける。発行そのものは /app/settings/invites で行う (管理者も同じ画面を使う)。
 import { fail, type Actions, type ServerLoad } from '@sveltejs/kit';
 import { requireAdmin } from '#lib/server/admin.ts';
@@ -9,6 +9,7 @@ import {
 	saveInviteSettings,
 	usableInviteCodes,
 } from '#lib/server/invites.ts';
+import { parseRegistration, readRegistration, saveRegistration } from '#lib/server/registration.ts';
 import { getServices } from '#lib/server/services.ts';
 
 export const load: ServerLoad = ({ locals }) => {
@@ -17,7 +18,7 @@ export const load: ServerLoad = ({ locals }) => {
 	const now = new Date();
 	return {
 		settings: readInviteSettings(services.settings),
-		registration: services.registration,
+		registration: readRegistration(services.settings),
 		codes: usableInviteCodes(services.auth.listInviteCodes(), now),
 		// 管理者は権限がなくても発行できるので、権限を付ける対象は管理者でない人だけ
 		users: services.auth
@@ -33,6 +34,13 @@ export const load: ServerLoad = ({ locals }) => {
 };
 
 export const actions: Actions = {
+	saveRegistration: async ({ request, locals }) => {
+		requireAdmin(locals);
+		const registration = parseRegistration((await request.formData()).get('registration'));
+		if (!registration) return fail(400, { error: '登録の方式を選んでください。' });
+		saveRegistration(getServices().settings, registration, new Date());
+		return { message: '登録の方式を保存しました。' };
+	},
 	saveSettings: async ({ request, locals }) => {
 		requireAdmin(locals);
 		const { settings } = getServices();

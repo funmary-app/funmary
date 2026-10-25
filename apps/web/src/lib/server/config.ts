@@ -27,7 +27,6 @@ export interface Config {
 		readonly issuer: string | undefined;
 	};
 	readonly allowedEmailDomains: readonly string[];
-	readonly registration: 'invite' | 'open' | 'closed';
 	readonly invitesPerUser: number;
 	readonly adminEmails: readonly string[];
 	/** 学生ポータルのアカウント。本番では必ずある */
@@ -207,7 +206,6 @@ function envSchema(mode: Mode) {
 		// E2E テストで、Google の代わりのサーバーに向けるための設定。本番では書かない
 		OIDC_ISSUER: v.optional(httpUrl('http:// か https:// で始まる URL を書いてください')),
 		ALLOWED_EMAIL_DOMAINS: v.optional(commaList(DOMAIN), 'fun.ac.jp'),
-		REGISTRATION: oneOf(['invite', 'open', 'closed'], 'invite'),
 		INVITES_PER_USER: v.optional(integer(0, 100), '0'),
 		ADMIN_EMAILS: v.optional(commaList(EMAIL), ''),
 		PORTAL_USER_ID: requiredInProduction(mode, v.string(), '学生ポータルの ID を書いてください'),
@@ -372,7 +370,6 @@ export function parseConfig(env: Readonly<Record<string, string | undefined>>): 
 				issuer: e.OIDC_ISSUER,
 			},
 			allowedEmailDomains: e.ALLOWED_EMAIL_DOMAINS,
-			registration: e.REGISTRATION,
 			invitesPerUser: e.INVITES_PER_USER,
 			adminEmails: e.ADMIN_EMAILS,
 			portal:

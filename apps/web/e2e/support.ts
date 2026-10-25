@@ -1,7 +1,13 @@
 // E2E のテストが共有する部品。Google の代わりに、テスト用の OpenID Connect のサーバーを使う。
 // サーバーは本物の RS256 で署名した ID トークンを返すので、アプリは本番と同じ手順 (PKCE、state、nonce、署名の検証) を通る。
 import { join } from 'node:path';
-import { createBusStore, createSubjectStore, openDatabase, type Database } from '@funmary/db';
+import {
+	createBusStore,
+	createSettingsStore,
+	createSubjectStore,
+	openDatabase,
+	type Database,
+} from '@funmary/db';
 import { expect, test, type Page } from '@playwright/test';
 import type {
 	MockIdentity,
@@ -177,4 +183,11 @@ export async function answerConfirm(page: Page, accept: boolean) {
 	const dialog = page.getByRole('alertdialog');
 	await dialog.getByRole('button', { name: accept ? '続ける' : 'やめる' }).click();
 	await expect(dialog).toBeHidden();
+}
+
+/** 大学のアカウントなら誰でも登録できる形にする (招待コードの流れは単体テストで確かめている) */
+export function allowOpenRegistration() {
+	withTestDatabase((database) =>
+		createSettingsStore(database).set('registration', 'open', new Date()),
+	);
 }

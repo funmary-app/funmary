@@ -25,7 +25,6 @@ describe('parseConfig', () => {
 				port: 28461,
 				dataDir: './data',
 				allowedEmailDomains: ['fun.ac.jp'],
-				registration: 'invite',
 				invitesPerUser: 0,
 				adminEmails: [],
 				sourcesDisabled: [],
@@ -41,23 +40,21 @@ describe('parseConfig', () => {
 			...developmentEnv(),
 			HOST: '0.0.0.0',
 			PORT: '8080',
-			REGISTRATION: 'open',
 			LOG_LEVEL: 'warn',
 		});
 		const withEmpty = parseConfig({
 			...developmentEnv(),
 			HOST: '',
 			PORT: '',
-			REGISTRATION: '',
 			LOG_LEVEL: '',
 		});
 		expect(withValues).toMatchObject({
 			ok: true,
-			config: { host: '0.0.0.0', port: 8080, registration: 'open', logLevel: 'warn' },
+			config: { host: '0.0.0.0', port: 8080, logLevel: 'warn' },
 		});
 		expect(withEmpty).toMatchObject({
 			ok: true,
-			config: { host: '127.0.0.1', port: 28461, registration: 'invite', logLevel: 'debug' },
+			config: { host: '127.0.0.1', port: 28461, logLevel: 'debug' },
 		});
 	});
 
@@ -284,7 +281,6 @@ describe('parseConfig', () => {
 		['PORT', '80a', '数でない'],
 		['ENCRYPTION_KEY', Buffer.alloc(16).toString('base64'), '32 バイトでない'],
 		['VAPID_SUBJECT', 'admin@funmary.example.com', 'mailto: がない'],
-		['REGISTRATION', 'free', '選べる値でない'],
 		['INVITES_PER_USER', '-1', '負の数'],
 		['ADMIN_EMAILS', 'admin', 'メールアドレスでない'],
 		['ADMIN_DISCORD_WEBHOOK_URL', 'https://example.com/hook', 'Discord の Webhook でない'],

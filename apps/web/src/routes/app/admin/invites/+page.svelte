@@ -3,6 +3,8 @@
 	import RadioField from '#lib/components/RadioField.svelte';
 	import Button, { Label } from '@smui/button';
 	import type { InviteIssuers, InviteSettings } from '@funmary/core';
+	import type { Registration } from '@funmary/auth';
+	import { REGISTRATION_OPTIONS, registrationLabel } from '#lib/registration.ts';
 	import { enhance } from '$app/forms';
 	import { resolve } from '$app/paths';
 	import FormNotice from '#lib/components/FormNotice.svelte';
@@ -16,7 +18,7 @@
 	}: {
 		data: {
 			settings: InviteSettings;
-			registration: 'invite' | 'open' | 'closed';
+			registration: Registration;
 			codes: InviteCodeView[];
 			users: { id: string; email: string; suspended: boolean; canInvite: boolean }[];
 		};
@@ -43,17 +45,21 @@
 		issuers !== data.settings.issuers ||
 			(limitUsed && monthlyLimit !== String(data.settings.monthlyLimit)),
 	);
+	// 登録の方式も、上の設定と同じく、保存していない選択を別に持つ
+	let editedRegistration = $state<Registration>();
+	const registration = $derived(editedRegistration ?? data.registration);
+	const registrationDirty = $derived(registration !== data.registration);
 	const permittedCount = $derived(data.users.filter((user) => user.canInvite).length);
 </script>
 
 <svelte:head>
-	<title>招待コードの管理 - Funmary</title>
+	<title>登録と招待 - Funmary</title>
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
 <div class="page page-w-48">
-	<SettingsBreadcrumb current="招待コードの管理" />
-	<h1>招待コードの管理</h1>
+	<SettingsBreadcrumb current="登録と招待" />
+	<h1>登録と招待</h1>
 
 	<p>
 		招待コードの発行は、
@@ -61,13 +67,52 @@
 		の画面で行います。
 	</p>
 
+	<FormNotice error={form?.error} message={form?.message} />
+
+	<section aria-labelledby="registration-heading">
+		<h2 id="registration-heading">登録の方式</h2>
+		<form
+			method="POST"
+			action="?/saveRegistration"
+			use:enhance={() =>
+				async ({ result, update }) => {
+					await update({ reset: false });
+					if (result.type === 'success') editedRegistration = undefined;
+				}}
+			class="entry"
+		>
+			<fieldset>
+				<legend>新しい人の登録</legend>
+				{#each REGISTRATION_OPTIONS as option (option.value)}
+					<RadioField
+						name="registration"
+						value={option.value}
+						group={registration}
+						onchange={() => (editedRegistration = option.value)}
+					>
+						<span class="choice-text">
+							<span class="choice-label">{option.label}</span>
+							<span class="muted">{option.description}</span>
+						</span>
+					</RadioField>
+				{/each}
+			</fieldset>
+			<div class="actions">
+				<Button type="submit" variant="unelevated"><Label>保存する</Label></Button>
+				<span class="muted" aria-live="polite"
+					>{registrationDirty ? '保存していない変更があります' : ''}</span
+				>
+			</div>
+		</form>
+	</section>
+
 	{#if data.registration !== 'invite'}
-		<p class="muted">
-			いまの登録の方式 (REGISTRATION) は {data.registration} なので、招待コードは登録に使われません。
+		<p class="notice">
+			いまの登録の方式は「{registrationLabel(
+				data.registration,
+			)}」なので、招待コードは登録に使われません。
 		</p>
 	{/if}
-
-	<FormNotice error={form?.error} message={form?.message} />
 
 	<section aria-labelledby="settings-heading">
 		<h2 id="settings-heading">発行できる人</h2>

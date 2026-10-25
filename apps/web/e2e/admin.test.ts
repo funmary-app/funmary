@@ -723,6 +723,7 @@ test.describe('招待コード', () => {
 		const adminPage = await (await browser.newContext()).newPage();
 		await signInAs(adminPage, 'e2e-admin@fun.ac.jp');
 		await adminPage.goto('/app/admin/invites');
+		const issuersForm = adminPage.getByRole('region', { name: '発行できる人' });
 		const memberRow = adminPage.getByRole('listitem').filter({ hasText: member });
 		const limit = adminPage.getByLabel('1 か月に発行できる数');
 		// 管理者のみのときは、月の上限を使わない
@@ -730,7 +731,7 @@ test.describe('招待コード', () => {
 		await adminPage.getByLabel(/許可したユーザー/).check();
 		await expect(limit).toBeEnabled();
 		await expect(adminPage.getByText('保存していない変更があります')).toBeVisible();
-		await adminPage.getByRole('button', { name: '保存する' }).click();
+		await issuersForm.getByRole('button', { name: '保存する' }).click();
 		await expect(adminPage.getByRole('status')).toHaveText(
 			'招待コードを発行できる人の設定を保存しました。',
 		);
@@ -757,13 +758,35 @@ test.describe('招待コード', () => {
 		await expect(memberRow.getByRole('button', { name: /^許可する/ })).toBeVisible();
 		await adminPage.getByLabel(/管理者のみ/).check();
 		await expect(limit).toBeDisabled();
-		await adminPage.getByRole('button', { name: '保存する' }).click();
+		await issuersForm.getByRole('button', { name: '保存する' }).click();
 		await expect(adminPage.getByRole('status')).toHaveText(
 			'招待コードを発行できる人の設定を保存しました。',
 		);
 		await expect(adminPage.getByLabel(/管理者のみ/)).toBeChecked();
 		// 無効にした欄は送られないが、前に決めた上限は残る
 		await expect(limit).toHaveValue('5');
+	});
+
+	test('管理者は、設定の「登録と招待」で、登録の方式を選んで保存できる', async ({ page }) => {
+		await signInAs(page, 'e2e-admin@fun.ac.jp');
+		await page.goto('/app/settings');
+		await page.getByRole('link', { name: /^登録と招待/ }).click();
+		await expect(page).toHaveURL('/app/admin/invites');
+		await expect(page.getByRole('heading', { level: 1 })).toHaveText('登録と招待');
+		await expect(page.getByRole('navigation', { name: 'パンくず' })).toContainText('登録と招待');
+
+		const form = page.getByRole('region', { name: '登録の方式' });
+		await expect(form.getByLabel(/誰でも登録できる/)).toBeChecked();
+		await form.getByLabel(/受け付けない/).check();
+		await expect(form.getByText('保存していない変更があります')).toBeVisible();
+		// ほかのテストが並べて新しい人を登録するので、方式は変えずに保存する
+		await form.getByLabel(/誰でも登録できる/).check();
+		await expect(form.getByText('保存していない変更があります')).toBeHidden();
+		await form.getByRole('button', { name: '保存する' }).click();
+		await expect(page.getByRole('status')).toHaveText('登録の方式を保存しました。');
+		await expect(form.getByLabel(/誰でも登録できる/)).toBeChecked();
+		// 招待制でないので、招待コードが使われないことを知らせる
+		await expect(page.getByText(/招待コードは登録に使われません/)).toBeVisible();
 	});
 });
 

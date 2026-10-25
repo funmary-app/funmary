@@ -9,6 +9,7 @@ import {
 	revokeInvite,
 	usableInviteCodes,
 } from '#lib/server/invites.ts';
+import { readRegistration } from '#lib/server/registration.ts';
 import { getServices } from '#lib/server/services.ts';
 import { requireSignedIn } from '#lib/server/admin.ts';
 
@@ -19,7 +20,7 @@ export const load: ServerLoad = ({ locals }) => {
 	const { issuance } = loadInviteStatus(services, locals.user, now);
 	return {
 		issuance,
-		registration: services.registration,
+		registration: readRegistration(services.settings),
 		codes: usableInviteCodes(services.auth.listInviteCodes({ createdBy: locals.user.id }), now),
 	};
 };

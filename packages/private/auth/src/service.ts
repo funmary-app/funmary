@@ -77,8 +77,8 @@ export interface AuthServiceOptions {
 	readonly store: AuthStore;
 	/** ALLOWED_EMAIL_DOMAINS */
 	readonly allowedDomains: readonly string[];
-	/** REGISTRATION */
-	readonly registration: Registration;
+	/** 新規登録の方式。管理画面で変えられるので、ログインのたびに読む */
+	readonly registration: () => Registration;
 	/** ADMIN_EMAILS */
 	readonly adminEmails: readonly string[];
 	/** 管理者が用意したテストアカウントのメールアドレスか。ないときは、テストアカウントを認めない */
@@ -143,7 +143,7 @@ export function createAuthService(options: AuthServiceOptions): AuthService {
 			const decision = decideSignIn({
 				claims,
 				allowedDomains: options.allowedDomains,
-				registration: options.registration,
+				registration: options.registration(),
 				adminEmails: options.adminEmails,
 				existingUser: existing
 					? { id: existing.id, status: existing.status, role: existing.role }

@@ -126,8 +126,8 @@
 			{
 				href: resolve('app/admin/invites'),
 				icon: IconInvite,
-				title: '招待コード',
-				description: '発行できる人と、発行されたコード',
+				title: '登録と招待',
+				description: '新規登録の方式、招待コードを発行できる人と、発行されたコード',
 			},
 			{
 				href: resolve('app/admin/test-accounts'),

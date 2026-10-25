@@ -5,6 +5,7 @@ import {
 	fillSecrets,
 	generateSecrets,
 	parseEnvValues,
+	removeEnvKeys,
 	setEnvValues,
 } from './env-file.ts';
 
@@ -184,6 +185,21 @@ describe('setEnvValues', () => {
 		const text = 'ORIGIN=old\r\nHOST=127.0.0.1\r\n';
 		const result = setEnvValues(text, new Map([['ORIGIN', 'new']]));
 		expect(result).toBe('ORIGIN=new\r\nHOST=127.0.0.1\r\n');
+	});
+});
+
+describe('removeEnvKeys', () => {
+	it('指定した鍵の行だけを消し、ほかの行とコメントは残して、消した鍵を返す', () => {
+		const text = ['# 登録', 'REGISTRATION=open', 'ADMIN_EMAILS=a@fun.ac.jp', ''].join('\n');
+		expect(removeEnvKeys(text, ['REGISTRATION', 'NOT_THERE'])).toEqual({
+			text: ['# 登録', 'ADMIN_EMAILS=a@fun.ac.jp', ''].join('\n'),
+			removed: ['REGISTRATION'],
+		});
+	});
+
+	it('改行の形 (CRLF) を保つ', () => {
+		const text = 'REGISTRATION=\r\nHOST=127.0.0.1\r\n';
+		expect(removeEnvKeys(text, ['REGISTRATION']).text).toBe('HOST=127.0.0.1\r\n');
 	});
 });
 
