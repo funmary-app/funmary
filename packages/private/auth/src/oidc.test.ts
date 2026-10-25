@@ -159,6 +159,16 @@ describe('http の issuer', () => {
 	});
 });
 
+describe('createAuthorization の prompt', () => {
+	it('ログアウトのあとに別のアカウントで入れるよう、Google のアカウントの選択画面を毎回出させる', async () => {
+		for (const hostedDomainHint of [true, false]) {
+			const auth = await oidc.createAuthorization({ hostedDomainHint });
+
+			expect(new URL(auth.url).searchParams.get('prompt')).toBe('select_account');
+		}
+	});
+});
+
 describe('createAuthorization の hd', () => {
 	it('テストアカウントの入口では、大学のドメインの絞り込み (hd) を付けない', async () => {
 		const auth = await oidc.createAuthorization({ hostedDomainHint: false });
