@@ -17,8 +17,6 @@ const serverEnv = {
 	GOOGLE_CLIENT_SECRET: 'e2e-client-secret',
 	// Google の代わりに、e2e/global-setup.ts が立てる OpenID Connect のサーバーを使う
 	OIDC_ISSUER: `http://127.0.0.1:${OIDC_PORT}`,
-	// 大学のアカウントなら誰でも登録できる形にする (招待コードの流れは単体テストで確かめている)
-	REGISTRATION: 'open',
 	// このアドレスでログインした利用者は管理者になる (管理画面のテストに使う)
 	ADMIN_EMAILS: 'e2e-admin@fun.ac.jp',
 	PORTAL_USER_ID: 'e2e-student',
@@ -59,11 +57,18 @@ export default defineConfig({
 			testMatch: 'healthz.test.ts',
 			teardown: 'shared-settings',
 		},
+		// サーバーが DB を作ったあとに、登録の方式を入れる (registration.setup.ts)
+		{
+			name: 'registration',
+			use: { ...devices['Desktop Chrome'] },
+			testMatch: 'registration.setup.ts',
+			dependencies: ['server'],
+		},
 		{
 			name: 'chromium',
 			use: { ...devices['Desktop Chrome'] },
 			testIgnore: ['healthz.test.ts', ...SHARED_SETTINGS],
-			dependencies: ['server'],
+			dependencies: ['registration'],
 		},
 		// 全体の設定 (曜日と時限の登録のしかた、学期の期間、招待の方式、Webhook の上限など) を変えるファイル。
 		// ほかのファイルの確かめる画面を変えてしまうので、ほかがすべて終わってから動かす。

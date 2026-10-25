@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-// E2E のサーバーは、だれでも登録できる設定 (REGISTRATION=open) で動かしている
+// E2E では、だれでも登録できる設定にしている (registration.setup.ts)
 test('ログインしていなければ、アプリの紹介と、はじめる入口を出す', async ({ page }) => {
 	await page.goto('/');
 	await expect(page.getByRole('heading', { level: 1 })).toHaveText(

@@ -91,6 +91,7 @@ import {
 	campusRanges,
 	readRegisteredRanges,
 } from '#lib/server/campus-networks.ts';
+import { readRegistration } from '#lib/server/registration.ts';
 import { parseThemePreference, THEME_COOKIE } from '#lib/theme.ts';
 
 /** Hono に渡すパス。これ自身か、この下のパスが対象になる */
@@ -354,7 +355,6 @@ export const init: ServerInit = () => {
 		jobs: { names: jobs.map((job) => job.name), runNow: (name: string) => runner.runNow(name) },
 		responseTimes,
 		auditLog: createAuditLogStore(database),
-		registration: result.config.registration,
 		estimateHolidays,
 		origin: publicOrigin,
 		termsVersion: CURRENT_TERMS_VERSION,
@@ -388,7 +388,7 @@ export const init: ServerInit = () => {
 		}),
 		store,
 		allowedDomains: result.config.allowedEmailDomains,
-		registration: () => result.config.registration,
+		registration: () => readRegistration(settingsStore),
 		adminEmails: result.config.adminEmails,
 		isTestAccount: (email) => testAccountStore.isTestAccount(email),
 	});

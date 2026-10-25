@@ -44,6 +44,8 @@ import { parseConfig, type Config } from './lib/server/config.ts';
 import { alignEnvFile, fillSecrets, generateSecrets } from './lib/server/env-file.ts';
 import { JOB_LABELS, SERVER_ONLY_JOBS, createJobDefinitions } from './lib/server/jobs.ts';
 import { findMigrationsFolder } from './lib/server/migrations-path.ts';
+import { registrationLabel } from './lib/registration.ts';
+import { readRegistration } from './lib/server/registration.ts';
 import { importTimetable, type TimetableImportReport } from './lib/server/timetable-import.ts';
 import {
 	ROLE_LABELS,
@@ -521,9 +523,10 @@ const inviteCreate = defineCommand({
 			console.log(
 				`使用回数 ${uses} 回、期限 ${expiresAt ? `${jstDateTime(expiresAt).date} ${jstDateTime(expiresAt).time} (日本時間)` : 'なし'}`,
 			);
-			if (config.registration !== 'invite') {
+			const registration = readRegistration(createSettingsStore(database));
+			if (registration !== 'invite') {
 				console.log(
-					`いまの登録の方式 (REGISTRATION) は ${config.registration} なので、招待コードは登録に使われません。`,
+					`いまの登録の方式は「${registrationLabel(registration)}」なので、招待コードは登録に使われません (管理画面の「登録と招待」で変えられます)。`,
 				);
 			}
 		} finally {
