@@ -2,7 +2,6 @@
 	import SegmentedButton, { Label as SegmentLabel, Segment } from '@smui/segmented-button';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import IconAdd from '~icons/material-symbols/add';
 	import IconCalendar from '~icons/material-symbols/calendar-month-outline';
 	import IconHoliday from '~icons/material-symbols/event-busy-outline';
 	import IconNext from '~icons/material-symbols/chevron-right';
@@ -286,11 +285,7 @@
 											period: String(row.period),
 										})}
 										aria-label="{formatDate(cell.date)} {row.period} 限のコマ (科目の登録と編集)"
-									>
-										{#if cell.lessons.length === 0 && cell.events.length === 0}
-											<IconAdd aria-hidden="true" />
-										{/if}
-									</a>
+									></a>
 								{/if}
 								{#each cell.events as event (event.key)}
 									{@render eventCard(event, false)}
