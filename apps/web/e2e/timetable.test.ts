@@ -194,7 +194,10 @@ test.describe('今日と週の時間割', () => {
 
 		await page.goto('/app/week?date=2026-10-07');
 		const table = page.getByRole('table');
-		await table.getByRole('link', { name: '10/7 (水) 6 限のコマ' }).click();
+		const slot = table.getByRole('link', { name: '10/7 (水) 6 限のコマ' });
+		// 空きコマだと見て分かるように、「+」の印は出さない。押すと登録の画面に移ることは、このあと確かめる
+		await expect(slot.locator('svg')).toHaveCount(0);
+		await slot.click();
 		await expect(page).toHaveURL('/app/week/2026-10-07/6');
 		await expect(page.getByRole('heading', { level: 1 })).toHaveText('10/7 (水) 6 限');
 
