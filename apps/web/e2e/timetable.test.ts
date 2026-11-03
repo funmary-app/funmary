@@ -501,11 +501,22 @@ test.describe('自分の予定', () => {
 		await page.getByRole('link', { name: '自分の予定' }).click();
 		await expect(page.getByText('まだ予定がありません')).toBeVisible();
 
+		// 開始日は、次の月曜日にする。「この日は除く」の候補にはこれからの回しか出ないので、
+		// 日付を固定すると、その日が過ぎたあとに候補から外れて、このテストが壊れる
+		const DAY_MS = 24 * 60 * 60 * 1000;
+		const jstNow = new Date(Date.now() + 9 * 60 * 60 * 1000);
+		const startDate = new Date(jstNow.getTime() + ((8 - jstNow.getUTCDay()) % 7 || 7) * DAY_MS);
+		const secondDate = new Date(startDate.getTime() + 2 * DAY_MS);
+		const isoDate = (date: Date) => date.toISOString().slice(0, 10);
+		const shortDate = (date: Date) => `${date.getUTCMonth() + 1}/${date.getUTCDate()}`;
+		const dateCheckbox = (date: Date, weekday: string) =>
+			new RegExp(`^${shortDate(date).replace('/', '\\/')} \\(${weekday}\\)`);
+
 		// 毎週 月と水、時限で、4 回まで
 		await page.getByRole('link', { name: '予定を足す' }).click();
 		await page.getByLabel('予定の名前').fill('架空のサークル練習');
 		await page.getByLabel('場所 (任意)').fill('架空の部室');
-		await page.getByLabel('開始日').fill('2026-11-02');
+		await page.getByLabel('開始日').fill(isoDate(startDate));
 		await page.getByRole('radio', { name: '時限で決める' }).check();
 		await page.getByLabel('始まりの時限').selectOption('5');
 		await page.getByLabel('終わりの時限').selectOption('6');
@@ -518,19 +529,23 @@ test.describe('自分の予定', () => {
 
 		await expect(page.getByRole('status')).toHaveText('予定を足しました。');
 		const item = page.getByRole('listitem').filter({ hasText: '架空のサークル練習' });
-		await expect(item).toContainText('11/2 (月)、5 限から 6 限');
+		await expect(item).toContainText(`${shortDate(startDate)} (月)、5 限から 6 限`);
 		await expect(item).toContainText('繰り返し: 毎週 月、水、4 回まで');
 		await expect(item).toContainText('場所: 架空の部室');
 
-		// 11/4 の回を除く
+		// 2 回目 (水曜) の回を除く
 		await item.getByRole('link', { name: /^編集/ }).click();
 		await expect(page.getByLabel('予定の名前')).toHaveValue('架空のサークル練習');
-		await page.getByRole('checkbox', { name: /^11\/4 \(水\)/ }).check();
+		await page.getByRole('checkbox', { name: dateCheckbox(secondDate, '水') }).check();
 		await page.getByRole('button', { name: '保存する' }).click();
 		await expect(page.getByRole('status')).toHaveText('予定を直しました。');
 		await page.getByRole('link', { name: /^編集/ }).click();
-		await expect(page.getByRole('checkbox', { name: /^11\/4 \(水\)/ })).toBeChecked();
-		await expect(page.getByRole('checkbox', { name: /^11\/2 \(月\)/ })).not.toBeChecked();
+		await expect(
+			page.getByRole('checkbox', { name: dateCheckbox(secondDate, '水') }),
+		).toBeChecked();
+		await expect(
+			page.getByRole('checkbox', { name: dateCheckbox(startDate, '月') }),
+		).not.toBeChecked();
 
 		// 誤りは、入力を残して知らせる
 		await page.getByLabel('終了日 (数日にわたるときだけ)').fill('2026-10-01');
