@@ -1,16 +1,26 @@
 <script lang="ts">
 	import SegmentedButton, { Label as SegmentLabel, Segment } from '@smui/segmented-button';
+	import Button, { Label as ButtonLabel } from '@smui/button';
+	import Dialog, { Actions, Content, Header, Title } from '@smui/dialog';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import IconCalendar from '~icons/material-symbols/calendar-month-outline';
 	import IconHoliday from '~icons/material-symbols/event-busy-outline';
+	import IconImage from '~icons/material-symbols/image-outline';
 	import IconNext from '~icons/material-symbols/chevron-right';
 	import IconPrevious from '~icons/material-symbols/chevron-left';
 	import IconSubstitute from '~icons/material-symbols/swap-horiz';
 	import LessonRoom from '#lib/components/LessonRoom.svelte';
+	import RadioField from '#lib/components/RadioField.svelte';
 	import StatusBadge from '#lib/components/StatusBadge.svelte';
 	import ToggleButton from '#lib/components/ToggleButton.svelte';
 	import { ABBREVIATION_DISPLAY_COOKIE } from '#lib/abbreviation-display.ts';
+	import { notify } from '#lib/notify.svelte.ts';
+	import {
+		TIMETABLE_IMAGE_SIZES,
+		type TimetableImageFormat,
+		type TimetableImageSizeId,
+	} from '#lib/timetable-image.ts';
 	import type { EventView } from '#lib/server/event-view.ts';
 	import type { LessonView } from '#lib/server/lesson-view.ts';
 	import type { DayNote } from '@funmary/api';
@@ -109,6 +119,35 @@
 		if (/^(19|2\d)\d{2}-\d{2}-\d{2}$/.test(date)) await goto(weekUrl(date));
 	}
 
+	let timetableTable: HTMLTableElement | undefined = $state();
+	let exportOpen = $state(false);
+	let exportFormat: TimetableImageFormat = $state('png');
+	let exportSizeId: TimetableImageSizeId = $state('wallpaper');
+	let exporting = $state(false);
+
+	/** 週の時間割の表を、選んだ形式と大きさの画像にして保存する。描画の道具は、押したときにだけ読み込む */
+	async function saveTimetableImage() {
+		if (!timetableTable || exporting) return;
+		const size =
+			TIMETABLE_IMAGE_SIZES.find((candidate) => candidate.id === exportSizeId) ??
+			TIMETABLE_IMAGE_SIZES[0];
+		exporting = true;
+		try {
+			const { downloadTimetableImage } = await import('#lib/timetable-image-export.ts');
+			await downloadTimetableImage(timetableTable, {
+				monday: data.monday,
+				size,
+				format: exportFormat,
+				background: getComputedStyle(document.documentElement).backgroundColor,
+			});
+			exportOpen = false;
+		} catch {
+			notify('画像を保存できませんでした');
+		} finally {
+			exporting = false;
+		}
+	}
+
 	/** 日付の横に出すラベル。祝日と全学の休講日は授業がないので、列も灰色にする */
 	const NOTE_BADGES = {
 		holiday: { label: '祝日', icon: IconHoliday },
@@ -192,6 +231,15 @@
 				aria-hidden="true"
 			/>
 		</div>
+		<button
+			type="button"
+			class="icon-button"
+			aria-label="週の時間割を画像で保存"
+			title="画像で保存"
+			onclick={() => (exportOpen = true)}
+		>
+			<IconImage aria-hidden="true" />
+		</button>
 		<a class="text-button" href={resolve('app/events')}>自分の予定</a>
 		<div class="views" role="group" aria-label="時間割の見せ方">
 			<ToggleButton
@@ -223,7 +271,7 @@
 	{/if}
 
 	<div class="scroll" data-view={view} bind:this={scroller}>
-		<table>
+		<table bind:this={timetableTable}>
 			<caption class="visually-hidden">{formatDate(data.monday)} からの週の時間割</caption>
 			<thead>
 				<tr>
@@ -317,6 +365,46 @@
 			学期の期間は、大学の学年暦がまだ入っていないため、推定した日付で出しています。
 		</p>
 	{/if}
+
+	<!-- SMUI は外側の枠と中の面の両方に alertdialog の役割を付けるので、読み上げで 2 つにならないよう、
+	     外側は役割なしにし、名前は中の面に付ける (ConfirmDialog と同じやり方) -->
+	<Dialog
+		bind:open={exportOpen}
+		role="presentation"
+		aria-modal={undefined}
+		surface$aria-label="週の時間割を画像で保存"
+	>
+		<Header>
+			<Title>週の時間割を画像で保存</Title>
+		</Header>
+		<Content>
+			<div class="export-group" role="group" aria-label="形式">
+				<p class="export-label">形式</p>
+				<RadioField name="timetable-image-format" value="png" bind:group={exportFormat}
+					>PNG</RadioField
+				>
+				<RadioField name="timetable-image-format" value="pdf" bind:group={exportFormat}
+					>PDF</RadioField
+				>
+			</div>
+			<div class="export-group" role="group" aria-label="大きさ">
+				<p class="export-label">大きさ</p>
+				{#each TIMETABLE_IMAGE_SIZES as size (size.id)}
+					<RadioField name="timetable-image-size" value={size.id} bind:group={exportSizeId}
+						>{size.label} ({size.width} x {size.height})</RadioField
+					>
+				{/each}
+			</div>
+		</Content>
+		<Actions>
+			<Button onclick={() => (exportOpen = false)}>
+				<ButtonLabel>やめる</ButtonLabel>
+			</Button>
+			<Button onclick={saveTimetableImage} disabled={exporting}>
+				<ButtonLabel>{exporting ? '作っています' : '保存する'}</ButtonLabel>
+			</Button>
+		</Actions>
+	</Dialog>
 </div>
 
 <style lang="scss">

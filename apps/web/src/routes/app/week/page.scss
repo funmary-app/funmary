@@ -35,6 +35,17 @@
 .picker {
 	position: relative;
 }
+/* 画像で保存のダイアログの、形式と大きさの組 */
+.export-group {
+	margin-bottom: 1rem;
+}
+.export-group:last-child {
+	margin-bottom: 0;
+}
+.export-label {
+	margin: 0 0 0.25rem;
+	font-weight: 700;
+}
 .views {
 	display: flex;
 	flex-wrap: wrap;
