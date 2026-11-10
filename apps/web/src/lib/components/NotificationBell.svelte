@@ -33,7 +33,7 @@
 	}
 	/* バッジがアイコンの右にはみ出すので、文字との間を広く取る */
 	.bell:not(.compact) {
-		gap: 1rem;
+		gap: 1.375rem;
 	}
 	.compact {
 		@include header-action.compact;
