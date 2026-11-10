@@ -161,3 +161,25 @@ test.describe('スマホの上部バーと、フッターのリンク', () => {
 		await expect(page.getByRole('link', { name: 'ソースコード (GitHub)' })).toBeVisible();
 	});
 });
+
+test.describe('PC の左のメニュー', () => {
+	test('画面の色のボタンの、アイコンと文字の間は、メニューの項目と同じ広さ', async ({ page }) => {
+		await signInAs(page, `e2e-menu-gap-${Date.now()}@fun.ac.jp`);
+		await page.setViewportSize({ width: 1280, height: 800 });
+		await page.goto('/app');
+
+		const toggle = page.locator('.side .toggle');
+		await expect(toggle).toBeVisible();
+		const gaps = await page.evaluate(() => {
+			const item = document.querySelector('.side-items a');
+			const button = document.querySelector('.side .toggle');
+			if (!(item instanceof HTMLElement) || !(button instanceof HTMLElement)) return null;
+			return {
+				item: getComputedStyle(item).columnGap,
+				toggle: getComputedStyle(button).columnGap,
+			};
+		});
+		expect(gaps).not.toBeNull();
+		expect(gaps?.toggle).toBe(gaps?.item);
+	});
+});
