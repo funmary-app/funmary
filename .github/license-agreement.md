@@ -7,5 +7,5 @@ funmary-app/funmary に送る変更 (コード、文書など) を、BSD 3-Claus
 ライセンスの本文:
 
 - https://github.com/funmary-app/funmary/blob/main/LICENSE-BSD-3-CLAUSE
-- https://github.com/funmary-app/funmary/blob/main/LICENSE-APACHE-2.0
+- https://github.com/funmary-app/funmary/blob/main/LICENSE-APACHE
 - https://github.com/funmary-app/funmary/blob/main/LICENSE-ASSETS

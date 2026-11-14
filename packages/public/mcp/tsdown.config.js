@@ -11,5 +11,5 @@ export default defineConfig({
 	fixedExtension: false,
 	dts: { entry: 'src/index.ts' },
 	// ライセンスの本文を、公開するパッケージに含める
-	copy: ['../../../LICENSE-APACHE-2.0', '../../../LICENSE-BSD-3-CLAUSE'],
+	copy: ['../../../LICENSE-APACHE', '../../../LICENSE-BSD-3-CLAUSE'],
 });

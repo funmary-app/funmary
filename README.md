@@ -125,7 +125,7 @@ funmary/
 Funmary のコードは、次の 2 つのライセンスのどちらかを選んで使えます (デュアルライセンス。SPDX の式では `BSD-3-Clause OR Apache-2.0`)。
 
 - BSD 3-Clause License ([LICENSE-BSD-3-CLAUSE](LICENSE-BSD-3-CLAUSE))
-- Apache License, Version 2.0 ([LICENSE-APACHE-2.0](LICENSE-APACHE-2.0))
+- Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE))
 
 Funmary に送られた貢献も、追加の条件なしに同じ 2 つのライセンスで受け取ります。初めての PR のときに、このことへの同意をお願いしています (Bot を除くすべての人が対象です。PR に案内のコメントが届きます)。
 

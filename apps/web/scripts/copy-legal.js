@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { generateThirdPartyLicenses } from '../../../scripts/third-party-licenses.js';
 
 const root = fileURLToPath(new URL('../../..', import.meta.url));
-const licenseFiles = ['LICENSE-BSD-3-CLAUSE', 'LICENSE-APACHE-2.0', 'LICENSE-ASSETS'];
+const licenseFiles = ['LICENSE-BSD-3-CLAUSE', 'LICENSE-APACHE', 'LICENSE-ASSETS'];
 const targets = [
 	// vite preview (E2E テスト) が使う出力
 	'../.svelte-kit/output/server/legal',

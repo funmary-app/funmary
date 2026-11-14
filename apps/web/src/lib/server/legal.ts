@@ -6,7 +6,7 @@ import { dirname, join } from 'node:path';
 
 /** 何階層まで上へたどるか */
 const MAX_LEVELS = 4;
-const LICENSE_FILES = ['LICENSE-BSD-3-CLAUSE', 'LICENSE-APACHE-2.0', 'LICENSE-ASSETS'] as const;
+const LICENSE_FILES = ['LICENSE-BSD-3-CLAUSE', 'LICENSE-APACHE', 'LICENSE-ASSETS'] as const;
 
 export interface LegalInfo {
 	licenses: { file: string; text: string }[];
