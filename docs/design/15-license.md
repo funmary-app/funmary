@@ -22,7 +22,7 @@ SPDX の式では、`OR` と `AND` の意味が違います。Funmary が使う�
 
 ## 15.2 置き方
 
-- リポジトリ直下の `LICENSE-BSD-3-CLAUSE` と `LICENSE-APACHE-2.0` に、それぞれの全文を置きます。本文は、SPDX の原文のままです。GitHub が、種類を判定できるようにするためです
+- リポジトリ直下の `LICENSE-BSD-3-CLAUSE` と `LICENSE-APACHE` に、それぞれの全文を置きます。本文は、SPDX の原文のままです。GitHub が、種類を判定できるようにするためです
 - ルートと各パッケージの `package.json` の `license` には、`(BSD-3-Clause OR Apache-2.0)` と書きます
 - README の末尾に、どちらかを選べることと、貢献されたコードも同じ 2 つのライセンスで受け取ることを書きます
 

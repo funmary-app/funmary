@@ -5,7 +5,7 @@
 
 	const NAMES: Record<string, string> = {
 		'LICENSE-BSD-3-CLAUSE': 'BSD-3-Clause',
-		'LICENSE-APACHE-2.0': 'Apache-2.0',
+		'LICENSE-APACHE': 'Apache-2.0',
 		'LICENSE-ASSETS': 'ロゴとアイコンの利用条件',
 	};
 </script>
