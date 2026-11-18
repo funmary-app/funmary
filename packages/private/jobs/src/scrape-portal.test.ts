@@ -78,7 +78,7 @@ describe('ポータルの定期処理', () => {
 		expect(job.schedule).toBe('0 7,12,18 * * *');
 	});
 
-	it('取得して解析し、変更を記録して、成功を見張りに記録する', async () => {
+	it('休講情報を取り込み、変更と取得の成功を記録する', async () => {
 		const t = setup();
 		const message = await t.job.run(t.context);
 		expect(t.applied).toHaveLength(1);
