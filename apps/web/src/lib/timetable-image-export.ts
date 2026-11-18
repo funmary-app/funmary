@@ -1,5 +1,4 @@
-// 週の時間割の表を、画像 (PNG か PDF) にして保存する。重い描画の道具 (modern-screenshot) は、
-// 保存を押したときにだけ読み込む (ほかの画面の JavaScript を増やさないため、ここでは import() を使う)
+// 週の時間割の表を、画像 (PNG か PDF) にして保存する。重い描画の道具 (modern-screenshot) は、保存を押したときにだけ読み込む (ほかの画面の JavaScript を増やさないため、ここでは import() を使う)
 
 import {
 	buildTimetablePdf,
