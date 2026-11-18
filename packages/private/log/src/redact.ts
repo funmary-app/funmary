@@ -9,7 +9,7 @@ const RULES: readonly (readonly [RegExp, string])[] = [
 	],
 	// 監視サービスの ping の URL
 	[/(https?:\/\/hc-ping\.com\/)[^\s"'<>]+/gi, '$1***'],
-	// カレンダー購読の URL: /cal/<トークン>.ics
+	// カレンダー購読 URL: /cal/<トークン>.ics
 	[/(\/cal\/)[^/\s"'<>?#]+?(\.ics)/g, '$1***$2'],
 	// フィードと共有リンク: /feed/<トークン>/..., /share/<トークン>
 	[/(\/(?:feed|share)\/)[^/\s"'<>?#]+/g, '$1***'],

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { redact } from './redact.ts';
 
 describe('redact', () => {
-	it('カレンダー購読の URL のトークンを伏せる', () => {
+	it('カレンダー購読 URL のトークンを伏せる', () => {
 		expect(redact('GET /cal/abcDEF123_-xyz.ics 200')).toBe('GET /cal/***.ics 200');
 		expect(redact('https://funmary.example.com/cal/secret-token.ics?x=1')).toBe(
 			'https://funmary.example.com/cal/***.ics?x=1',
