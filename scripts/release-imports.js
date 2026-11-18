@@ -7,8 +7,7 @@ import { init, parse } from 'es-module-lexer';
 await init();
 
 /**
- * コードが読み込むパッケージの名前 (と、その下のパス)。相対パス、Node.js の組み込み、
- * 文字列で決まらない動的な import (import(url) など) は除く
+ * コードが読み込むパッケージの名前 (と、その下のパス)。相対パス、Node.js の組み込み、文字列で決まらない動的な import (import(url) など) は除く
  * @param {string} code
  * @returns {string[]}
  */

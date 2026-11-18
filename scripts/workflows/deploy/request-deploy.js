@@ -1,6 +1,5 @@
 // SSH で VPS に反映を頼む (deploy.yml)。VPS では funmary-update が版の名前を確かめ、update.sh が反映する。
-// 環境変数: RELEASED_SHA_FILE (Release が残した、リリースにしたコミットの hash のファイル)、
-// DEPLOY_HOST、DEPLOY_SSH_KEY、DEPLOY_KNOWN_HOSTS (Environment production の secret)、DEPLOY_ENABLED (false なら反映しない)
+// 環境変数: RELEASED_SHA_FILE (Release が残した、リリースにしたコミットの hash のファイル)、DEPLOY_HOST、DEPLOY_SSH_KEY、DEPLOY_KNOWN_HOSTS (Environment production の secret)、DEPLOY_ENABLED (false なら反映しない)
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';

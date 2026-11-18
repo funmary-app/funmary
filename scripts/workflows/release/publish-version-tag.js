@@ -1,7 +1,6 @@
-// 節目の版 (v*) のリリースを作る (release-tag.yml)。すでにある build-<hash> の成果物は、内部のディレクトリ名が
-// 版の名前と結び付いている (package-release.js、update.sh の展開) ため使い回せず、package-release.js を
-// もう一度 v* の版の名前で呼んで作り直す。環境変数: VERSION_INPUT (patch/minor/major か X.Y.Z)、
-// TARGET_SHA (タグを打つコミット)、GH_TOKEN、GITHUB_REPOSITORY。先に pnpm build を動かしておく
+// 配布ファイルの中のディレクトリ名にはタグ名が入るため、build-<hash> 向けの成果物は v* 向けに作り直す。
+// 実行前に pnpm build を済ませる。VERSION_INPUT は patch、minor、major または X.Y.Z、TARGET_SHA はタグを付けるコミット。
+// GitHub の操作には GH_TOKEN と GITHUB_REPOSITORY を使う。
 import { execFileSync } from 'node:child_process';
 import { writeFileSync } from 'node:fs';
 import { releaseNotesFromGit } from './git-release-notes.js';
