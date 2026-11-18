@@ -130,12 +130,12 @@ describe('upcomingDepartures', () => {
 
 describe('generationForDate', () => {
 	const generations: BusGeneration[] = [
+		{ code: 20261020, name: '令和8年10月20日', current: false },
 		{ code: 20260401, name: '令和8年4月1日', current: false },
 		{ code: 20261001, name: '令和8年10月1日', current: true },
-		{ code: 20261020, name: '令和8年10月20日', current: false },
 	];
 
-	it('その日に有効な、いちばん新しい版を選ぶ', () => {
+	it('入力順にかかわらず、その日に有効な最新のダイヤの版を選ぶ', () => {
 		expect(generationForDate(generations, '2026-10-05')?.code).toBe(20261001);
 		expect(generationForDate(generations, '2026-10-20')?.code).toBe(20261020);
 		expect(generationForDate(generations, '2027-01-01')?.code).toBe(20261020);
