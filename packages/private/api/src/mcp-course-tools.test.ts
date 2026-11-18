@@ -42,14 +42,14 @@ async function setup(scopes: string[]) {
 	return { src, userId, client, call };
 }
 
-describe('MCP の履修の道具', () => {
-	it('write:courses がなければ、履修の道具は出ない', async () => {
+describe('MCP の履修のツール', () => {
+	it('write:courses がなければ、履修のツールは出ない', async () => {
 		const { client } = await setup(['write:events']);
 		const names = (await client.listTools()).tools.map((tool) => tool.name);
 		expect(names).not.toContain('register_course');
 	});
 
-	it('write:courses では、履修の道具が出る。解除には、壊す操作の印が付く', async () => {
+	it('write:courses では、履修のツールが出る。解除には、壊す操作の印が付く', async () => {
 		const { client } = await setup(['write:courses']);
 		const tools = (await client.listTools()).tools;
 		expect(tools.map((tool) => tool.name).sort()).toEqual([

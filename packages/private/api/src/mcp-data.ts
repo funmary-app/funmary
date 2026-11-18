@@ -1,5 +1,4 @@
-// MCP の道具 (@funmary/mcp) が使う、データの取り出し口の、サーバーでの実装。DB から、公開 API (REST) と同じ reads/ と writes/ の関数で読み書きする。
-// 道具の定義は @funmary/mcp に 1 つだけあり、手元で動く MCP は、公開 API を通して、同じ中身を得る。
+// Web 版の MCP ツールは、公開 API (REST) と同じ関数で DB を読み書きする。
 import { jstDateTime } from '@funmary/core';
 import {
 	ambiguousMessage,

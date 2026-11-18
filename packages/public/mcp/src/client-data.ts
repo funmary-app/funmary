@@ -1,4 +1,4 @@
-// 手元で動く MCP のための、データの取り出し口。@funmary/client を通して、公開 API (REST) から読み書きする。
+// ローカルの MCP サーバーは、@funmary/client 経由で公開 API (REST) を呼ぶ。
 import { FunmaryApiError, type FunmaryClient } from '@funmary/client';
 import { ambiguousMessage, FunmaryToolFailure, type CourseRef, type FunmaryData } from './data.ts';
 

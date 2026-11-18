@@ -1,5 +1,5 @@
 // 手元で動く MCP サーバー (stdio)。Claude Desktop などが、子のプロセスとして起動する。
-// 公開 API の URL と個人用のアクセストークンから、トークンの範囲に合う道具だけを出す。
+// 公開 API の URL と個人用のアクセストークンから、トークンの範囲に合うツールだけを出す。
 import { createFunmaryClient, FunmaryApiError } from '@funmary/client';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { createClientData } from './client-data.ts';

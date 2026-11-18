@@ -65,7 +65,7 @@ async function connect(
 	return { client, data, call };
 }
 
-describe('道具の定義', () => {
+describe('ツールの定義', () => {
 	it('名前は重ならず、説明と必要な範囲を持つ', () => {
 		const names = TOOLS.map((tool) => tool.name);
 		expect(new Set(names).size).toBe(names.length);
@@ -75,20 +75,20 @@ describe('道具の定義', () => {
 		}
 	});
 
-	it('読み取りの道具だけに readOnlyHint が付く。書き込みの道具には付かない', () => {
+	it('readOnlyHint は読み取りツールで true、書き込みツールで false になる', () => {
 		for (const tool of TOOLS) {
 			expect(tool.annotations.readOnlyHint, tool.name).toBe(tool.scope.startsWith('read:'));
 		}
 	});
 });
 
-describe('範囲による出し分け', () => {
-	it('範囲を持たなければ、道具は 1 つも出ない', async () => {
+describe('スコープによるツールの選択', () => {
+	it('範囲を持たなければ、ツールは 1 つも出ない', async () => {
 		const { client } = await connect([]);
 		await expect(client.listTools()).rejects.toThrow();
 	});
 
-	it('範囲に合う道具だけが出る', async () => {
+	it('範囲に合うツールだけが出る', async () => {
 		const { client } = await connect(['read:transit', 'write:notifications']);
 		const names = (await client.listTools()).tools.map((tool) => tool.name).sort();
 		expect(names).toEqual([
@@ -101,7 +101,7 @@ describe('範囲による出し分け', () => {
 		]);
 	});
 
-	it('enabled で、範囲があっても出さない道具を決められる', async () => {
+	it('enabled で、範囲があっても出さないツールを決められる', async () => {
 		const { client } = await connect(['read:transit', 'read:changes'], fakeData(), {
 			enabled: (tool) => tool.scope !== 'read:transit',
 		});
@@ -235,7 +235,7 @@ describe('書き込み', () => {
 		await expect(call('mark_all_notifications_read')).resolves.toMatchObject({ isError: true });
 	});
 
-	it('科目の指し方が足りなければ、データの口を呼ばず、誤りにする', async () => {
+	it('科目を特定する入力がなければ、データを取得せずエラーを返す', async () => {
 		const { call, data } = await connect(['write:courses']);
 		expect((await call('register_course', {})).isError).toBe(true);
 		expect((await call('register_course', { syllabusId: '100' })).isError).toBe(true);
