@@ -1,5 +1,4 @@
-// 学年暦の PDF から、ページごとに文字と塗りの矩形を取り出す。pdfjs-dist の描画命令の一覧 (operator list) を読み、
-// 塗りの色と、座標の変換 (cm)、その保存と復元 (q と Q) をたどる。文字のデータが入った PDF が対象で、画像の PDF は読めない。
+// 学年暦の PDF から、ページごとに文字と塗りの矩形を取り出す。pdfjs-dist の描画命令の一覧 (operator list) を読み、塗りの色と、座標の変換 (cm)、その保存と復元 (q と Q) をたどる。文字のデータが入った PDF が対象で、画像の PDF は読めない。
 // 取り出した内容は calendar.ts に渡す。管理者の取り込みと、学年暦の定期処理で使う。
 import { createHash } from 'node:crypto';
 import { readTextItems, withPdfDocument, type Pdfjs } from '../pdf/document.ts';

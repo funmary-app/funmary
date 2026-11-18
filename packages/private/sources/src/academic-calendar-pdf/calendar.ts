@@ -93,8 +93,7 @@ const WEEKDAY_NAMES: Readonly<Record<string, Weekday>> = {
 const WEEKDAY_LABELS = ['', '月', '火', '水', '木', '金', '土', '日'];
 
 /**
- * PDF のページごとの内容から、学年暦を読む。日本語の表題 (「2026年)度」) のページを読み、
- * ほかに読めるページ (英語の版) があれば、セルの色を照らし合わせる。
+ * PDF のページごとの内容から、学年暦を読む。日本語の表題 (「2026年)度」) のページを読み、ほかに読めるページ (英語の版) があれば、セルの色を照らし合わせる。
  */
 export function parseAcademicCalendarPages(
 	pages: readonly PdfPageContent[],
