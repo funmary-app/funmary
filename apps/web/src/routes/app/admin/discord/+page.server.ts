@@ -24,7 +24,7 @@ const NO_BOT =
 const describeError = (error: unknown) =>
 	error instanceof DiscordApiError
 		? error.message
-		: 'Discord に接続できませんでした。時間をおいて、もう一度お試しください。';
+		: 'Discord に接続できませんでした。しばらくしてから、もう一度お試しください。';
 
 export const load: ServerLoad = async ({ locals }) => {
 	requireAdmin(locals);

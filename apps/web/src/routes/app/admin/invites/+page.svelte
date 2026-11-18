@@ -35,8 +35,7 @@
 		{ value: 'anyone', label: '誰でも', description: 'ログインしている全員が発行できます。' },
 	];
 
-	// 保存していない選択は、保存した値とは別に持つ。一覧の「許可する」など、ほかの操作で data が読み直されても消えないようにし、
-	// 保存できたときだけ消す (書き込める $derived だと、data が読み直されるたびに保存した値に戻ってしまう)
+	// 保存していない選択は、保存した値とは別に持つ。一覧の「許可する」など、ほかの操作で data が読み直されても消えないようにし、保存できたときだけ消す (書き込める $derived だと、data が読み直されるたびに保存した値に戻ってしまう)
 	let edited = $state<{ issuers?: InviteSettings['issuers']; monthlyLimit?: string }>({});
 	const issuers = $derived(edited.issuers ?? data.settings.issuers);
 	const monthlyLimit = $derived(edited.monthlyLimit ?? String(data.settings.monthlyLimit));

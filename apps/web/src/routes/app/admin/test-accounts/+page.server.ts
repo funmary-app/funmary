@@ -1,5 +1,4 @@
-// 管理者のテストアカウント。大学のアカウントでない Google のアカウント (メールアドレス) を足すと、そのアカウントで
-// ログインして、機能を試せる。管理者ごとに持ち、データは引き継がない。必要なときだけ、管理者のデータを写す。
+// 管理者のテストアカウント。大学のアカウントでない Google のアカウント (メールアドレス) を足すと、そのアカウントでログインして、機能を試せる。管理者ごとに持ち、データは引き継がない。必要なときだけ、管理者のデータを写す。
 import { MAX_TEST_ACCOUNTS_PER_ADMIN } from '@funmary/db';
 import { fail, type Actions, type ServerLoad } from '@sveltejs/kit';
 import { requireAdmin } from '#lib/server/admin.ts';

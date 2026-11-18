@@ -79,13 +79,13 @@
 {/snippet}
 
 <svelte:head>
-	<title>Discord設定 - Funmary</title>
+	<title>Discord 設定 - Funmary</title>
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
 <div class="page page-w-48">
-	<SettingsBreadcrumb current="Discord設定" />
-	<h1>Discord設定</h1>
+	<SettingsBreadcrumb current="Discord 設定" />
+	<h1>Discord 設定</h1>
 
 	<FormNotice error={form?.error} message={form?.message} />
 
@@ -142,7 +142,7 @@
 			<p>
 				利用者が自分の Discord
 				アカウントを紐付け、休講などの通知を、サポートサーバーの本人だけの非公開スレッドか DM
-				で受け取れるようにします。設定の「Discord連携」に入口が出ます。
+				で受け取れるようにします。利用者は設定の「Discord 連携」から接続できます。
 			</p>
 			{#if !data.link.configured}
 				<p class="meta">

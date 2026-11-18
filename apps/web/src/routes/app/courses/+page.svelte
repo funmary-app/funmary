@@ -92,7 +92,7 @@
 	<FormNotice error={form?.error} message={form?.message} />
 
 	{#if data.academicYear === null}
-		<p>まだシラバスを取り込んでいません。取り込みが済むまで、お待ちください。</p>
+		<p>シラバスの取り込みが済むと、科目を検索できるようになります。</p>
 	{:else}
 		<p>{data.academicYear} 年度の科目から登録します。</p>
 
@@ -210,7 +210,7 @@
 									<Button type="submit" variant="unelevated"><Label>登録する</Label></Button>
 								</form>
 								<p class="note">
-									ほかの利用者には見えず、自分の時間割にだけ使われます。共有の登録が確認待ちや、できない設定のときにも使えます。
+									ここで追加したコマは、自分の時間割にだけ表示されます。共有のコマが確認待ちのときや、共有の登録が無効なときにも使えます。
 								</p>
 							</details>
 
@@ -251,7 +251,7 @@
 			{#if data.query.trim() !== ''}
 				{#if data.results.length === 0}
 					<p>
-						見つかりませんでした。シラバスにない授業なら、下の「シラバスにない授業を足す」から足せます。
+						一致する科目がありません。シラバスに載っていない授業は、下の「シラバスにない授業を追加」から登録できます。
 					</p>
 				{:else}
 					<ul class="subjects">
@@ -277,9 +277,9 @@
 		</div>
 
 		<section aria-labelledby="create-heading">
-			<h2 id="create-heading">シラバスにない授業を足す</h2>
+			<h2 id="create-heading">シラバスにない授業を追加</h2>
 			<details>
-				<summary>公開シラバスに載っていない授業を、科目として足す</summary>
+				<summary>公開シラバスに載っていない授業を登録する</summary>
 				<p class="note" id="create-name-note">
 					授業の名前は、クラスも含めて書きます (例:
 					キャリアガイダンス)。足した授業は、ほかの利用者も探して登録できます。同じ名前の科目があれば、足さずにそちらを案内します。足した授業は、あなたと管理者が直したり消したりできます。

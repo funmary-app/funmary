@@ -76,7 +76,7 @@
 					{
 						href: resolve('app/settings/discord'),
 						icon: IconDiscord,
-						title: 'Discord連携',
+						title: 'Discord 連携',
 						description: '休講などの通知を、Discord の非公開スレッドか DM で受け取る',
 					},
 				]
@@ -144,7 +144,7 @@
 			{
 				href: resolve('app/admin/discord'),
 				icon: IconDiscord,
-				title: 'Discord設定',
+				title: 'Discord 設定',
 				description: 'Bot のチャンネルとロールを整え、ロールをユーザーに付ける',
 			},
 			{

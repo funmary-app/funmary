@@ -126,10 +126,10 @@ test.describe('このアプリについて', () => {
 	}) => {
 		await loginAs(page);
 		await page.goto('/app/settings');
-		await expect(page.getByRole('link', { name: 'Discord連携' })).toHaveCount(0);
+		await expect(page.getByRole('link', { name: 'Discord 連携' })).toHaveCount(0);
 
 		await page.goto('/app/settings/discord');
-		await expect(page.getByRole('heading', { name: 'Discord連携', level: 1 })).toBeVisible();
+		await expect(page.getByRole('heading', { name: 'Discord 連携', level: 1 })).toBeVisible();
 		await expect(page.getByText('いまは Discord 連携を使えません。')).toBeVisible();
 	});
 });

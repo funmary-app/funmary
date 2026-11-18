@@ -1,5 +1,4 @@
-// 授業時間割の PDF の取り込み (管理用コマンドの timetable import と同じ処理)。PDF を読み、科目と照合した結果を見せ、
-// 管理者が確かめてから、科目ごとに共有する枠に取り込む。既にある枠は上書きしない。
+// 授業時間割の PDF の取り込み (管理用コマンドの timetable import と同じ処理)。PDF を読み、科目と照合した結果を見せ、管理者が確かめてから、科目ごとに共有する枠に取り込む。既にある枠は上書きしない。
 import { fail, type Actions, type ServerLoad } from '@sveltejs/kit';
 import { parseTimetablePdf } from '@funmary/sources/timetable-pdf';
 import { requireAdmin } from '#lib/server/admin.ts';
