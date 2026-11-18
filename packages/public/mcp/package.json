@@ -1,6 +1,6 @@
 {
 	"name": "@funmary/mcp",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"description": "Funmary のローカル MCP サーバー (stdio) と、Web 版と共通の MCP ツール定義",
 	"license": "(BSD-3-Clause OR Apache-2.0)",
 	"author": "funmary (https://github.com/funmary-app)",

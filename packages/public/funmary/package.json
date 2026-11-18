@@ -1,6 +1,6 @@
 {
 	"name": "funmary",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"description": "Funmary のコマンドと、ライブラリの入口。端末から、時間割、休講、バスの時刻表を見て、手元の MCP を起動する。クライアントと MCP の組み立ても、ここから使える",
 	"license": "(BSD-3-Clause OR Apache-2.0)",
 	"author": "funmary (https://github.com/funmary-app)",
