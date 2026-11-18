@@ -1,5 +1,4 @@
-// LICENSE の本文と、依存のライセンス一覧。scripts/copy-legal.js がビルドの出力に写した legal/ フォルダを、
-// 起動時に上の階層へたどって探し、1 回だけ読む (build-info.ts と同じ考え方)。
+// LICENSE の本文と、依存のライセンス一覧。scripts/copy-legal.js がビルドの出力に写した legal/ フォルダを、起動時に上の階層へたどって探し、1 回だけ読む (build-info.ts と同じ考え方)。
 // 手元の TypeScript のまま動かす開発では見つからないので null (設定の画面では、その旨を出す)
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';

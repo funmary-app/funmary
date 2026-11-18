@@ -1,4 +1,4 @@
-// 利用規約とプライバシーポリシーへの (再) 同意の画面。登録のあと、そして規約を更新したときに、ログインしている全員が通る。
+// 利用規約とプライバシーポリシーへの (再) 同意画面。登録のあと、そして規約を更新したときに、ログインしている全員が通る。
 // 同意するまで、アプリ、公開 API、MCP、Discord、購読、通知の配信をすべて止めている (hooks.server.ts ほか)。
 import { hasAcceptedTerms } from '@funmary/core';
 import { fail, redirect, type Actions, type ServerLoad } from '@sveltejs/kit';

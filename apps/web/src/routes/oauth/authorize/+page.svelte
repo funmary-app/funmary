@@ -31,12 +31,12 @@
 	{:else}
 		<FormNotice error={form?.error ?? null} />
 		<p>
-			<strong>{data.clientName}</strong> が、<strong>{data.email}</strong> の Funmary のデータへのアクセスを求めています。
+			<strong>{data.clientName}</strong> が、Funmary のアカウント (<strong>{data.email}</strong>)
+			のデータへのアクセスを求めています。
 		</p>
 		{#if data.scopes?.some((option) => option.write)}
 			<p class="warning">
-				書き込みの範囲も求めています。許可すると、あなたの予定を足す、直す、消す、通知を既読にすることができます。必要なものだけに、チェックを入れてください
-				(書き込みは、初めはオフです)。
+				このアプリはデータの変更権限も求めています。書き込みの項目は最初は選択されていません。許可する項目だけにチェックを入れてください。
 			</p>
 		{:else}
 			<p>許可しても、データを書き換えることはできません。</p>

@@ -1,12 +1,8 @@
 // 消えたリリースの復元の、計画とリリースの項目の作り直し (restore-releases.yml の最初のジョブ、Issue #222)。
-// これまでの Release の実行のログから、各回のコミットを取り出し、リリースの項目が残っていないものについて、
-// リリースノート付きの項目を古い順に作る (添付のファイルは、次のジョブが各コミットをビルドし直して置く)。
+// これまでの Release の実行のログから、各回のコミットを取り出し、リリースの項目が残っていないものについて、リリースノート付きの項目を古い順に作る (添付のファイルは、次のジョブが各コミットをビルドし直して置く)。
 //
-// タグは、先に作者が手元のクローンから push しておく (消える前に取り込んだタグが残っている)。GITHUB_TOKEN では、
-// 今の main とワークフローのファイルが違う古いコミットにタグを作れない (参照の API でもリリースの API でも、
-// ワークフローの変更として扱われ、workflows の権限が要る)。そのため、ここでは既存のタグに項目を作るだけにする。
-// 環境変数: GH_TOKEN (gh が使う)、GITHUB_REPOSITORY (owner/repo)、GITHUB_OUTPUT (Actions が設定する)、
-// DRY_RUN (true なら、項目を作らずに計画だけを出す)
+// タグは、先に作者が手元のクローンから push しておく (消える前に取り込んだタグが残っている)。GITHUB_TOKEN では、今の main とワークフローのファイルが違う古いコミットにタグを作れない (参照の API でもリリースの API でも、ワークフローの変更として扱われ、workflows の権限が要る)。そのため、ここでは既存のタグに項目を作るだけにする。
+// 環境変数: GH_TOKEN (gh が使う)、GITHUB_REPOSITORY (owner/repo)、GITHUB_OUTPUT (Actions が設定する)、DRY_RUN (true なら、項目を作らずに計画だけを出す)
 import { execFileSync } from 'node:child_process';
 import { appendFileSync, mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -72,8 +68,7 @@ if (!dryRun) {
 	for (const { sha, version } of plan) {
 		const notesFile = join(notesDir, `${version}.md`);
 		writeFileSync(notesFile, releaseNotesFromGit({ repo, version, sha }));
-		// 既存のタグに作る (--verify-tag で、タグがなければ作らずに失敗する)。ふだんの Release と同じく、
-		// 正式でない版 (prerelease) にし、「最新」の印を付けない
+		// 既存のタグに作る (--verify-tag で、タグがなければ作らずに失敗する)。ふだんの Release と同じく、正式でない版 (prerelease) にし、「最新」の印を付けない
 		gh([
 			'release',
 			'create',
