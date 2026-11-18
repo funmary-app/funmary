@@ -1,5 +1,4 @@
-// 公開 API と MCP が受け取る、予定の JSON。画面のフォームと同じ検査 (@funmary/core の parseEventFields) を通すため、
-// JSON を、フォームの欄の名前と値の表にそろえてから渡す。公開範囲は受け取らない (誤って公開しないため)。
+// 公開 API と MCP が受け取る、予定の JSON。画面のフォームと同じ検査 (@funmary/core の parseEventFields) を通すため、JSON を、フォームの欄の名前と値の表にそろえてから渡す。公開範囲は受け取らない (誤って公開しないため)。
 import {
 	rruleToRecurrence,
 	type EventFieldReader,
