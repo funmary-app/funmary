@@ -32,7 +32,7 @@
 		{/each}
 	{:else}
 		<p class="muted">
-			手元の開発では表示できません。<code>pnpm build</code> を実行すると見られます。
+			ローカルで表示するには <code>pnpm build</code> を実行してください。
 		</p>
 	{/if}
 </div>

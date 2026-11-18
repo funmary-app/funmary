@@ -29,7 +29,7 @@
 	<h1>{title}</h1>
 	{#if message}<p>{message}</p>{/if}
 	{#if status >= 500}
-		<p>時間をおいて、もう一度お試しください。</p>
+		<p>しばらくしてから、もう一度お試しください。</p>
 	{/if}
 	<p><a href={resolve('/')}>トップページへ戻る</a></p>
 
