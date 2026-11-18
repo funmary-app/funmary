@@ -183,7 +183,7 @@ describe('GET /auth/google/callback', () => {
 		expect(set.get('__Secure-funmary_login')!.attributes).toContain('Max-Age=0');
 	});
 
-	it('同意の画面から来たときは、ログインのあとにそこへ戻し、戻り先の Cookie を消す', async () => {
+	it('同意画面から来たときは、ログインのあとにそこへ戻し、戻り先の Cookie を消す', async () => {
 		const target = '/oauth/authorize?client_id=c1&state=a%20b';
 		const res = await callback(makeApi(), sealFlow(flowNow(), KEY), target);
 		expect(res.headers.get('Location')).toBe(target);
@@ -195,7 +195,7 @@ describe('GET /auth/google/callback', () => {
 		'//evil.example/oauth/authorize?x=1',
 		'/app/settings',
 		'/oauth/authorizeX?x=1',
-	])('戻り先が同意の画面でなければ、%s には移らず /app に移る', async (target) => {
+	])('戻り先が同意画面でなければ、%s には移らず /app に移る', async (target) => {
 		const res = await callback(makeApi(), sealFlow(flowNow(), KEY), target);
 		expect(res.headers.get('Location')).toBe('/app');
 	});

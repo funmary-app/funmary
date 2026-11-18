@@ -29,7 +29,7 @@ export interface ApiDeps {
 	readonly mcp?: McpRoutesDeps;
 	/** MCP の認可 (OAuth 2.1)。ないときは、その口を開けない */
 	readonly oauth?: OAuthRoutesDeps;
-	/** Discord のスラッシュコマンドの受け口。ないときは、その口を開けない */
+	/** Discord のスラッシュコマンドの設定。省略するとエンドポイントを登録しない */
 	readonly discordInteractions?: DiscordInteractionsDeps;
 	/** DB に読み書きできるか。例外を投げたときも、読み書きできないとみなす */
 	readonly checkHealth: () => boolean;

@@ -30,7 +30,7 @@ describe('GET /healthz', () => {
 });
 
 describe('POST /discord/interactions', () => {
-	it('公開鍵を渡すと、createApi の中で受け口が開く (署名なしなので 401)', async () => {
+	it('公開鍵を設定すると署名のないリクエストに 401 を返す', async () => {
 		const api = createApi({
 			checkHealth: () => true,
 			discordInteractions: { publicKeyHex: 'ab'.repeat(32), answer: () => 'x' },
@@ -39,7 +39,7 @@ describe('POST /discord/interactions', () => {
 		expect(res.status).toBe(401);
 	});
 
-	it('公開鍵を渡さなければ、受け口は開かない (404)', async () => {
+	it('公開鍵が未設定ならエンドポイントは 404 を返す', async () => {
 		const api = createApi({ checkHealth: () => true });
 		const res = await api.request('/discord/interactions', { method: 'POST', body: '{"type":1}' });
 		expect(res.status).toBe(404);

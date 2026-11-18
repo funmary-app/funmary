@@ -1,4 +1,4 @@
-// 同意の画面 (/oauth/authorize) が受け取る、クライアントからの依頼の検査。
+// 同意画面 (/oauth/authorize) が受け取る、クライアントからの依頼の検査。
 // 画面は SvelteKit 側にあるので、検査だけをここに置き、単体で試せるようにする。
 import {
 	ACCESS_TOKEN_SCOPES,
