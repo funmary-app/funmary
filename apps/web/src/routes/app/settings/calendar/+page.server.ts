@@ -1,4 +1,4 @@
-// カレンダーの購読の設定。購読の URL を発行、再発行、無効にする。
+// カレンダーの購読の設定。購読 URL を発行、再発行、無効にする。
 // URL のトークンは DB にハッシュだけを保存するので、URL と QR コードは発行の直後に 1 回だけ出す。
 import { type Actions, type ServerLoad } from '@sveltejs/kit';
 import { qrCode, subscriptionLinks } from '#lib/server/calendar-subscription.ts';
@@ -29,7 +29,7 @@ export const actions: Actions = {
 		requireSignedIn(locals);
 		getServices().feedTokens.revoke(locals.user.id, 'calendar', new Date());
 		return {
-			message: '購読の URL を無効にしました。カレンダーアプリの予定は、もう更新されません。',
+			message: '購読 URL を無効にしました。カレンダーアプリの予定は、もう更新されません。',
 		};
 	},
 };

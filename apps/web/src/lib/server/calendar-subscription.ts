@@ -5,7 +5,7 @@ import { encode } from 'uqr';
 const QUIET_ZONE = 4;
 
 export interface SubscriptionLinks {
-	/** 購読の URL。カレンダーアプリの "URL で追加" に貼る */
+	/** 購読 URL。カレンダーアプリの "URL で追加" に貼る */
 	readonly url: string;
 	/** iPhone や Mac で、押すとカレンダーアプリが開く URL */
 	readonly webcal: string;

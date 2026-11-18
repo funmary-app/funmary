@@ -48,10 +48,8 @@
 	<SettingsBreadcrumb current="公開 API と MCP" />
 	<h1>公開 API と MCP</h1>
 	<p>
-		自分の AI エージェント (Claude、ChatGPT、Cursor など)
-		や自作のスクリプトから、自分の時間割や休講を読めます。書き込みの範囲を許可したトークンは、予定を足す、直す、消す、通知を既読にすることもできます
-		(既定ではオフです)。発行したトークンを渡した相手には、あなたの時間割の内容が伝わります。渡す相手は
-		信用できるものだけにしてください。
+		アクセストークンを使うと、AI
+		エージェントやスクリプトから自分の時間割や休講情報にアクセスできます。トークンを持つ相手は、発行時に選んだ範囲でデータを読み取ったり変更したりできます。信頼できるアプリや相手にだけ渡してください。
 	</p>
 	<p>
 		<!-- API の文書は SvelteKit の外 (Hono が配る) なので、external で画面の中の移動にしない -->
@@ -64,7 +62,7 @@
 
 	{#if form?.token}
 		<div class="key-box" role="status">
-			<p>トークン (今だけ表示します。コピーしてから閉じてください。もう一度は見られません):</p>
+			<p>トークンは発行直後に一度だけ表示します。この画面を閉じる前にコピーしてください。</p>
 			<CopyField id="new-token" label="トークン" value={form.token} {copyState} />
 			<CopySnippet
 				label="手元の MCP の設定 (Claude Desktop など。トークンが入っています)"
@@ -98,7 +96,7 @@
 			<fieldset>
 				<legend>書き込める範囲</legend>
 				<p class="hint">
-					必要なときだけ選んでください。渡した相手が、あなたの予定を変えられるようになります。予定の公開範囲は、トークンからは変えられません。足す予定は、常に非公開です。
+					データを変更する必要があるときだけ選んでください。トークンで追加した予定は非公開です。既存の予定の公開範囲をトークンで変更することはできません。
 				</p>
 				{#each data.scopeOptions.filter((option) => option.write) as option (option.scope)}
 					<CheckboxField name="scopes" value={option.scope}>{option.label}</CheckboxField>

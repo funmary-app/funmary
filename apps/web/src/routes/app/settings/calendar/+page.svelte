@@ -60,7 +60,7 @@
 	{#if form?.issued}
 		{@const issued = form.issued}
 		<section class="issued" aria-labelledby="issued-heading">
-			<h2 id="issued-heading">購読の URL を発行しました</h2>
+			<h2 id="issued-heading">購読 URL を発行しました</h2>
 			<p>
 				この画面を離れると、もう出せません。いまのうちに、カレンダーアプリに登録してください。URL
 				を知っている人は誰でもあなたの時間割を見られるので、人に教えないでください。
@@ -82,7 +82,7 @@
 				の Google カレンダーの「他のカレンダー」の「URL で追加」に貼ってください。
 			</p>
 
-			<CopyField id="calendar-url" label="購読の URL" value={issued.url} {copyState} />
+			<CopyField id="calendar-url" label="購読 URL" value={issued.url} {copyState} />
 
 			<p class="muted" role="status">{copyState.copied ? 'コピーしました。' : ''}</p>
 
@@ -90,7 +90,7 @@
 				<svg
 					viewBox="0 0 {issued.qr.size} {issued.qr.size}"
 					role="img"
-					aria-label="購読の URL の QR コード"
+					aria-label="購読 URL の QR コード"
 					shape-rendering="crispEdges"
 				>
 					<rect width={issued.qr.size} height={issued.qr.size} fill="#fff"></rect>
@@ -131,7 +131,7 @@
 				<form
 					method="POST"
 					action="?/revoke"
-					use:confirmSubmit={'この購読の URL を無効にします。登録したカレンダーアプリで、予定が見えなくなります。よろしいですか?'}
+					use:confirmSubmit={'カレンダーアプリで予定が更新されなくなります。購読 URL を無効にしますか？'}
 					use:enhance
 				>
 					<Button type="submit" variant="outlined"><Label>無効にする</Label></Button>
@@ -140,7 +140,7 @@
 		</section>
 	{:else}
 		<section aria-labelledby="issue-heading">
-			<h2 id="issue-heading">購読の URL を発行する</h2>
+			<h2 id="issue-heading">購読 URL を発行する</h2>
 			<p class="muted">発行した URL を、カレンダーアプリに登録します。</p>
 			<form
 				method="POST"
@@ -149,7 +149,7 @@
 					copyState.reset();
 				}}
 			>
-				<Button type="submit" variant="unelevated"><Label>購読の URL を発行する</Label></Button>
+				<Button type="submit" variant="unelevated"><Label>購読 URL を発行する</Label></Button>
 			</form>
 		</section>
 	{/if}
