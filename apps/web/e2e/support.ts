@@ -44,7 +44,7 @@ export function useMockOidc() {
 }
 
 /**
- * ログインする。初めてのログインでは、利用規約への同意の画面が出るので、同意して先へ進む
+ * ログインする。初めてのログインでは、利用規約への同意画面が出るので、同意して先へ進む
  * (ほとんどのテストは、同意済みの利用者として始めたいため)。同意の流れそのものは、専用のテストで確かめる
  */
 export async function signIn(page: Page) {
@@ -56,9 +56,7 @@ export async function signIn(page: Page) {
 }
 
 /**
- * テストのサーバーと同じ DB を開き、fn を 1 つのトランザクションで動かす。テストのサーバーと書き込みを取り合うので、
- * 初めに書き込みの鍵を取る (IMMEDIATE)。読んでから書くトランザクションは、その間にサーバーが書くと、待たずに
- * database is locked で失敗する (WAL のため)
+ * テストのサーバーと同じ DB を開き、fn を 1 つのトランザクションで動かす。テストのサーバーと書き込みを取り合うので、初めに書き込みの鍵を取る (IMMEDIATE)。読んでから書くトランザクションは、その間にサーバーが書くと、待たずに database is locked で失敗する (WAL のため)
  */
 function withTestDatabase<T>(fn: (database: Database) => T): T {
 	const database = openDatabase(join(E2E_DATA_DIR, 'funmary.db'), {
@@ -103,7 +101,7 @@ export function seedSubjects<T>(fn: (database: Database, exerciseId: number) => 
 	});
 }
 
-/** 指定したメールアドレスの利用者 (大学のアカウント) として、ログインして、アプリ (/app) を開く。同意の画面は通り抜ける */
+/** 指定したメールアドレスの利用者 (大学のアカウント) として、ログインして、アプリ (/app) を開く。同意画面は通り抜ける */
 export async function signInAs(page: Page, email: string) {
 	await oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
 	await signIn(page);

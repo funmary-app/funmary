@@ -12,8 +12,7 @@ export default async function globalSetup() {
 		clientId: 'e2e.apps.googleusercontent.com',
 		clientSecret: 'e2e-client-secret',
 		port: OIDC_PORT,
-		// 手元では、テストのサーバーを使い回す (reuseExistingServer)。アプリは前の公開鍵を覚えているので、
-		// 鍵が変わると ID トークンの検証に失敗する。立て直しても同じ鍵を使う
+		// 手元では、テストのサーバーを使い回す (reuseExistingServer)。アプリは前の公開鍵を覚えているので、鍵が変わると ID トークンの検証に失敗する。立て直しても同じ鍵を使う
 		keyFile: join(E2E_DATA_DIR, 'mock-oidc-key.pem'),
 	});
 	return () => server.close();
