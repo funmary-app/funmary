@@ -1,4 +1,4 @@
-// カレンダー購読の URL。カレンダーアプリが /cal/<トークン>.ics を取りに来る。
+// カレンダー購読 URL。カレンダーアプリが /cal/<トークン>.ics を取りに来る。
 import { Hono } from 'hono';
 import { etag } from 'hono/etag';
 import { rateLimiter } from 'hono-rate-limiter';
@@ -17,7 +17,7 @@ export interface CalendarRoutesDeps {
 	readonly loadFeed: (
 		token: string,
 	) => { feed: CalendarFeed; stamp: Date } | typeof TERMS_REQUIRED | null;
-	/** 同意の画面の URL。持ち主が利用規約への同意を待っているとき、購読に返す説明に入れる */
+	/** 同意画面の URL。持ち主が利用規約への同意を待っているとき、購読に返す説明に入れる */
 	readonly consentUrl?: string;
 	/** 予定の UID の @ の後ろ */
 	readonly uidDomain: string;

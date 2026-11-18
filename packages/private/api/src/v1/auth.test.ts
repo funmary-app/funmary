@@ -86,7 +86,7 @@ describe('利用規約への再同意', () => {
 		expect(res.status).toBe(200);
 	});
 
-	it('一度も同意していないか、古い版なら 403 で、専用のエラーと同意の画面の URL を返す', async () => {
+	it('一度も同意していないか、古い版なら 403 で、専用のエラーと同意画面の URL を返す', async () => {
 		for (const accepted of [null, '2026-09-20']) {
 			const res = await call(appWith(owner(accepted), gate));
 			expect(res.status).toBe(403);

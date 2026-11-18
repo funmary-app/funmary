@@ -70,7 +70,7 @@ describe('GET /cal/<トークン>.ics', () => {
 });
 
 describe('利用規約への同意を待っている持ち主の購読', () => {
-	it('403 で、同意の画面の URL を添えた説明を返し、キャッシュさせない', async () => {
+	it('403 で、同意画面の URL を添えた説明を返し、キャッシュさせない', async () => {
 		const api = createApi({
 			checkHealth: () => true,
 			calendar: {

@@ -170,8 +170,7 @@ function userEvent(event: CalendarUserEvent, stamp: ICAL.Time, uidDomain: string
 }
 
 /**
- * RRULE の UNTIL は、DTSTART と同じ種類でなければならない (RFC 5545)。画面で選んだ日付 (YYYYMMDD) は、
- * 時刻の予定では、日本時間のその日の終わり (23:59:59+09:00) を、UTC (同じ日の 14:59:59Z) で書く
+ * RRULE の UNTIL は、DTSTART と同じ種類でなければならない (RFC 5545)。画面で選んだ日付 (YYYYMMDD) は、時刻の予定では、日本時間のその日の終わり (23:59:59+09:00) を、UTC (同じ日の 14:59:59Z) で書く
  */
 function rruleForIcs(rrule: string, allDay: boolean): string {
 	if (allDay) return rrule;
