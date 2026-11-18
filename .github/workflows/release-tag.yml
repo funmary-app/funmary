@@ -1,8 +1,7 @@
 name: 節目の版のリリース
 
 # 節目の版 (v*) のリリースを、手で実行して作る。入力は patch/minor/major、または X.Y.Z の直接指定。
-# patch/minor/major は、直前の v* タグから上げる。対象のコミットには、CI が通って作られた build-<hash> のリリースが
-# 必要 (publish-version-tag.js が確かめる)。同じ版のタグがあれば、作らずに止まる
+# patch/minor/major は、直前の v* タグから上げる。対象のコミットには公開済みの build-<hash> リリースが必要。同じ版のタグがあれば作らずに止まる。
 on:
   workflow_dispatch:
     inputs:
@@ -11,7 +10,7 @@ on:
         required: true
         type: string
       sha:
-        description: 'タグを打つコミット (空なら、実行するブランチの最新)'
+        description: 'タグを打つコミット (空なら、実行するブランチの最新の公開済みビルド)'
         required: false
         type: string
 
@@ -32,12 +31,16 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ inputs.sha != '' && inputs.sha || github.sha }}
-          # 直前の v* タグを探すので、履歴とタグをすべて取る
+          # 公開済みビルドと直前の v* タグを探すため、履歴とタグをすべて取る。
           fetch-depth: 0
+      - name: タグを打つコミットを選ぶ
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TARGET_INPUT: ${{ inputs.sha }}
+        run: node scripts/workflows/release/resolve-release-target.js
+      - name: 対象コミットに切り替える
+        run: git switch --detach "$TARGET_SHA"
       - uses: ./.github/actions/setup
-      - name: タグを打つコミットを確かめる
-        run: echo "TARGET_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
       - run: pnpm build
       - name: 版を決めて、GitHub Releases に置く
         env:
