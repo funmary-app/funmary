@@ -16,6 +16,13 @@ describe('parseSlotInput', () => {
 		});
 	});
 
+	it('土曜の 6 限まで登録できる', () => {
+		expect(parseSlotInput({ weekday: 6, period: 6 })).toEqual({
+			ok: true,
+			value: { weekday: 6, period: 6, room: null },
+		});
+	});
+
 	it('教室が空、空白だけ、未指定、null なら null にする', () => {
 		for (const room of ['', '  ', undefined, null]) {
 			expect(parseSlotInput({ weekday: 1, period: 1, room })).toMatchObject({
@@ -36,9 +43,18 @@ describe('parseSlotInput', () => {
 
 	it('教室名は 100 文字までで、制御文字を含められない', () => {
 		expect(parseSlotInput({ weekday: 1, period: 1, room: 'a'.repeat(100) }).ok).toBe(true);
-		expect(parseSlotInput({ weekday: 1, period: 1, room: 'a'.repeat(101) }).ok).toBe(false);
-		expect(parseSlotInput({ weekday: 1, period: 1, room: '3\n63' }).ok).toBe(false);
-		expect(parseSlotInput({ weekday: 1, period: 1, room: 363 }).ok).toBe(false);
+		expect(parseSlotInput({ weekday: 1, period: 1, room: 'a'.repeat(101) })).toEqual({
+			ok: false,
+			error: '教室名は 100 文字以内で入力してください',
+		});
+		expect(parseSlotInput({ weekday: 1, period: 1, room: '3\n63' })).toEqual({
+			ok: false,
+			error: '教室名に改行などの制御文字は使えません',
+		});
+		expect(parseSlotInput({ weekday: 1, period: 1, room: 363 })).toEqual({
+			ok: false,
+			error: '教室名は文字列で指定してください',
+		});
 	});
 
 	it('誤りには、直し方が分かる文が入る', () => {
@@ -59,8 +75,11 @@ describe('parseAbbreviation', () => {
 		expect(parseAbbreviation('')).toEqual({ ok: true, value: '' });
 	});
 
-	it('文字列でなければ、受け付けない', () => {
-		expect(parseAbbreviation(null).ok).toBe(false);
+	it('文字列以外は受け付けず、正式名称に戻す方法を案内する', () => {
+		expect(parseAbbreviation(null)).toEqual({
+			ok: false,
+			error: '略称の入力を確認してください。空欄で保存すると正式名称に戻ります。',
+		});
 		expect(parseAbbreviation(3).ok).toBe(false);
 	});
 
@@ -68,7 +87,7 @@ describe('parseAbbreviation', () => {
 		expect(parseAbbreviation('あ'.repeat(100)).ok).toBe(true);
 		expect(parseAbbreviation('あ'.repeat(101))).toEqual({
 			ok: false,
-			error: '略称名は100文字以内で入力してください。',
+			error: '略称は 100 文字以内で入力してください。',
 		});
 	});
 });
