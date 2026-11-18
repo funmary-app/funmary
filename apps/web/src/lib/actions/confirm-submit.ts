@@ -1,11 +1,9 @@
 // 破壊的な操作 (削除、取り消し、退会など) の前に、確認のダイアログを出す Svelte のアクション。
-// ダイアログは最上位のレイアウトの ConfirmDialog。JavaScript が無効なブラウザでは、確認なしでそのまま送信される
-// (フォームの送信自体は動く)。
-//
-// use:enhance と同じ <form> に付けてよく、書く順は問わない。enhance は submit のリスナーを
-// ふつうに (バブリングで) 登録し、ほかのリスナーが送信を止めたかを見ずに送信する。そこで、こちらは
-// 捕捉 (capture) で登録する。イベントの対象の要素では、捕捉のリスナーが、登録の順に関係なく先に
-// 呼ばれるので、stopImmediatePropagation で enhance の送信処理を必ず止められる。
+// JavaScript が無効なブラウザでは、確認を表示せずにフォームを送信する。
+
+// use:enhance は、ほかのリスナーが送信を取り消したか確認せずに送信する。
+// フォームに capture リスナーを登録すると、ディレクティブの順序にかかわらず use:enhance より先に呼ばれる。
+// stopImmediatePropagation() で use:enhance にイベントが渡るのを防ぐ。
 // 「続ける」が押されたら、同じボタンでもう一度送信する (このときは止めない)。
 import { askConfirm } from '#lib/confirm-dialog.svelte.ts';
 

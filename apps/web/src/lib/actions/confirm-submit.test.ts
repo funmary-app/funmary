@@ -13,8 +13,7 @@ type FakeEvent = {
 type Listener = (event: FakeEvent) => void;
 type Options = { capture?: boolean } | undefined;
 
-// イベントの対象の要素での、ブラウザの動きをまねる。捕捉 (capture) のリスナーを登録の順に関係なく先に呼び、
-// stopImmediatePropagation のあとのリスナーは呼ばない。外すときは、登録と同じ capture を指定しないと外れない。
+// イベントの対象の要素での、ブラウザの動きをまねる。捕捉 (capture) のリスナーを登録の順に関係なく先に呼び、stopImmediatePropagation のあとのリスナーは呼ばない。外すときは、登録と同じ capture を指定しないと外れない。
 // requestSubmit は、渡したボタンを submitter にして、もう一度 submit を起こす
 function createFakeForm() {
 	const listeners: { listener: Listener; capture: boolean }[] = [];

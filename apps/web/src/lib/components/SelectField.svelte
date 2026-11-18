@@ -1,6 +1,5 @@
 <script lang="ts">
-	// 選択欄と、そのラベル。スマホで OS の選択の画面を出し、JavaScript を増やさないよう、ブラウザの <select> のまま、
-	// 見た目だけ TextField (SMUI の outlined の欄) にそろえる
+	// スマートフォンで OS 標準の選択画面を使えるよう、<select> を使い、見た目を SMUI の outlined TextField にそろえる。
 	import type { Snippet } from 'svelte';
 	import type { HTMLSelectAttributes } from 'svelte/elements';
 
