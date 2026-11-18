@@ -1,6 +1,5 @@
 // フォームの送信の Origin の検査。SvelteKit の組み込みの検査を切って (svelte.config の trustedOrigins)、同じ検査をここで行う。
-// 組み込みの検査は、Origin のない form の POST をすべて断る。OAuth のトークンの口には、claude.ai などのサーバーが
-// Origin なしで form を送ってくるので、その口だけは通す。Cookie では認証しない口なので、CSRF の心配はない。
+// OAuth のクライアントはトークンのエンドポイントに Origin なしでフォームを送ることがある。このエンドポイントは Cookie で認証しないため、SvelteKit の Origin 検査から除外する。
 
 /** Origin がなくても通す口。Cookie を使わず、クライアントのサーバーから直接呼ばれる */
 const SERVER_TO_SERVER_PATHS: ReadonlySet<string> = new Set(['/oauth/token']);

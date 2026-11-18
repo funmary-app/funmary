@@ -63,8 +63,7 @@ export function parseInviteForm(form: FormData): FormResult<InviteRequest> {
 }
 
 /**
- * 設定のフォーム。「管理者のみ」のときは月の上限の欄を無効にして送らないので、
- * 欄がなければ current の上限を残す (モードを戻したときに前の値が使える)
+ * 設定のフォーム。「管理者のみ」のときは月の上限の欄を無効にして送らないので、欄がなければ current の上限を残す (モードを戻したときに前の値が使える)
  */
 export function parseInviteSettingsForm(
 	form: FormData,

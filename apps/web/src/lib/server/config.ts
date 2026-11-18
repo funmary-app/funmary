@@ -42,11 +42,10 @@ export interface Config {
 	/** 管理用の Discord の Bot。トークンとギルドの ID の両方があるときだけある */
 	readonly discordBot: { readonly token: string; readonly guildId: string } | undefined;
 	/**
-	 * 利用者の Discord 連携 (#163) の OAuth。Bot と同じ Discord Application の
-	 * OAuth2 タブにある Client ID と Client Secret。両方あるときだけある
+	 * 利用者の Discord 連携 (#163) の OAuth。Bot と同じ Discord Application の OAuth2 タブにある Client ID と Client Secret。両方あるときだけある
 	 */
 	readonly discordOAuth: { readonly clientId: string; readonly clientSecret: string } | undefined;
-	/** スラッシュコマンドの署名を確かめる公開鍵 (16 進数)。なければ、コマンドの受け口を開けない */
+	/** Discord のリクエストの署名を検証する公開鍵 (16 進数)。未設定の場合はスラッシュコマンドを受け付けない */
 	readonly discordPublicKey: string | undefined;
 	readonly notifyDryRun: boolean;
 	readonly heartbeatUrl: string | undefined;
@@ -281,9 +280,8 @@ function envSchema(mode: Mode) {
 /** 環境変数の入れ物 (process.env など) から設定を作る。足りない値や誤りは、すべてまとめて返す */
 export function parseConfig(env: Readonly<Record<string, string | undefined>>): ConfigResult {
 	const mode: Mode = env['NODE_ENV'] === 'production' ? 'production' : 'development';
-	// 空の値は、書かなかったのと同じに扱う。.env.example を丸ごと写しても動くようにするため
-	// 変数がない場合も、値を undefined にして並べておく。Valibot は、ない変数には既定の英語の説明を付けるが、
-	// undefined の値なら変数ごとに書いた説明を使うため
+	// .env.example をそのままコピーできるよう、空欄は未設定として扱う。
+	// 値がない場合もキーを残して undefined を渡すと、Valibot が変数ごとに指定したエラー文を使う。
 	const schema = envSchema(mode);
 	const input = Object.fromEntries(
 		Object.keys(schema.entries).map((name) => {

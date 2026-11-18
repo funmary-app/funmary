@@ -55,8 +55,7 @@ export const JOB_LABELS: ReadonlyMap<string, string> = new Map([
 ]);
 
 /**
- * サーバーの中でだけ動かす定期処理。予定のまとめと通知の送信は利用者に送るので、
- * 管理用コマンドから別のプロセスで動かすと、サーバーの実行と重なって二重に送ることがある
+ * サーバーの中でだけ動かす定期処理。予定のまとめと通知の送信は利用者に送るので、管理用コマンドから別のプロセスで動かすと、サーバーの実行と重なって二重に送ることがある
  */
 export const SERVER_ONLY_JOBS: readonly string[] = ['send-daily-digest', 'deliver-notifications'];
 
@@ -197,7 +196,7 @@ export function createJobDefinitions({ config, database, alert }: JobFactoryDeps
 						unmatchedStore.record(academicYear, names, now),
 				},
 				alert,
-				// 取得のたびに、監視サービスに知らせる。決まった時刻に届かなければ、監視サービスが知らせる
+				// 取得の成功を監視サービスに知らせる。通知が途絶えると、監視サービスが運用者に知らせる
 				...(heartbeatUrl && {
 					heartbeat: () => fetch(heartbeatUrl, { signal: AbortSignal.timeout(10_000) }),
 				}),

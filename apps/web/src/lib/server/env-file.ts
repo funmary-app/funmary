@@ -163,8 +163,7 @@ export function removeEnvKeys(
 
 /**
  * 指定した鍵の値だけを書き換える。コメント、並び順、改行の形は変えない。
- * 行のない鍵は、末尾に見出しを付けて足す (ふつうは先に alignEnvFile で行を用意するが、
- * 手元の .env にあって .env.example にまだない鍵を送るとき、黙って捨てないため)
+ * 行のない鍵は、末尾に見出しを付けて足す (ふつうは先に alignEnvFile で行を用意するが、手元の .env にあって .env.example にまだない鍵を送るとき、黙って捨てないため)
  */
 export function setEnvValues(text: string, overrides: ReadonlyMap<string, string>): string {
 	const newline = text.includes('\r\n') ? '\r\n' : '\n';

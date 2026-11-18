@@ -196,7 +196,7 @@ export async function changeMemberRole(
 		}
 		return {
 			ok: false,
-			error: 'Discord に接続できませんでした。時間をおいて、もう一度お試しください。',
+			error: 'Discord に接続できませんでした。しばらくしてから、もう一度お試しください。',
 		};
 	}
 	const label = `funmary-${roleName}`;

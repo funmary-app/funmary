@@ -29,7 +29,7 @@ describe('isCsrfForbidden', () => {
 		expect(isCsrfForbidden({ ...base, method: 'GET', origin: null })).toBe(false);
 	});
 
-	it('OAuth のトークンの口だけは、Origin のない form を通す', () => {
+	it('OAuth のトークンエンドポイントでは Origin のないフォーム送信を許可する', () => {
 		expect(isCsrfForbidden({ ...base, path: '/oauth/token', origin: null })).toBe(false);
 		expect(isCsrfForbidden({ ...base, path: '/oauth/authorize', origin: null })).toBe(true);
 	});
