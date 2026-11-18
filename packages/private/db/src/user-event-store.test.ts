@@ -25,7 +25,6 @@ function setup() {
 		store: createUserEventStore(database),
 		alice,
 		bob,
-		auth,
 		aliceViewer: { id: alice, email: 'a@fun.ac.jp' },
 		bobViewer: { id: bob, email: 'b@fun.ac.jp' },
 	};
@@ -98,11 +97,11 @@ describe('UserEventStore', () => {
 		expect(store.listByOwner(alice).map((event) => event.title)).toEqual(['A', 'B']);
 	});
 
-	it('利用者が退会 (削除) されたら、その人の予定も消える', () => {
-		const { store, alice, auth } = setup();
+	it('利用者を削除すると、その人の予定も消える', () => {
+		const { store, alice } = setup();
 		store.create(alice, input(), T0);
-		database.sqlite.prepare('DELETE FROM users WHERE id = ?').run(alice);
-		expect(auth).toBeDefined();
+		const deleted = database.sqlite.prepare('DELETE FROM users WHERE id = ?').run(alice);
+		expect(deleted.changes).toBe(1);
 		expect(store.listByOwner(alice)).toEqual([]);
 	});
 });

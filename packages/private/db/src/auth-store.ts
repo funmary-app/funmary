@@ -11,8 +11,7 @@ import { inviteCodes, sessions, termsAcceptances, userPermissions, users } from 
 export const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 
 /**
- * user (何もできない一般の利用者)、moderator (監査ログや、曜日と時限の確認待ちを見られる)、
- * admin (すべて) の 3 段階。管理用コマンドの user promote で変える
+ * user (何もできない一般の利用者)、moderator (監査ログや、曜日と時限の確認待ちを見られる)、admin (すべて) の 3 段階。管理用コマンドの user promote で変える
  */
 export type UserRole = 'user' | 'moderator' | 'admin';
 

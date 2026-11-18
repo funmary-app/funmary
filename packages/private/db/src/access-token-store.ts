@@ -1,5 +1,4 @@
-// 公開 API と MCP サーバー向けの個人用アクセストークン。feed-token-store.ts と違い、
-// 1 人が複数のトークンを同時に持てる。発行したときに 1 回だけ返し、DB には SHA-256 だけを保存する。
+// 公開 API と MCP サーバー向けの個人用アクセストークン。feed-token-store.ts と違い、1 人が複数のトークンを同時に持てる。発行したときに 1 回だけ返し、DB には SHA-256 だけを保存する。
 import { and, eq, gt, isNull, lt, or } from 'drizzle-orm';
 import type { Database } from './database.ts';
 import { accessTokens, users } from './schema.ts';
@@ -8,7 +7,7 @@ import { generateToken, hashToken } from './secrets.ts';
 /** GitHub の secret scanning などで、誤って公開されたトークンに気づきやすくする */
 const TOKEN_PREFIX = 'fmy_';
 
-/** 読み取りの範囲。同意の画面で範囲が指定されなかったときの既定は、これだけ */
+/** 読み取りの範囲。同意画面で範囲が指定されなかったときの既定は、これだけ */
 export const READ_SCOPES = [
 	'read:lessons',
 	'read:changes',
