@@ -207,7 +207,7 @@ describe('today、week、changes', () => {
 		expect(await run(['changes', '--days', '0'], deps)).toBe(2);
 	});
 
-	it('API の誤りは、理由を出して、終了コード 1。同意待ちなら、同意の画面の URL も出す', async () => {
+	it('API の誤りは、理由を出して、終了コード 1。同意待ちなら、同意画面の URL も出す', async () => {
 		const client = fakeClient({
 			timetable: vi.fn(() =>
 				Promise.reject(
