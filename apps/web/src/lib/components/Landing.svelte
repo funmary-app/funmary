@@ -76,7 +76,7 @@
 		<div class="hero-text">
 			<p class="hero-logo"><BrandLogo height="3.5rem" /></p>
 			<h1 id="hero-heading">
-				授業の予定を、<br class="heading-break" />ひとつの時間割に。
+				大学の<span class="nowrap">「知りたい」</span>を、<br class="heading-break" />すべて。
 			</h1>
 			<p class="subcatch">時間割の取り込み、休講通知、カレンダー連携をまとめて。</p>
 			<p class="lead">

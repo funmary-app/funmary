@@ -40,6 +40,11 @@ h1 {
 	}
 }
 
+/* 「知りたい」の途中で折り返さない */
+.nowrap {
+	white-space: nowrap;
+}
+
 /* 列に余裕があれば、見出しの途中に入れた改行を隠す。 */
 .heading-break {
 	display: inline;
