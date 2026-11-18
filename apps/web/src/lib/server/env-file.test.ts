@@ -3,6 +3,7 @@ import { parseConfig } from './config.ts';
 import {
 	alignEnvFile,
 	fillSecrets,
+	findRetiredEnvKeys,
 	generateSecrets,
 	parseEnvValues,
 	removeEnvKeys,
@@ -79,6 +80,17 @@ describe('fillSecrets', () => {
 			filled: ['SESSION_SECRET', 'ENCRYPTION_KEY'],
 		});
 	});
+
+	it('複数行の値に含まれる鍵名と区別して、ファイルにない鍵を末尾に追加する', () => {
+		const text = '# 鍵\nPROFILE="1 行目\nSESSION_SECRET=\n3 行目"\n';
+
+		expect(fillSecrets(text, fixedSecrets)).toEqual({
+			text:
+				text +
+				'SESSION_SECRET=session\nENCRYPTION_KEY=encryption\nVAPID_PUBLIC_KEY=public\nVAPID_PRIVATE_KEY=private\n',
+			filled: ['SESSION_SECRET', 'ENCRYPTION_KEY', 'VAPID_PUBLIC_KEY', 'VAPID_PRIVATE_KEY'],
+		});
+	});
 });
 
 describe('alignEnvFile', () => {
@@ -144,6 +156,17 @@ describe('alignEnvFile', () => {
 		expect(result.text).toContain('\r\n');
 		expect(result.text).not.toMatch(/[^\r]\n/);
 	});
+
+	it('複数行の値をそのまま移し、値の中にある行を別の鍵として扱わない', () => {
+		const current = 'PORT=3000\nPROFILE="1 行目\nHOST=example\n3 行目" # 説明\n';
+		const template = '# 設定\nPROFILE=\nHOST=\nPORT=\n';
+
+		expect(alignEnvFile(current, template)).toMatchObject({
+			text: '# 設定\nPROFILE="1 行目\nHOST=example\n3 行目" # 説明\nHOST=\nPORT=3000\n',
+			added: ['HOST'],
+			extra: [],
+		});
+	});
 });
 
 describe('parseEnvValues', () => {
@@ -160,6 +183,15 @@ describe('parseEnvValues', () => {
 	it('同じ鍵が 2 回あれば、あとの行の値を使う', () => {
 		const text = ['ORIGIN=first', 'ORIGIN=second'].join('\n');
 		expect(parseEnvValues(text).get('ORIGIN')).toBe('second');
+	});
+
+	it('引用符とコメントを含む複数行の値をまとめて読み取る', () => {
+		expect(parseEnvValues('PROFILE="1 行目\nROLE=member\n3 行目" # 説明\nROLE=owner\n')).toEqual(
+			new Map([
+				['PROFILE', '"1 行目\nROLE=member\n3 行目" # 説明'],
+				['ROLE', 'owner'],
+			]),
+		);
 	});
 });
 
@@ -186,9 +218,24 @@ describe('setEnvValues', () => {
 		const result = setEnvValues(text, new Map([['ORIGIN', 'new']]));
 		expect(result).toBe('ORIGIN=new\r\nHOST=127.0.0.1\r\n');
 	});
+
+	it('引用符で囲まれた複数行の値全体を置き換え、ほかの鍵と混在する改行を保つ', () => {
+		const text = 'PROFILE="old\r\nROLE=example\r\nend"\r\nROLE=owner\n';
+
+		expect(setEnvValues(text, new Map([['PROFILE', '"new\nsecond"']]))).toBe(
+			'PROFILE="new\nsecond"\r\nROLE=owner\n',
+		);
+	});
 });
 
 describe('removeEnvKeys', () => {
+	it('ひな形で廃止を指定した変数のうち、現在のファイルに残っているものを選ぶ', () => {
+		const template = '# @retired OLD_FORMAT REMOVED\nKEEP=\n';
+		const current = 'KEEP=yes\nOLD_FORMAT=default\nOTHER=enabled\n';
+
+		expect(findRetiredEnvKeys(current, template)).toEqual(['OLD_FORMAT']);
+	});
+
 	it('指定した鍵の行だけを消し、ほかの行とコメントは残して、消した鍵を返す', () => {
 		const text = ['# 登録', 'REGISTRATION=open', 'ADMIN_EMAILS=a@fun.ac.jp', ''].join('\n');
 		expect(removeEnvKeys(text, ['REGISTRATION', 'NOT_THERE'])).toEqual({
@@ -200,6 +247,15 @@ describe('removeEnvKeys', () => {
 	it('改行の形 (CRLF) を保つ', () => {
 		const text = 'REGISTRATION=\r\nHOST=127.0.0.1\r\n';
 		expect(removeEnvKeys(text, ['REGISTRATION']).text).toBe('HOST=127.0.0.1\r\n');
+	});
+
+	it('廃止した鍵の行だけを消し、複数行の値の中にある同名の行は残す', () => {
+		const text = '\uFEFFPROFILE="1 行目\r\nREGISTRATION=example\n3 行目"\nREGISTRATION=open\r\n';
+
+		expect(removeEnvKeys(text, ['REGISTRATION'])).toEqual({
+			text: '\uFEFFPROFILE="1 行目\r\nREGISTRATION=example\n3 行目"\n',
+			removed: ['REGISTRATION'],
+		});
 	});
 });
 

@@ -228,7 +228,7 @@ VPS にログインしているなら、`funmary-admin` を直接使います。
 sudo /usr/local/bin/funmary-admin align-env --file=/etc/funmary/funmary.env
 ```
 
-手元のリポジトリで `pnpm env:upload` を実行すると、SSH で VPS の環境変数を更新できます。使わなくなった項目 (`REGISTRATION` など) が残っていれば、削除するか聞かれます。項目の並びをそろえたあと、手元の `.env` にしかない項目や VPS と値が異なる項目は、1 件ずつ反映するか選べます。環境ごとに生成する鍵は上書きしません。接続先や鍵の場所をシェルの履歴に残さないように、接続先は `.env.ssh` に書きます。
+手元のリポジトリで `pnpm env:upload` を実行すると、SSH で VPS の環境変数を更新できます。`.env.example` で廃止を指定した項目 (`REGISTRATION` など) が残っていれば、削除するか聞かれます。項目の並びをそろえたあと、手元の `.env` にしかない項目や VPS と値が異なる項目は、変数名を見て 1 件ずつ反映するか選べます。環境ごとに生成する鍵は上書きしません。接続先や鍵の場所をシェルの履歴に残さないように、接続先は `.env.ssh` に書きます。
 
 ```sh
 cp .env.ssh.example .env.ssh

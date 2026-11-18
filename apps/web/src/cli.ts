@@ -159,7 +159,7 @@ const alignEnv = defineCommand({
 			return;
 		}
 		const backupPath = `${args.file}.bak.${new Date().toISOString().replaceAll(/[:.]/g, '-')}`;
-		writeFileSync(backupPath, current);
+		writeFileSync(backupPath, current, { mode: 0o600, flag: 'wx' });
 		writeFileSync(args.file, result.text);
 		console.log(
 			`${args.file} の並びを ${args.template} に合わせました (${backupPath} に元の内容を残しました)`,

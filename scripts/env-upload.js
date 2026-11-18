@@ -5,7 +5,7 @@
 // 反映専用の制限された鍵 (funmary-deploy、command= で funmary-update だけに絞ったもの) は使わない。
 // 作者自身の SSH 鍵と sudo を使う (自動デプロイの経路とは別)。
 //
-// 1. 使わなくなった鍵 (RETIRED_NAMES) がリモートに残っていれば、消すか確認する
+// 1. .env.example で廃止とされた変数がリモートに残っていれば、削除するか確認する
 // 2. リモートの環境変数ファイルを .env.example の並びに揃える (足りない鍵を空のまま足す。値は変えない)
 // 3. 手元の .env にあって、リモートにない値、またはリモートと違う値だけを、1 つずつ上書きするか確認する
 //    (どちらにもない鍵、リモートにしかない鍵には触れない)
@@ -14,9 +14,9 @@ import { existsSync, readFileSync } from 'node:fs';
 import { createInterface } from 'node:readline/promises';
 import {
 	alignEnvFile,
+	findRetiredEnvKeys,
 	parseEnvValues,
 	removeEnvKeys,
-	RETIRED_NAMES,
 	SECRET_NAMES,
 	setEnvValues,
 } from '../apps/web/src/lib/server/env-file.ts';
@@ -42,7 +42,7 @@ const remoteText = runSsh(sshConfig, ['sudo', 'cat', quote(remoteFile)]);
 
 // 使わなくなった鍵は、揃える前に消す (揃えると「.env.example にない鍵」として残るため)
 let cleanedText = remoteText;
-const retired = RETIRED_NAMES.filter((name) => parseEnvValues(remoteText).has(name));
+const retired = findRetiredEnvKeys(remoteText, templateText);
 if (retired.length > 0) {
 	console.log(`\n使わなくなった鍵が残っています: ${retired.join(', ')}`);
 	const rl = createInterface({ input: process.stdin, output: process.stdout });
@@ -63,7 +63,7 @@ if (structured.extra.length > 0) {
 // 手元の .env と、揃えたあとのリモートの値を見比べる
 const localValues = parseEnvValues(localText);
 const remoteValues = parseEnvValues(structured.text);
-/** @type {{ key: string, local: string, remote: string }[]} */
+/** @type {{ key: string, local: string }[]} */
 const changed = [];
 /** @type {string[]} */
 const skippedSecrets = [];
@@ -76,7 +76,7 @@ for (const [key, local] of localValues) {
 		skippedSecrets.push(key);
 		continue;
 	}
-	changed.push({ key, local, remote });
+	changed.push({ key, local });
 }
 if (skippedSecrets.length > 0) {
 	console.log(
@@ -92,10 +92,8 @@ if (changed.length > 0) {
 		console.log(
 			`\n手元の .env と値が違う、またはリモートにない鍵が ${changed.length} 件あります。`,
 		);
-		for (const [i, { key, local, remote }] of changed.entries()) {
+		for (const [i, { key, local }] of changed.entries()) {
 			console.log(`\n[${i + 1}/${changed.length}] ${key}`);
-			console.log(`  手元: ${local}`);
-			console.log(`  VPS : ${remote === '' ? '(未設定)' : remote}`);
 			const answer = await rl.question('  手元の値で上書きしますか? (y/N): ');
 			if (/^y(es)?$/i.test(answer.trim())) overrides.set(key, local);
 		}

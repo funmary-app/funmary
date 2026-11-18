@@ -1,6 +1,7 @@
 // 環境変数ファイル (.env や /etc/funmary/funmary.env) の中身を書き換える処理。ファイルは読み書きしない。
 import { generateKeyPairSync } from 'node:crypto';
 import { generateEncryptionKey, generateToken } from '@funmary/db';
+import { align, diff, parse, prune, stringify, type EntryNode, type EnvDocument } from 'migenv';
 
 /** funmary-admin init が作る鍵の名前 */
 export const SECRET_NAMES = [
@@ -11,14 +12,6 @@ export const SECRET_NAMES = [
 ] as const;
 
 export type Secrets = Record<(typeof SECRET_NAMES)[number], string>;
-
-/** 使わなくなった鍵。pnpm env:upload が、本番の環境変数ファイルから消すか聞く */
-export const RETIRED_NAMES = [
-	// 登録の方式は、管理画面の「登録と招待」で変えるようにした
-	'REGISTRATION',
-	// 招待コードを発行できる人と月の上限は、管理画面の「登録と招待」で決める
-	'INVITES_PER_USER',
-] as const;
 
 /** funmary-admin init が埋める鍵を、新しく作る */
 export function generateSecrets(): Secrets {
@@ -48,117 +41,88 @@ export interface FillResult {
 	readonly filled: readonly string[];
 }
 
+function withRawValue(entry: EntryNode, rawValue: string): EntryNode {
+	return {
+		...entry,
+		raw: entry.raw.slice(0, entry.raw.length - entry.rawValue.length) + rawValue,
+		rawValue,
+	};
+}
+
+function appendEnvLines(document: EnvDocument, lines: readonly string[]): string {
+	const separator = document.nodes.length > 0 && !document.finalNewline ? document.newline : '';
+	return stringify(document) + separator + lines.join(document.newline) + document.newline;
+}
+
 /**
  * 値が空の鍵だけを埋め、行のない鍵は末尾に足す。値のある行、ほかの行、コメント、並び順、改行の形は変えない。
  * 鍵を作り直すと暗号化したデータが読めなくなるので、埋まっている鍵には触れない。
  */
 export function fillSecrets(text: string, generate: () => Secrets): FillResult {
-	const newline = text.includes('\r\n') ? '\r\n' : '\n';
-	const lines = text.split(newline);
+	const document = parse(text);
 	const secrets = generate();
 	const filled: string[] = [];
 	const seen = new Set<string>();
 
-	const replaced = lines.map((line) => {
-		const match = /^([A-Z_]+)\s*=(.*)$/.exec(line);
-		const name = SECRET_NAMES.find((secret) => secret === match?.[1]);
-		if (name === undefined) return line;
+	const nodes = document.nodes.map((node) => {
+		if (node.kind !== 'entry') return node;
+		const name = SECRET_NAMES.find((secret) => secret === node.key);
+		if (name === undefined) return node;
 		seen.add(name);
-		if (match?.[2]?.trim() !== '') return line;
+		if (node.rawValue.trim() !== '') return node;
 		filled.push(name);
-		return `${name}=${secrets[name]}`;
+		return withRawValue(node, secrets[name]);
 	});
 
+	const updated = { ...document, nodes };
 	const missing = SECRET_NAMES.filter((name) => !seen.has(name));
-	if (missing.length > 0) {
-		// 末尾の改行の後ろに足す。最後の要素が空文字列なら、ファイルは改行で終わっている
-		if (replaced.at(-1) === '') replaced.pop();
-		for (const name of missing) {
-			replaced.push(`${name}=${secrets[name]}`);
-			filled.push(name);
-		}
-		replaced.push('');
-	}
-	return { text: replaced.join(newline), filled };
-}
-
-const ENV_LINE = /^([A-Z_]+)\s*=(.*)$/;
-
-export interface AlignResult {
-	readonly text: string;
-	/** template にはあるが、current になかった鍵 (空のまま足した) */
-	readonly added: readonly string[];
-	/** current にはあるが、template にない鍵 (値を保ち、末尾にまとめて残した) */
-	readonly extra: readonly string[];
+	if (missing.length === 0) return { text: stringify(updated), filled };
+	return {
+		text: appendEnvLines(
+			updated,
+			missing.map((name) => `${name}=${secrets[name]}`),
+		),
+		filled: [...filled, ...missing],
+	};
 }
 
 /**
- * current の並びを、template (.env.example) の並びに合わせる。値のある行の値は変えない。
- * template にあって current にない鍵は、template の位置に空のまま足す。
- * current にあって template にない鍵は、値を保ったまま末尾にまとめる (消さない)。
- * コメントと見出し、空行、改行の形は template のものを使う。
+ * ひな形の並びに合わせ、ひな形にない変数は末尾に残す。
+ * 並べ替えで引用符の解釈が変わる場合は、呼び出し元での書き込みを止める。
  */
-export function alignEnvFile(current: string, template: string): AlignResult {
-	const newline = template.includes('\r\n') ? '\r\n' : '\n';
-	const currentLines = current.split(/\r\n|\n/);
-
-	// 同じ鍵が 2 回あれば、あとの行を使う (env_value と同じ考え方)
-	const values = new Map<string, string>();
-	for (const line of currentLines) {
-		const match = ENV_LINE.exec(line);
-		if (match?.[1]) values.set(match[1], match[2] ?? '');
-	}
-
-	const added: string[] = [];
-	const templateKeys = new Set<string>();
-	const aligned = template.split(/\r\n|\n/).map((line) => {
-		const match = ENV_LINE.exec(line);
-		if (!match?.[1]) return line;
-		const name = match[1];
-		templateKeys.add(name);
-		if (!values.has(name)) {
-			added.push(name);
-			return line;
-		}
-		const value = values.get(name);
-		if (value === '' || value === undefined) return line;
-		return `${name}=${value}`;
+export function alignEnvFile(current: string, template: string) {
+	const result = align(current, template, {
+		rename: false,
+		// 空に見える値でも、引用符やコメントが書かれていれば引き継ぐ
+		protect: (_key, rawValue) => rawValue !== '',
+		extrasHeader: '# ---- ほかの変数 (テンプレートにない。手で見直してください) ----',
 	});
-
-	const extraKeys = [...values.keys()].filter((name) => !templateKeys.has(name));
-	if (extraKeys.length > 0) {
-		if (aligned.at(-1) === '') aligned.pop();
-		aligned.push('', '# ---- ほかの変数 (テンプレートにない。手で見直してください) ----', '');
-		for (const name of extraKeys) aligned.push(`${name}=${values.get(name) ?? ''}`);
-		aligned.push('');
+	if (result.warnings.some(({ code }) => code === 'ambiguous-quote')) {
+		throw new Error(
+			'並べ替えると環境変数の値の解釈が変わります。引用符の使い方を確認してください。',
+		);
 	}
-	return { text: aligned.join(newline), added, extra: extraKeys };
+	return result;
 }
 
-/** `KEY=値` の行を、鍵の名前と値の入れ物にする。同じ鍵が 2 回あれば、あとの行を使う */
+/** 引用符やコメントを含む値を取得する。同じ変数が複数あれば、最後に書かれた値を使う */
 export function parseEnvValues(text: string): Map<string, string> {
 	const values = new Map<string, string>();
-	for (const line of text.split(/\r\n|\n/)) {
-		const match = ENV_LINE.exec(line);
-		if (match?.[1]) values.set(match[1], match[2] ?? '');
+	for (const node of parse(text).nodes) {
+		if (node.kind === 'entry') values.set(node.key, node.rawValue);
 	}
 	return values;
 }
 
+/** ひな形で廃止を指定された変数のうち、ファイルに残っているものを返す */
+export function findRetiredEnvKeys(current: string, template: string) {
+	return diff(current, template).retired;
+}
+
 /** 指定した鍵の行を消す。コメント、ほかの行、改行の形は変えない */
-export function removeEnvKeys(
-	text: string,
-	names: readonly string[],
-): { text: string; removed: string[] } {
-	const newline = text.includes('\r\n') ? '\r\n' : '\n';
-	const removed = new Set<string>();
-	const lines = text.split(/\r\n|\n/).filter((line) => {
-		const name = ENV_LINE.exec(line)?.[1];
-		if (!name || !names.includes(name)) return true;
-		removed.add(name);
-		return false;
-	});
-	return { text: lines.join(newline), removed: [...removed] };
+export function removeEnvKeys(text: string, names: readonly string[]) {
+	const { text: updated, removed } = prune(text, names);
+	return { text: updated, removed };
 }
 
 /**
@@ -166,24 +130,22 @@ export function removeEnvKeys(
  * 行のない鍵は、末尾に見出しを付けて足す (ふつうは先に alignEnvFile で行を用意するが、手元の .env にあって .env.example にまだない鍵を送るとき、黙って捨てないため)
  */
 export function setEnvValues(text: string, overrides: ReadonlyMap<string, string>): string {
-	const newline = text.includes('\r\n') ? '\r\n' : '\n';
+	const document = parse(text);
 	const replaced = new Set<string>();
-	const lines = text.split(/\r\n|\n/).map((line) => {
-		const match = ENV_LINE.exec(line);
-		const name = match?.[1];
-		if (!name || !overrides.has(name)) return line;
-		replaced.add(name);
-		return `${name}=${overrides.get(name)}`;
+	const nodes = document.nodes.map((node) => {
+		if (node.kind !== 'entry') return node;
+		const rawValue = overrides.get(node.key);
+		if (rawValue === undefined) return node;
+		replaced.add(node.key);
+		return withRawValue(node, rawValue);
 	});
 	// 行のない鍵は、黙って捨てずに末尾に足す (.env.example にまだない鍵を、手元の .env から送るとき)
 	const missing = [...overrides].filter(([name]) => !replaced.has(name));
-	if (missing.length === 0) return lines.join(newline);
-	if (lines.at(-1) === '') lines.pop();
-	return [
-		...lines,
+	const updated = { ...document, nodes };
+	if (missing.length === 0) return stringify(updated);
+	return appendEnvLines(updated, [
 		'',
 		'# .env.example にない鍵 (手元の .env から足した)',
 		...missing.map(([name, value]) => `${name}=${value}`),
-		'',
-	].join(newline);
+	]);
 }
