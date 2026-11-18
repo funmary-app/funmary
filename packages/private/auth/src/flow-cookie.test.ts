@@ -6,8 +6,7 @@ import type { LoginFlow } from './service.ts';
 const KEY = randomBytes(32);
 
 /**
- * 封の最後のバイトの 1 ビットを反転する。文字列の末尾を書き換えると、Base64 の使われないビットだけが変わり、
- * 中身が同じままのことがあるので、バイトを書き換えてから符号化し直す
+ * 封の最後のバイトの 1 ビットを反転する。文字列の末尾を書き換えると、Base64 の使われないビットだけが変わり、中身が同じままのことがあるので、バイトを書き換えてから符号化し直す
  */
 function flipLastByte(sealed: string): string {
 	const bytes = Buffer.from(sealed, 'base64url');

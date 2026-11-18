@@ -1,5 +1,4 @@
-// Google の OpenID Connect との通信。手順は openid-client に任せ、
-// PKCE、state、nonce、ID トークンの署名の検証を正しく行う。要求するスコープは openid、email、profile だけにする。
+// Google の OpenID Connect との通信。手順は openid-client に任せ、PKCE、state、nonce、ID トークンの署名の検証を正しく行う。要求するスコープは openid、email、profile だけにする。
 import { createRemoteJWKSet, jwtVerify } from 'jose';
 import * as client from 'openid-client';
 import type { OidcAuthorization, OidcClient } from './service.ts';
@@ -61,8 +60,7 @@ export function createGoogleOidcClient(options: OidcOptions): OidcClient {
 				code_challenge_method: 'S256',
 				state,
 				nonce,
-				// 付けないと、Google は前回のアカウントで自動で進む。ログアウトしても Google のログインは残るので、
-				// 別のアカウント (テストアカウントなど) に替えられるよう、選択画面を毎回出させる
+				// 付けないと、Google は前回のアカウントで自動で進む。ログアウトしても Google のログインは残るので、別のアカウント (テストアカウントなど) に替えられるよう、選択画面を毎回出させる
 				prompt: 'select_account',
 				...(authorizationOptions.hostedDomainHint !== false && { hd: options.hostedDomain }),
 			});
@@ -78,8 +76,7 @@ export function createGoogleOidcClient(options: OidcOptions): OidcClient {
 				expectedNonce: expected.nonce,
 				idTokenExpected: true,
 			});
-			// openid-client は、ID トークンをトークンエンドポイントから直接受け取るとき、OIDC の規格 (Core 3.1.3.7) に沿って
-			// 署名を検証しない (TLS で直接受け取るので、代わりになる)。ID トークンの署名は検証したいので、JWKS で検証する
+			// openid-client は、ID トークンをトークンエンドポイントから直接受け取るとき、OIDC の規格 (Core 3.1.3.7) に沿って署名を検証しない (TLS で直接受け取るので、代わりになる)。ID トークンの署名は検証したいので、JWKS で検証する
 			if (!tokens.id_token) throw new Error('ID トークンがありません');
 			const metadata = config.serverMetadata();
 			if (!metadata.jwks_uri) throw new Error('issuer が jwks_uri を公開していません');
