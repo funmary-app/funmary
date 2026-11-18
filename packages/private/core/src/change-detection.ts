@@ -1,5 +1,3 @@
-// 変更の検知と誤通知の防止。ポータルから取った休講などの一覧を前回の内容と比べて、
-// 通知のもとになるイベント (新規、変更、取り消し) を作る。I/O は持たない。今日の日付は引数で受け取る。
 import type { CalendarDate } from './calendar-date.ts';
 
 export type ChangeKind = 'cancellation' | 'makeup' | 'roomChange';
@@ -83,7 +81,7 @@ export function detectChanges(input: {
 	) {
 		return {
 			kind: 'suspicious',
-			reason: `未来の日付の項目が、前回の ${previousActive.length} 件から ${scrapedFuture.length} 件に減りました`,
+			reason: `今日以降の項目が前回の ${previousActive.length} 件から ${scrapedFuture.length} 件に減ったため、更新を見送りました。`,
 		};
 	}
 

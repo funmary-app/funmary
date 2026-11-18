@@ -1,6 +1,5 @@
 // 利用者の予定の展開 (Issue #144)。繰り返しの展開は ical.js に任せ、自前の繰り返しの処理は書かない。
-// ical.js は大きいので、@funmary/core の入口 (index.ts) からは出さない。サーバーだけが
-// `@funmary/core/event-expansion` として読む (画面側の JavaScript に入らないようにするため)。
+// ical.js は大きいので、@funmary/core の入口 (index.ts) からは出さない。サーバーだけが `@funmary/core/event-expansion` として読む (画面側の JavaScript に入らないようにするため)。
 import ICAL from 'ical.js';
 import { addDays, eachDate, type CalendarDate } from './calendar-date.ts';
 import { DEFAULT_PERIODS, findPeriod, type Period } from './periods.ts';

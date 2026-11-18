@@ -114,8 +114,7 @@ function coverClasses(
 }
 
 /**
- * まとめて書かれたコマを分けて照合する。例: "画像工学" の "3-JKL,4-GHI" は 画像工学3-JKL と 画像工学4-GHI、
- * "アルゴリズムとデータ構造" の "2-EFJKL" は 2-EF と 2-JKL。分けたものがすべて決まるときだけ返す
+ * まとめて書かれたコマを分けて照合する。例: "画像工学" の "3-JKL,4-GHI" は 画像工学3-JKL と 画像工学4-GHI、 "アルゴリズムとデータ構造" の "2-EFJKL" は 2-EF と 2-JKL。分けたものがすべて決まるときだけ返す
  */
 function splitCombinedCell(cell: TimetableCell, subjects: readonly SubjectName[]): number[] | null {
 	if (!cell.classes) return null;
