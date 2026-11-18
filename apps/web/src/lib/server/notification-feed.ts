@@ -18,7 +18,7 @@ const MAX_ITEMS = 50;
 export interface NotificationFeedSources {
 	readonly feedTokens: Pick<FeedTokenStore, 'findOwner' | 'markUsed'>;
 	readonly auth: Pick<AuthStore, 'findUserById'>;
-	/** 同意を求めている利用規約の版。持ち主が同意するまで、購読は通知を返さない */
+	/** 同意を求めている利用規約のバージョン。持ち主が同意するまで、購読は通知を返さない */
 	readonly termsVersion: string;
 	readonly notifications: Pick<NotificationStore, 'list'>;
 	/** 公開 URL の origin。項目のリンクを絶対の URL にするため */

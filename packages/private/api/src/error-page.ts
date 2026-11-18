@@ -1,5 +1,4 @@
-// Hono の口のエラーの画面。ブラウザから開かれたときだけ、画面のエラー (apps/web の +error.svelte) と同じく、
-// 状態の番号の猫 (http.cat) を出す。カレンダーアプリなどには、今までどおり文字だけを返す。
+// Hono の口のエラーの画面。ブラウザから開かれたときだけ、画面のエラー (apps/web の +error.svelte) と同じく、状態の番号の猫 (http.cat) を出す。カレンダーアプリなどには、今までどおり文字だけを返す。
 // 見た目は apps/web/src/error.html とそろえる
 import type { Context } from 'hono';
 
@@ -22,7 +21,8 @@ function title(status: number): string {
 export function errorPageHtml(status: number): string {
 	const code = Math.trunc(status);
 	const heading = title(code);
-	const retry = code >= 500 || code === 429 ? '<p>時間をおいて、もう一度お試しください。</p>' : '';
+	const retry =
+		code >= 500 || code === 429 ? '<p>しばらくしてから、もう一度お試しください。</p>' : '';
 	return `<!doctype html>
 <html lang="ja">
 <head>

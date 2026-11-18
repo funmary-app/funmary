@@ -47,7 +47,7 @@
 	{#if form?.issued}
 		{@const issued = form.issued}
 		<section class="issued" aria-labelledby="issued-heading">
-			<h2 id="issued-heading">購読の URL を発行しました</h2>
+			<h2 id="issued-heading">購読 URL を発行しました</h2>
 			<p>
 				この画面を離れると、もう出せません。いまのうちに、RSS リーダーに登録してください。URL
 				を知っている人は誰でもあなたの通知を見られるので、人に教えないでください。
@@ -92,7 +92,7 @@
 				<form
 					method="POST"
 					action="?/revoke"
-					use:confirmSubmit={'この購読の URL を無効にします。RSS リーダーに、もう届かなくなります。よろしいですか?'}
+					use:confirmSubmit={'フィードリーダーで通知が更新されなくなります。購読 URL を無効にしますか？'}
 					use:enhance
 				>
 					<Button type="submit" variant="outlined"><Label>無効にする</Label></Button>
@@ -127,7 +127,7 @@
 		{/if}
 	{:else}
 		<section aria-labelledby="issue-heading">
-			<h2 id="issue-heading">購読の URL を発行する</h2>
+			<h2 id="issue-heading">購読 URL を発行する</h2>
 			<p class="muted">発行した URL を、RSS リーダーに登録します。</p>
 			<form
 				method="POST"
@@ -136,7 +136,7 @@
 					copyState.reset();
 				}}
 			>
-				<Button type="submit" variant="unelevated"><Label>購読の URL を発行する</Label></Button>
+				<Button type="submit" variant="unelevated"><Label>購読 URL を発行する</Label></Button>
 			</form>
 		</section>
 	{/if}

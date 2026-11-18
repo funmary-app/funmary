@@ -1,5 +1,4 @@
-// Discord のスラッシュコマンドの受け口 (#36)。POST /discord/interactions を受け、
-// Discord から来たものだけを通す。答えの中身は、呼び出し側 (apps/web) が決める。
+// Discord の署名を検証し、コマンドへの応答は呼び出し側が指定した関数で生成する。
 import {
 	ephemeralMessage,
 	invocationOf,

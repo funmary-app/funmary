@@ -37,8 +37,7 @@ const serverEnv = {
 export default defineConfig({
 	testDir: 'e2e',
 	forbidOnly: !!process.env['CI'],
-	// ファイルを並べて動かす (ファイルの中のテストは順に動く)。ログインの OpenID Connect のサーバーは、
-	// global-setup.ts が 1 つだけ立て、次にログインする人をワーカーごとに分ける
+	// OpenID Connect サーバーは 1 つだけ起動し、ログインに使うアカウントをワーカーごとに分ける。
 	globalSetup: './e2e/global-setup.ts',
 	workers: 4,
 	retries: process.env['CI'] ? 2 : 0,

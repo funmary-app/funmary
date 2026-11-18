@@ -1,5 +1,4 @@
-// ログインの流れ全体。Google との通信 (OidcClient) と、DB (AuthStore) を受け取り、
-// ログインの開始、招待コードの確認、戻ってきたあとの登録とセッションの発行を行う。
+// ログインの流れ全体。Google との通信 (OidcClient) と、DB (AuthStore) を受け取り、ログインの開始、招待コードの確認、戻ってきたあとの登録とセッションの発行を行う。
 // Google との通信の中身 (PKCE、state、nonce、署名の検証) は OidcClient が受け持つ。ここでは、その結果の扱いを決める。
 import type { AuthStore, AuthUser } from '@funmary/db';
 import {

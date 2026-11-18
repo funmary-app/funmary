@@ -1,7 +1,6 @@
 // SMUI のテーマ (src/theme) と、入れてある SMUI の部品のスタイルを CSS に変換する。
 // - generated/smui.css: 色の CSS 変数とダーク用だけ。どのページでも読む
-// - generated/smui/<部品>.css: 部品ごとのスタイル。その部品を import したモジュールに、vite.config.js の
-//   smuiStyles が読み込みを足すので、部品を使うページだけで読まれる (全部のページで全部の部品の CSS を読まない)
+// - generated/smui/<部品>.css: 部品ごとのスタイル。その部品を import したモジュールに、vite.config.js の smuiStyles が読み込みを足すので、部品を使うページだけで読まれる (全部のページで全部の部品の CSS を読まない)
 // ダーク用は色の CSS 変数だけで、端末の設定がダークのときだけ効くよう @media で囲んで後ろに足す。
 // smui-theme の compile は、pnpm の置き方では入れた部品のスタイルを見つけられないので使わず、Sass を直接呼ぶ。
 // pnpm dev と pnpm build の前に動かす。部品を足したら、ここで作り直される。
@@ -35,8 +34,7 @@ const smuiPackages = [...dependencyNames('dependencies'), ...dependencyNames('de
  */
 const storeOf = (dir) => dirname(dirname(realpathSync(dir)));
 /**
- * 部品のスタイルは、依存する部品のスタイルを読む (@smui/data-table が @smui/select を読み、@smui/select が
- * @smui/menu-surface を読む)。依存の依存は、依存の実体の隣にしかないので、依存をたどって置き場所を集める
+ * 部品のスタイルは、依存する部品のスタイルを読む (@smui/data-table が @smui/select を読み、@smui/select が @smui/menu-surface を読む)。依存の依存は、依存の実体の隣にしかないので、依存をたどって置き場所を集める
  * @param {string} dir パッケージの場所
  * @param {Set<string>} found 集めた置き場所
  */
@@ -102,8 +100,7 @@ function darkVariables(css, selector) {
 }
 
 // CSS のレイヤーの順番 (後ろほど強い)。全体の要素への指定 (base.scss) < SMUI の部品 < SMUI の見た目の上書き (smui-overrides.scss)。
-// 画面ごとのスタイルはレイヤーに入れないので、いつもいちばん強い。部品の CSS はあとから読まれることがあるので、
-// 最初に読まれたファイルで順番が決まるよう、どのファイルの先頭にも同じ宣言を置く
+// 画面ごとのスタイルはレイヤーに入れないので、いつもいちばん強い。部品の CSS はあとから読まれることがあるので、最初に読まれたファイルで順番が決まるよう、どのファイルの先頭にも同じ宣言を置く
 const header =
 	'/* scripts/build-theme.js が作る。手で直さない */\n@layer base,smui,smui-overrides;';
 mkdirSync(generated, { recursive: true });

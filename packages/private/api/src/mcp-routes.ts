@@ -1,6 +1,4 @@
-// /mcp の MCP サーバー。公開 API と同じ個人用のアクセストークンで認証し、
-// 道具の定義は @funmary/mcp に 1 つだけあり、手元で動く MCP と共有する。ここでは、DB から読み書きするデータの口 (mcp-data.ts) を渡す。
-// 範囲 (read:*、write:*) を持つトークンにだけ、その範囲の道具を出す。
+// 公開 API と同じ認証を使い、アクセストークンのスコープに応じた MCP ツールを公開する。
 import { hasAcceptedTerms } from '@funmary/core';
 import { createFunmaryMcpServer } from '@funmary/mcp';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
@@ -34,20 +32,19 @@ function serverIcons(origin: string) {
 	];
 }
 
-/** MCP サーバーを組み立てる。テストでは、SDK の in-memory の接続で道具を直接確かめるのに使う */
+/** アクセストークンに許可された MCP ツールを登録する */
 export function buildMcpServer(deps: McpRoutesDeps, owner: McpWriteOwner) {
 	return createFunmaryMcpServer({
 		data: createServerData(deps, owner),
 		scopes: owner.scopes,
-		// バスの機能を使わない設定では、範囲があっても、バスの道具を出さない
+		// バスの機能を使わない設定では、範囲があっても、バスのツールを出さない
 		enabled: (tool) => tool.scope !== 'read:transit' || deps.bus !== null,
 		...(deps.origin ? { icons: serverIcons(deps.origin) } : {}),
 	});
 }
 
 /**
- * 利用規約への同意を待っている利用者に返す MCP サーバー。データの道具は 1 つも出さず、
- * 同意が要る理由と、同意の画面の URL だけを、サーバーの説明と、唯一の道具の答えに載せる。
+ * 未同意の利用者には、同意が必要な理由と同意画面の URL を案内する MCP ツールだけを公開する。
  * HTTP のエラーにしないのは、MCP のクライアントが、接続の失敗としか表示しないことが多いため
  */
 export function buildTermsRequiredMcpServer(consentUrl: string, origin?: string) {

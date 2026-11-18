@@ -1,5 +1,4 @@
-// 発行したトークンを、手元の MCP とコマンドで使うための、設定の例。接続先の既定値は、npm のパッケージが持たないので、
-// ここで、この Funmary の URL とトークンを埋めて、コピーできる形で出す。
+// 発行したトークンを、手元の MCP とコマンドで使うための、設定の例。接続先の既定値は、npm のパッケージが持たないので、ここで、この Funmary の URL とトークンを埋めて、コピーできる形で出す。
 
 /** 手元の MCP (@funmary/mcp、stdio) の設定。Claude Desktop などの mcpServers に、そのまま貼れる形 */
 export function buildMcpConfig(origin: string, token: string): string {

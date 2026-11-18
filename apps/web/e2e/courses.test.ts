@@ -170,8 +170,8 @@ test.describe('履修科目の登録', () => {
 		const name = `E2E の課外講座${Date.now()}`;
 		await loginAs(page);
 		await page.goto('/app/courses');
-		const create = page.getByRole('region', { name: 'シラバスにない授業を足す' });
-		await create.getByText('公開シラバスに載っていない授業を、科目として足す').click();
+		const create = page.getByRole('region', { name: 'シラバスにない授業を追加' });
+		await create.getByText('公開シラバスに載っていない授業を登録する').click();
 		await create.getByLabel(/授業の名前/).fill(name);
 		await create.getByLabel('学期').selectOption('後期');
 		await create.getByRole('button', { name: '足して登録する' }).click();
@@ -236,8 +236,8 @@ test.describe('履修科目の登録', () => {
 		const name = `E2E の公開範囲演習${Date.now()}`;
 		await loginAs(page);
 		await page.goto('/app/courses');
-		const create = page.getByRole('region', { name: 'シラバスにない授業を足す' });
-		await create.getByText('公開シラバスに載っていない授業を、科目として足す').click();
+		const create = page.getByRole('region', { name: 'シラバスにない授業を追加' });
+		await create.getByText('公開シラバスに載っていない授業を登録する').click();
 		await create.getByLabel(/授業の名前/).fill(name);
 		await create.getByLabel('学期').selectOption('後期');
 		await create.getByRole('button', { name: '足して登録する' }).click();

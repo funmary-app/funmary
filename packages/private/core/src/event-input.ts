@@ -58,8 +58,8 @@ function parseTime(form: EventFieldReader, spans: boolean): EventTime | string {
 	if (kind === 'time') {
 		const start = text(form, 'startTime');
 		const end = text(form, 'endTime');
-		if (!isTime(start) || !isTime(end)) return '時刻は、「時:分」の形で入れてください。';
-		if (end <= start) return '終わりの時刻は、始まりより後にしてください。';
+		if (!isTime(start) || !isTime(end)) return '時刻は 24 時間表記の「時:分」で入力してください。';
+		if (end <= start) return '終了時刻は開始時刻より後にしてください。';
 		return { kind: 'time', start, end };
 	}
 	if (kind === 'period') {
@@ -125,8 +125,7 @@ function parseRecurrence(
 	return { rrule: recurrenceToRrule(recurrence, startDate) };
 }
 
-/** フォームの値を検査して、予定にする。誤りがあれば、直し方が分かる文を返す */
-/** フォームの値を検査して、予定にする。誤りがあれば、直し方が分かる文を返す */
+/** フォームの入力を予定に変換する。入力を修正する必要があればエラーメッセージを返す。 */
 export function parseEventFields(form: EventFieldReader): EventFormResult {
 	const title = text(form, 'title');
 	if (title === '') return fail('予定の名前を入れてください。');
@@ -138,13 +137,13 @@ export function parseEventFields(form: EventFieldReader): EventFormResult {
 	if (notes.length > NOTES_MAX) return fail(`メモは ${NOTES_MAX} 文字までにしてください。`);
 
 	const startDate = text(form, 'startDate');
-	if (!isDate(startDate)) return fail('開始日を、日付で入れてください。');
+	if (!isDate(startDate)) return fail('開始日に正しい日付を入力してください。');
 	const endInput = text(form, 'endDate');
 	const endDate = endInput === '' ? startDate : endInput;
-	if (!isDate(endDate)) return fail('終了日を、日付で入れてください。');
+	if (!isDate(endDate)) return fail('終了日に正しい日付を入力してください。');
 	if (endDate < startDate) return fail('終了日は、開始日以降にしてください。');
 	if (daysBetween(startDate, endDate) >= SPAN_MAX_DAYS) {
-		return fail(`予定の期間は ${SPAN_MAX_DAYS} 日までにしてください。`);
+		return fail(`予定の期間は開始日と終了日を含めて ${SPAN_MAX_DAYS} 日以内にしてください。`);
 	}
 
 	const time = parseTime(form, endDate > startDate);

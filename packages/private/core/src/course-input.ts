@@ -38,10 +38,11 @@ export function parseSlotInput(input: {
 		return { ok: false, error: '時限を選んでください' };
 	}
 	const roomInput = input.room ?? '';
-	if (typeof roomInput !== 'string') return { ok: false, error: '教室名は文字で書いてください' };
+	if (typeof roomInput !== 'string')
+		return { ok: false, error: '教室名は文字列で指定してください' };
 	const room = roomInput.trim();
 	if (room.length > MAX_ROOM_LENGTH) {
-		return { ok: false, error: `教室名は ${MAX_ROOM_LENGTH} 文字までにしてください` };
+		return { ok: false, error: `教室名は ${MAX_ROOM_LENGTH} 文字以内で入力してください` };
 	}
 	if (!/^\P{Cc}*$/u.test(room)) {
 		return { ok: false, error: '教室名に改行などの制御文字は使えません' };
@@ -55,11 +56,14 @@ export type AbbreviationResult =
 /** 科目の略称。空は「正式名称に戻す」指定として受け付ける */
 export function parseAbbreviation(input: unknown): AbbreviationResult {
 	if (typeof input !== 'string') {
-		return { ok: false, error: '略称名を入力してください。空欄でも保存できます。' };
+		return {
+			ok: false,
+			error: '略称の入力を確認してください。空欄で保存すると正式名称に戻ります。',
+		};
 	}
 	const value = input.trim();
 	if (value.length > MAX_ABBREVIATION_LENGTH) {
-		return { ok: false, error: '略称名は100文字以内で入力してください。' };
+		return { ok: false, error: `略称は ${MAX_ABBREVIATION_LENGTH} 文字以内で入力してください。` };
 	}
 	return { ok: true, value };
 }

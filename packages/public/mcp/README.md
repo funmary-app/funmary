@@ -1,6 +1,6 @@
 # @funmary/mcp
 
-[Funmary](https://github.com/funmary-app/funmary) の MCP サーバーです。手元のパソコンで動かして、Claude Desktop などから、自分の時間割、休講、予定、バスの時刻表を読み書きできます。Funmary は、公立はこだて未来大学の学生向けの、非公式のアプリです。
+[Funmary](https://github.com/funmary-app/funmary) の MCP サーバーです。手元の PC で起動すると、Claude Desktop などから時間割、休講情報、予定、バスの時刻表を確認できます。書き込みを許可すると、予定や履修科目の変更、通知の既読化もできます。Funmary は公立はこだて未来大学の学生向けの非公式アプリです。
 
 ## 使い方
 
@@ -22,9 +22,9 @@ Funmary の設定画面で、個人用のアクセストークンを発行し、
 ```
 
 - `FUNMARY_URL`: 使っている Funmary のサーバーの URL。既定値は持ちません
-- `FUNMARY_TOKEN`: 個人用のアクセストークン。トークンに許した範囲 (`read:lessons`、`write:events` など) の道具だけが出ます。書き込みの範囲は、必要なときだけ許してください
+- `FUNMARY_TOKEN`: 個人用のアクセストークン。発行時に選んだスコープ (`read:lessons`、`write:events` など) に対応する MCP ツールを使えます。書き込みのスコープは、データの変更が必要なときだけ選びます
 
-道具の定義は、Funmary のサーバーの `/mcp` と共有しています。サーバーの `/mcp` に、OAuth で直接つなぐこともできます。
+MCP ツールの定義はサーバーと共通です。OAuth に対応するクライアントは、Funmary の `/mcp` に直接接続できます。
 
 ## ライブラリとして
 

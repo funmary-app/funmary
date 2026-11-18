@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { consentPath, needsConsent, safeNextPath } from './consent-gate.ts';
 
 describe('needsConsent', () => {
-	it('アプリの画面と、API の同意の画面は止める', () => {
+	it('アプリの画面と、API の同意画面は止める', () => {
 		for (const path of ['/app', '/app/week', '/app/settings/tokens', '/oauth/authorize']) {
 			expect(needsConsent(path), path).toBe(true);
 		}
@@ -70,7 +70,7 @@ describe('safeNextPath', () => {
 		}
 	});
 
-	it('同意の画面自身には戻さない (ぐるぐる回らないように)', () => {
+	it('同意画面自身には戻さない (ぐるぐる回らないように)', () => {
 		expect(safeNextPath('/consent')).toBe('/app');
 		expect(safeNextPath('/consent?next=%2Fapp')).toBe('/app');
 	});

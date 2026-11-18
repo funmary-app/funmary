@@ -2,7 +2,7 @@
 	"name": "funmary-monorepo",
 	"private": true,
 	"type": "module",
-	"description": "公立はこだて未来大学の学生向けの便利な総合 Web アプリ (非公式)",
+	"description": "公立はこだて未来大学の学生向けの時間割・休講通知アプリ (非公式)",
 	"license": "(BSD-3-Clause OR Apache-2.0)",
 	"repository": {
 		"type": "git",
@@ -28,6 +28,7 @@
 		"typecheck:ts6": "tsc6 --noEmit",
 		"test": "vitest run",
 		"test:watch": "vitest",
+		"test:mutation": "mutator --root packages/private/core",
 		"test:e2e": "pnpm --filter @funmary/web test:e2e",
 		"prepare": "simple-git-hooks",
 		"generate:client": "node scripts/generate-client-types.ts"
@@ -37,6 +38,7 @@
 		"@commitlint/config-conventional": "catalog:",
 		"@eslint/js": "catalog:",
 		"@funmary/api": "workspace:*",
+		"@mizchi/mutator": "0.3.0",
 		"@types/node": "catalog:",
 		"@typescript/native": "npm:typescript@^7.0.2",
 		"es-module-lexer": "^3.0.4",

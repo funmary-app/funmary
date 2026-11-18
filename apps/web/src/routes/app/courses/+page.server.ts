@@ -32,7 +32,7 @@ export const load: ServerLoad = ({ locals, url }) => {
 	// 新年度のシラバスがまだなければ、前年度の科目を使い続ける
 	const academicYear = subjects.latestYear();
 	const today = jstDateTime(new Date()).date;
-	// シラバスにない授業を足すときの学期の既定。4 月から 8 月は前期、それ以外は後期
+	// シラバスにない授業を追加ときの学期の既定。4 月から 8 月は前期、それ以外は後期
 	const month = Number(today.slice(5, 7));
 	const defaultTerm = month >= 4 && month <= 8 ? 'spring' : 'fall';
 	if (academicYear === null) {

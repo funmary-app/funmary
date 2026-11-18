@@ -96,8 +96,7 @@
 		border-top-width: 3px;
 	}
 
-	// 切り替えのボタン (週の時間割の見せ方、取り込みの方法)。押せる高さを 48px にし、
-	// 選んでいるほうは主色の枠と淡い地にする (SMUI の既定の色は、ダークでも明るいときの赤のまま)
+	// 切り替えのボタン (週の時間割の見せ方、取り込みの方法)。押せる高さを 48px にし、選んでいるほうは主色の枠と淡い地にする (SMUI の既定の色は、ダークでも明るいときの赤のまま)
 	.mdc-segmented-button {
 		--mdc-segmented-button-outline-color: var(--fm-divider);
 		--mdc-segmented-button-unselected-ink-color: var(--fm-text);
@@ -107,8 +106,7 @@
 		--mdc-theme-primary: var(--fm-primary);
 	}
 
-	// 枠の種類を solid にする。SMUI は色と太さだけを決めるので、ブラウザの button の既定 (outset) が残り、
-	// 上と左が明るく、下と右が暗い、立体の枠になっていた。角の丸みは、ほかのボタンと同じにする
+	// 枠の種類を solid にする。SMUI は色と太さだけを決めるので、ブラウザの button の既定 (outset) が残り、上と左が明るく、下と右が暗い、立体の枠になっていた。角の丸みは、ほかのボタンと同じにする
 	.mdc-segmented-button__segment {
 		height: 48px;
 		padding: 0 1rem;

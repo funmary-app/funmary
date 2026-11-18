@@ -1,9 +1,9 @@
 # セルフホストの手順
 
-Funmary を自分の VPS で動かす手順です。この文書だけで、最初の配置から更新、バックアップまでを行えます。
+自分の VPS に Funmary を導入し、運用する手順です。初めて導入するときは 1〜3 節を順に進めてください。更新、バックアップ、利用者の管理は[運用](#4-運用)を参照してください。
 
 > [!IMPORTANT]
-> Funmary は公立はこだて未来大学の非公式のアプリです。自分でホストしたものを、大学や、大学の学生ポータルの運営として名乗らないでください。学生ポータルへの接続は、この文書の手順に従う限り、定期処理だけが 1 日 3 回行います (60 分に 1 回より頻繁には接続しません)。
+> Funmary は公立はこだて未来大学の非公式アプリです。セルフホストするときは、大学や学生ポータルの公式サービスと誤解される名称を使わないでください。学生ポータルへの接続は通常 1 日 3 回です。手動で実行するときも、前回の試行から 60 分以上空けます。
 
 ## 1. 必要なもの
 
@@ -90,7 +90,7 @@ sudo chmod 600 /etc/funmary/funmary.env
 | `ALLOWED_EMAIL_DOMAINS`                                                     | ログインを許すメールアドレスのドメイン。大学のドメインを書く                                                      |
 | `ADMIN_EMAILS`                                                              | 管理者にするメールアドレス (自分のアドレスを書く)                                                                 |
 | `PORTAL_USER_ID`、`PORTAL_PASSWORD`                                         | 2.4 の学生ポータルのアカウント                                                                                    |
-| `ADMIN_DISCORD_WEBHOOK_URL` か `DISCORD_BOT_TOKEN`/`DISCORD_GUILD_ID`       | 管理用の通知の送り先 (任意)                                                                                       |
+| `ADMIN_DISCORD_WEBHOOK_URL` か `DISCORD_BOT_TOKEN`/`DISCORD_GUILD_ID`       | 管理用の通知先 (任意)                                                                                             |
 | `OPERATOR_NAME`、`OPERATOR_URL`                                             | 運営者としてフッターに出す名前と連絡先 (任意。両方書くか、両方空にする)                                           |
 | `CONTACT_EMAIL`                                                             | 問い合わせ先のメールアドレス。「このアプリについて」に出す (任意)                                                 |
 | `BRAND_DIR`                                                                 | ロゴ、アイコン、URL を共有したときの画像を差し替えるディレクトリ (必須。次の「ロゴとアイコンを差し替える」を参照) |
@@ -103,7 +103,7 @@ sudo chmod 600 /etc/funmary/funmary.env
 Funmary のロゴとアイコンは、コードのライセンスの対象外です ([LICENSE-ASSETS](../LICENSE-ASSETS))。セルフホストでは、自分の画像に差し替えてください。
 
 1. 画像を置くディレクトリを作る (例: `/etc/funmary/brand`)
-2. 次の名前で、自分の画像を置く。置いていない名前は、同梱の画像が使われるので、すべて置く
+2. 次の名前で画像を置く。省略したファイル名には同梱の画像が使われるので、すべて用意する
 
    | 名前                              | 大きさ           | 使うところ                                                                   |
    | --------------------------------- | ---------------- | ---------------------------------------------------------------------------- |
@@ -116,7 +116,7 @@ Funmary のロゴとアイコンは、コードのライセンスの対象外で
 
 3. `/etc/funmary/funmary.env` に `BRAND_DIR=/etc/funmary/brand` を書き、`funmary` のユーザーが読めるようにする
 
-画像は `/brand/<名前>` で配られます。差し替えたら、`systemctl restart funmary` は要りません (次に読まれたときから使われます。ブラウザは 1 日ほど覚えているので、すぐ確かめるときは再読み込みします)。
+画像は `/brand/<名前>` で配信されます。差し替えた画像は、次に取得されたときから使われます。ブラウザが画像を約 1 日キャッシュするため、すぐに確認したいときはページを再読み込みしてください。Funmary の再起動は不要です。
 
 ### 3.3 最初のリリースを取得する
 
@@ -138,7 +138,7 @@ Google の値 (`GOOGLE_CLIENT_ID`、`GOOGLE_CLIENT_SECRET`) と、ドメイン�
 
 ### 3.5 systemd の unit を置く
 
-`deploy/` にある unit ファイルを配置します (`update.sh` を使うと自動で `/opt/funmary/current/deploy/` から取得できるので、リリースの中から取ってもかまいません)。
+リリースに同梱されている systemd のユニットファイルを配置し、アプリとバックアップタイマーを起動します。
 
 ```sh
 sudo cp /opt/funmary/current/deploy/funmary.service /etc/systemd/system/
@@ -173,17 +173,18 @@ sudo certbot --nginx -d funmary.example.com
 curl https://funmary.example.com/healthz
 ```
 
-`{"status":"ok"}` が返れば、起動できています。ブラウザで開き、Google でログインできるかも確かめてください (登録の方式は、最初は招待制です。招待コードが要ります。招待コードの発行は 4.3 を参照)。
+`{"status":"ok"}` が返ればアプリは起動しています。続けてブラウザで開き、Google でログインできるか確認してください。登録は既定で招待制です。新規登録には[招待コードの発行](#43-招待コード)が必要です。
 
 `{"status":"unavailable"}` が返る、または応答がないときは `journalctl -u funmary -n 50` でログを確かめます。
 
 ### 3.8 学年暦と授業時間割を取り込む
 
-学生ポータルからは休講などの変更しか取れないので、学期の期間や、曜日と時限の対応表は、大学が配る PDF から別に取り込みます。
+学期の期間や授業の曜日、時限、教室は、大学が配布する PDF から取り込みます。授業時間割を取り込む前に、対象年度の公開シラバスの取得を済ませてください。定期処理を待つか、[取得元の管理画面](#46-取得元の状態を見る)から `import-syllabus` を実行できます。
 
-1. 大学の公式サイトから、学年暦と、前期・後期の授業時間割の PDF を入手する。
-2. 管理者としてログインし、設定の「学年暦」または「授業時間割の取り込み」の画面から PDF を上げる。読み取った内容を確かめてから取り込める。
-3. 管理用コマンドでも取り込める (`funmary-admin calendar import <PDF>` と `funmary-admin timetable import <PDF>`。どちらも `--apply` を付けるまでは確かめるだけで、DB には書き込まない)。
+1. 大学の公式サイトから、学年暦と前期・後期の授業時間割の PDF を入手します。
+2. 管理者としてログインし、設定の「学年暦」または「授業時間割の取り込み」で PDF を選びます。読み取り結果を確認してから取り込みます。
+
+管理用コマンドを使う場合は、`funmary-admin calendar import <PDF>` と `funmary-admin timetable import <PDF>` を実行します。どちらも `--apply` を付けるまでは確認だけを行います。
 
 学年暦は、大学サイトからの自動取得も月に 1 回行われます (内容が変わったときだけ取り込む)。
 
@@ -197,23 +198,29 @@ curl https://funmary.example.com/healthz
 sudo /usr/local/sbin/funmary-update.sh build-<新しいコミットのハッシュ>
 ```
 
-`update.sh` は、取得したファイルの sha256 を確かめてから展開し、アプリを再起動して `/healthz` が応答するかを確かめます。応答しなければ、自動で前の版に戻します (前の版が起動できなくなることはありません)。古いリリースは、直近 3 つを残して消えます。
+`update.sh` は配布ファイルの SHA-256 を検証してから展開します。稼働中のリリースが変わると、アプリを再起動し、`/healthz` で動作を確かめます。起動確認に失敗して前のリリースが残っている場合は、前のリリースに切り戻して再起動を試みます。更新に成功すると、直近 3 件と稼働中のリリースを残し、古いリリースを削除します。
 
 手で前の版に戻したいときは、同じコマンドに前の版のハッシュを指定します。
 
-**任意: リリースのたびに自動で反映する** — このリポジトリを [フォーク](https://github.com/funmary-app/funmary/fork) して使っている場合は、GitHub Actions からリリースのたびに自動で反映させられます。反映専用のユーザーと、そのユーザーでしか使えない SSH の鍵を用意し、`command=` で `funmary-update` だけを実行できるように制限します。
+#### リリースを自動で反映する (任意)
+
+リポジトリを[フォーク](https://github.com/funmary-app/funmary/fork)して使う場合は、GitHub Actions から VPS の更新を起動できます。VPS の更新スクリプトの配布元は、フォーク側のリリースに合わせてください。更新専用のユーザーと SSH 鍵を作り、`command=` で実行できるコマンドを `funmary-update` に制限します。
 
 ```sh
-sudo useradd --system --shell /bin/sh funmary-deploy
+sudo useradd --system --create-home --home-dir /home/funmary-deploy --shell /bin/sh funmary-deploy
 sudo -u funmary-deploy mkdir -p /home/funmary-deploy/.ssh
-echo 'command="sudo /usr/local/bin/funmary-update",no-agent-forwarding,no-port-forwarding,no-X11-forwarding ssh-ed25519 AAAA...' \
+echo 'command="sudo /usr/local/sbin/funmary-update",no-agent-forwarding,no-port-forwarding,no-X11-forwarding ssh-ed25519 AAAA...' \
   | sudo -u funmary-deploy tee /home/funmary-deploy/.ssh/authorized_keys
 sudo -u funmary-deploy chmod 600 /home/funmary-deploy/.ssh/authorized_keys
 ```
 
-`ssh-ed25519 AAAA...` の部分は、GitHub Actions 用に新しく作った鍵ペアの公開鍵に置き換えます。`funmary-deploy` が `sudo` で `funmary-update` を無入力で実行できるよう、`visudo` で `funmary-deploy ALL=(root) NOPASSWD: /usr/local/bin/funmary-update` も設定します。あとは、フォークしたリポジトリの Settings から `production` という Environment を作り、secret に `DEPLOY_HOST` (VPS のホスト名)、`DEPLOY_SSH_KEY` (秘密鍵)、`DEPLOY_KNOWN_HOSTS` (`ssh-keyscan` で得たホスト鍵) を設定すれば、`Release` ワークフローの完了後に自動で反映されます。使わないなら、この設定は不要です。
+`ssh-ed25519 AAAA...` を GitHub Actions 用に作った鍵ペアの公開鍵に置き換えます。`funmary-deploy` がパスワードなしで更新コマンドを実行できるよう、`visudo` で `funmary-deploy ALL=(root) NOPASSWD: /usr/local/sbin/funmary-update` を設定します。
 
-**新しい環境変数が増えたとき** — 更新のたびに `.env.example` を見比べる代わりに、次のどちらかで環境変数ファイルの並びを `.env.example` に合わせられます。どちらも、値のある行の値は変えず、足りない鍵を `.env.example` の位置に空のまま足し、`.env.example` にない鍵は末尾にまとめて残します (消しません)。書き換える前に、元の内容を `<ファイル>.bak.<日時>` として残します。
+フォークしたリポジトリの Settings で `production` という Environment を作り、secret に `DEPLOY_HOST` (VPS のホスト名)、`DEPLOY_SSH_KEY` (秘密鍵)、`DEPLOY_KNOWN_HOSTS` (`ssh-keyscan` で取得したホスト鍵) を設定すると、`Release` ワークフローの完了後に自動で反映されます。
+
+#### 環境変数ファイルを更新する
+
+環境変数が増えたら、次のいずれかの手順で設定ファイルを `.env.example` と同じ並びにできます。設定済みの値は引き継ぎます。新しい項目はひな形と同じ位置に値を空欄にして追加し、ひな形にない項目は末尾に残します。書き換える前の内容は `<ファイル>.bak.<日時>` に保存します。
 
 VPS にログインしているなら、`funmary-admin` を直接使います。
 
@@ -221,7 +228,7 @@ VPS にログインしているなら、`funmary-admin` を直接使います。
 sudo /usr/local/bin/funmary-admin align-env --file=/etc/funmary/funmary.env
 ```
 
-リポジトリの手元の環境からは、`pnpm env:upload` で、SSH で入るだけで済ませられます (使わなくなった鍵 (`REGISTRATION` など) が残っていれば消すか確認され、並びを揃えたあと、手元の `.env` にあってリモートと値が違う、またはリモートにない鍵があれば、1 つずつ上書きするか確認されます)。接続先は、コマンドの引数ではなく `.env.ssh` に書きます (シェルの履歴に接続先や鍵の場所を残さないため)。
+手元のリポジトリで `pnpm env:upload` を実行すると、SSH で VPS の環境変数を更新できます。使わなくなった項目 (`REGISTRATION` など) が残っていれば、削除するか聞かれます。項目の並びをそろえたあと、手元の `.env` にしかない項目や VPS と値が異なる項目は、1 件ずつ反映するか選べます。環境ごとに生成する鍵は上書きしません。接続先や鍵の場所をシェルの履歴に残さないように、接続先は `.env.ssh` に書きます。
 
 ```sh
 cp .env.ssh.example .env.ssh
@@ -267,7 +274,7 @@ sudo /usr/local/bin/funmary-admin invite create --uses 5 --days 30 --note "テ�
 ### 4.4 監視
 
 - `/healthz` を、外部の監視サービス (UptimeRobot など) で定期的に確認することを勧めます。
-- 環境変数 `HEARTBEAT_URL` に [healthchecks.io](https://healthchecks.io/) などの URL を設定すると、定期処理 (休講の取得など) が動くたびに、その URL への通知が届きます。定期処理が止まったことに気づけます。
+- 環境変数 `HEARTBEAT_URL` に [healthchecks.io](https://healthchecks.io/) などの URL を設定すると、学生ポータルからの取得に成功するたびに、その URL へ通知します。通知が途絶えたときは、監視サービスで取得の失敗や停止に気づけます。
 - `ADMIN_DISCORD_WEBHOOK_URL` か `DISCORD_BOT_TOKEN`/`DISCORD_GUILD_ID` を設定すると、取得元の不調や、反映の結果などが Discord に届きます。
 
 ### 4.5 ログの見方
@@ -311,9 +318,9 @@ sudo /usr/local/bin/funmary-admin user unsuspend <メールアドレス>        
 
 ## 5. 大学のサービスとのかかわり
 
-- Funmary が大学の学生ポータルに接続するのは、休講などを確かめる定期処理だけです。この定期処理は、1 日に 3 回 (日本時間 7 時、12 時、18 時) しか動かず、それより短い間隔で接続することはありません (`SOURCES_DISABLED` で個別の取得元を止めることはできますが、間隔を今より短くする設定はありません)。
-- 学生ポータルのアカウント (3.4 で設定したもの) のパスワードは、環境変数ファイルにだけ置かれ、暗号化して DB に保存されます。画面や管理用コマンドの出力には出ません。
-- 授業の曜日と時限、教室は、学生ポータルからは自動で取れないため、利用者どうしが登録して共有する仕組みです。学年暦と授業時間割の PDF は、大学の公式サイトから、管理者が手で取り込みます (3.8)。
+- 学生ポータルから休講などの情報を取得する定期処理は、日本時間の 7 時、12 時、18 時ごろに実行します。管理者が手動で実行するときも、前回の試行から 60 分たつまでは接続しません。`SOURCES_DISABLED` で取得元を個別に停止できます。
+- 学生ポータルの ID とパスワードは[環境変数ファイル](#32-環境変数ファイルを作る)に設定します。Funmary のサーバーがポータルへのログインに使います。画面や管理用コマンドの出力には表示しません。
+- 授業の曜日、時限、教室は学生ポータルから自動で取得できないため、利用者が登録して共有します。[学年暦と授業時間割の PDF](#38-学年暦と授業時間割を取り込む)は、大学の公式サイトから入手して管理者が取り込みます。学年暦は月に 1 回、自動取得も行います。
 - Funmary は大学の公式サービスではありません。運営者としての名前と連絡先を、環境変数 `OPERATOR_NAME`/`OPERATOR_URL` で設定すると、画面のフッターに出せます。設定しない場合、Funmary はソースコードへのリンクだけを出します。
 
 ## 困ったときは

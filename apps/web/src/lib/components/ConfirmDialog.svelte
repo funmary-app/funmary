@@ -1,12 +1,10 @@
 <script lang="ts">
-	// 破壊的な操作の前の確認 (use:confirmSubmit が出す)。最上位のレイアウトに 1 つだけ置く
 	import Button, { Label } from '@smui/button';
 	import Dialog, { Actions, Content } from '@smui/dialog';
 	import { answerConfirm, confirmDialog } from '#lib/confirm-dialog.svelte.ts';
 
 	let open = $derived(confirmDialog.message !== null);
-	// SMUI は外側の枠と中の面の両方を alertdialog にするので、読み上げで 2 つにならないよう、
-	// 外側 (role、aria-modal) は役割なしにし、説明は中の面 (surface$) に付ける
+	// SMUI は外枠と内側の両方に alertdialog を付ける。読み上げが重複しないよう外枠の役割を外し、説明は内側 (surface$) に付ける。
 </script>
 
 <Dialog

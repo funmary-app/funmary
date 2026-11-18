@@ -9,8 +9,7 @@ import { smuiStyles } from './scripts/smui-styles.js';
 
 // 単体テストの設定はルートの vitest.config.js に置く
 export default defineConfig(({ command }) => ({
-	// adapter-node は dependencies をビルドの外に置き、実行時に読み込む。VPS には better-sqlite3 しか入れないので、
-	// ビルドでは、ほかの依存をすべて同梱する。開発サーバーでは、読み込みを速くするため同梱しない
+	// adapter-node は dependencies をビルドの外に置き、実行時に読み込む。VPS には better-sqlite3 しか入れないので、ビルドでは、ほかの依存をすべて同梱する。開発サーバーでは、読み込みを速くするため同梱しない
 	...(command === 'build' && {
 		ssr: {
 			// adapter-node 6 は、noExternal が配列でないと dependencies をすべて外に置く。配列で "UNBUNDLED_DEPS 以外すべて" を同梱にする

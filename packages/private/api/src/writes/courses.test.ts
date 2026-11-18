@@ -169,17 +169,25 @@ describe('履修登録', () => {
 });
 
 describe('履修登録の解除', () => {
-	it('解除し、自分だけの曜日と時限と略称は残す', () => {
+	it('履修登録を取り消しても、個人用の曜日と時限、略称は残る', () => {
 		const { sources, user, actorOf } = setup();
 		const a = user('a');
-		registerCourse(sources, actorOf(a), LINEAR, NOW);
-		setPersonalSlot(sources, actorOf(a), LINEAR, { weekday: 2, period: 3, room: '363' }, NOW);
+		const actor = actorOf(a);
+		registerCourse(sources, actor, LINEAR, NOW);
+		setPersonalSlot(sources, actor, LINEAR, { weekday: 2, period: 3, room: '363' }, NOW);
+		setAbbreviation(sources, actor, LINEAR, '線形', NOW);
 
-		const result = unregisterCourse(sources, actorOf(a), LINEAR, NOW);
+		const result = unregisterCourse(sources, actor, LINEAR, NOW);
 
-		expect(result).toMatchObject({ ok: true, course: { registered: false } });
+		expect(result).toMatchObject({
+			ok: true,
+			course: {
+				registered: false,
+				personalSlots: [{ weekday: 2, period: 3, room: '363' }],
+				abbreviation: '線形',
+			},
+		});
 		expect(sources.courses.listRegistrations(a)).toEqual([]);
-		expect(sources.personalSlots.listForSubject(a, 1)).toBeDefined();
 		expect(sources.activity.listRecent(a)[0]).toMatchObject({ action: 'course.unregister' });
 	});
 

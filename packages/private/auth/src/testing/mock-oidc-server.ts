@@ -37,8 +37,7 @@ export type TamperMode = 'none' | 'wrong-key' | 'wrong-audience' | 'expired' | '
 
 /**
  * 認可のリクエストの x-e2e-worker ヘッダーの値ごとに、ログインする人と ID トークンの壊し方を分ける。
- * E2E のワーカー (別のプロセス) が 1 つのサーバーを共有するので、ワーカーは POST /__mock/identity と
- * POST /__mock/tamper ({ client, identity } と { client, mode }) で、自分の分を決める
+ * E2E のワーカー (別のプロセス) が 1 つのサーバーを共有するので、ワーカーは POST /__mock/identity と POST /__mock/tamper ({ client, identity } と { client, mode }) で、自分の分を決める
  */
 export const CLIENT_HEADER = 'x-e2e-worker';
 

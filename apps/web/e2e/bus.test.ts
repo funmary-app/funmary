@@ -201,7 +201,7 @@ test.describe('バス', () => {
 			await page.goto('/app/bus');
 
 			const nextBus = page.getByRole('region', { name: '次のバス' });
-			await expect(nextBus).toContainText('今日の発車は、もうありません');
+			await expect(nextBus).toContainText('今日はこのあとの便がありません');
 			await expect(nextBus).not.toContainText('55A');
 		} finally {
 			seedBus();

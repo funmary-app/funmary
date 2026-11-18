@@ -61,7 +61,7 @@ test.describe('管理画面', () => {
 		await signInAs(page, 'e2e-admin@fun.ac.jp');
 		const name = `E2E の監査ログ演習${Date.now()}`;
 		await page.goto('/app/courses');
-		await page.getByText('公開シラバスに載っていない授業を、科目として足す').click();
+		await page.getByText('公開シラバスに載っていない授業を登録する').click();
 		await page.getByLabel(/授業の名前/).fill(name);
 		await page.getByLabel('学期').selectOption('後期');
 		await page.getByRole('button', { name: '足して登録する' }).click();
@@ -89,7 +89,7 @@ test.describe('管理画面', () => {
 		await expect(entries.filter({ hasText: name }).first()).toContainText('e2e-admin@fun.ac.jp');
 	});
 
-	test('Discord設定の画面は、管理者にだけ開け、Bot が未設定なら設定のしかたを出す', async ({
+	test('Discord 設定の画面は、管理者にだけ開け、Bot が未設定なら設定のしかたを出す', async ({
 		page,
 	}) => {
 		await signInAs(page, 'e2e-not-admin@fun.ac.jp');
@@ -97,8 +97,8 @@ test.describe('管理画面', () => {
 
 		await signInAs(page, 'e2e-admin@fun.ac.jp');
 		await page.goto('/app/settings');
-		await page.getByRole('link', { name: /^Discord設定/ }).click();
-		await expect(page.getByRole('heading', { name: 'Discord設定', level: 1 })).toBeVisible();
+		await page.getByRole('link', { name: /^Discord 設定/ }).click();
+		await expect(page.getByRole('heading', { name: 'Discord 設定', level: 1 })).toBeVisible();
 		await expect(page.getByText('Bot が設定されていません')).toBeVisible();
 		await expect(page.getByRole('navigation', { name: 'パンくず' })).toContainText('設定');
 		// チャンネル 7 本とロール 3 つが、まだ決まっていない状態で並ぶ
@@ -222,7 +222,7 @@ test.describe('曜日と時限の確認', () => {
 		const otherPage = await (await browser.newContext()).newPage();
 		await signInAs(otherPage, `e2e-slot-user-${Date.now()}@fun.ac.jp`);
 		await otherPage.goto('/app/courses');
-		await otherPage.getByText('公開シラバスに載っていない授業を、科目として足す').click();
+		await otherPage.getByText('公開シラバスに載っていない授業を登録する').click();
 		await otherPage.getByLabel(/授業の名前/).fill(name);
 		await otherPage.getByLabel('学期').selectOption('後期');
 		await otherPage.getByRole('button', { name: '足して登録する' }).click();

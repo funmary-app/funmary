@@ -1,4 +1,4 @@
-// MCP の認可 (OAuth 2.1) の同意の画面。claude.ai などのコネクタが、利用者をここへ連れてくる。
+// MCP の認可 (OAuth 2.1) の同意画面。claude.ai などのコネクタが、利用者をここへ連れてくる。
 // ログインしていなければ、ログインのあとにここへ戻るよう Cookie に覚えさせて、ログインへ送る。
 import {
 	buildRedirect,
@@ -13,8 +13,7 @@ import { getServices } from '#lib/server/services.ts';
 import { requireSignedIn } from '#lib/server/admin.ts';
 
 /**
- * クライアントへ戻す。戻り先は、クライアントが登録した URI と完全に一致したものだけ
- * (parseAuthorizeRequest が検査する) なので、外のサイトへの移動を許してよい。
+ * クライアントへ戻す。戻り先は、クライアントが登録した URI と完全に一致したものだけ (parseAuthorizeRequest が検査する) なので、外のサイトへの移動を許してよい。
  */
 const goBack = (location: string): never => redirect(303, location, { external: true });
 

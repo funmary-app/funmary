@@ -57,8 +57,7 @@ export interface NotificationStore {
 	markAllRead(userId: string, now: Date): number;
 	pruneBefore(before: Date): number;
 	/**
-	 * 通知する休講、補講、教室変更の候補。履修している人ごとに、today 以降で、取り消されておらず、
-	 * 履修したあとに見つけたもの (履修した時点で既にあったものは、通知欄に流さない)
+	 * 通知する休講、補講、教室変更の候補。履修している人ごとに、today 以降で、取り消されておらず、履修したあとに見つけたもの (履修した時点で既にあったものは、通知欄に流さない)
 	 */
 	classChangeCandidates(today: string): ClassChangeCandidate[];
 }

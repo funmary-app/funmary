@@ -1,4 +1,4 @@
-// 取得元の見張りの状態 (@funmary/core の SourceHealth) を、source_status のテーブルに保存する。
+// 取得元の状態の状態 (@funmary/core の SourceHealth) を、source_status のテーブルに保存する。
 import { INITIAL_SOURCE_HEALTH, type SourceHealth } from '@funmary/core';
 import { eq } from 'drizzle-orm';
 import type { Database } from './database.ts';

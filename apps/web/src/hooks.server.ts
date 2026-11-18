@@ -95,7 +95,7 @@ import { readRegistration } from '#lib/server/registration.ts';
 import { parseThemePreference, THEME_COOKIE } from '#lib/theme.ts';
 
 /** Hono に渡すパス。これ自身か、この下のパスが対象になる */
-// 同意の画面 (/oauth/authorize) は SvelteKit の画面なので、/oauth の全体ではなく、口ごとに書く
+// 同意画面 (/oauth/authorize) は SvelteKit の画面なので、/oauth の全体ではなく、口ごとに書く
 const API_PATHS = [
 	'/.well-known',
 	'/api',
@@ -376,7 +376,7 @@ export const init: ServerInit = () => {
 		legal: findLegalInfo(dirname(fileURLToPath(import.meta.url))),
 	};
 	setServices(services);
-	// 同意していない利用者のトークンには、公開 API と MCP が、同意の画面の URL を知らせて断る
+	// 同意していない利用者のトークンには、公開 API と MCP が、同意画面の URL を知らせて断る
 	const termsGate = { version: CURRENT_TERMS_VERSION, consentUrl: `${publicOrigin}/consent` };
 	const authService: AuthService = createAuthService({
 		oidc: createGoogleOidcClient({
@@ -429,7 +429,7 @@ export const init: ServerInit = () => {
 			termsGate,
 		},
 		oauth: { oauth: oauthStore, origin: publicOrigin },
-		// 公開鍵がなければ、Discord の署名を確かめられないので、受け口を開けない
+		// Discord の署名を検証できる場合にのみ、エンドポイントを登録する
 		...(result.config.discordPublicKey
 			? {
 					discordInteractions: {
@@ -482,7 +482,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 			});
 		}
 	}
-	// 利用規約への同意が済むまで、アプリの画面を止める。画面は同意の画面へ、フォームの送信などは 403 にする
+	// 利用規約への同意が済むまで、アプリの画面を止める。画面は同意画面へ、フォームの送信などは 403 にする
 	if (
 		event.locals.user &&
 		needsConsent(path) &&

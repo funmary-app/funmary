@@ -23,7 +23,7 @@ export interface OAuthClient {
 	readonly redirectUris: readonly string[];
 }
 
-/** 認可コードを引き換えるときに、トークンの口が確かめる材料 */
+/** トークンエンドポイントが、認可コードの引き換え時に検証する項目 */
 export interface ConsumedCode {
 	readonly clientId: string;
 	readonly userId: string;

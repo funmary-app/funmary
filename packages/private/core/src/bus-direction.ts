@@ -3,8 +3,7 @@
 // そこで、発車表の「経由」と「行き先」の文字から向きを決める。
 // 55 系統はどれも未来大を通る (函館駅前、未来大、赤川の順に並ぶ) ので、次のように決められる。
 // - A から未来大へ: A の発車のうち、経由か行き先に未来大があるもの
-// - 未来大から A へ: 未来大の発車のうち、行き先が「A から未来大と反対へ向かう便」の行き先と同じもの
-//   (その便は、未来大を通ってから A を通る)。または、経由か行き先に A があるもの
+// - 未来大から A へ: A を経由する便、A が行き先の便、A から未来大と反対方向へ向かう便と同じ行き先の便を選ぶ。
 // I/O は持たない。
 import type { BusPlatformTimetable, BusStop, BusStopTimetable } from './bus.ts';
 
@@ -34,8 +33,7 @@ export const BRANCH_JUNCTION_STOP: BusStop = { id: '14013', name: '亀田支所�
 const normalize = (text: string) => text.normalize('NFKC').replace(/\s+/g, '');
 
 /**
- * 停留所の名前が同じか (全角と半角、空白の違いは無視する)。向きごとに別のバス停コードを持つ停留所 (昭和営業所前など) は、
- * 同じ名前の別のコードとして一覧に並ぶ
+ * 停留所の名前が同じか (全角と半角、空白の違いは無視する)。向きごとに別のバス停コードを持つ停留所 (昭和営業所前など) は、同じ名前の別のコードとして一覧に並ぶ
  */
 export const sameStopName = (a: string, b: string): boolean => normalize(a) === normalize(b);
 

@@ -304,7 +304,7 @@ describe('トークンの発行', () => {
 	});
 });
 
-describe('同意の画面への依頼の検査', () => {
+describe('同意画面への依頼の検査', () => {
 	const setupClient = () => {
 		const { oauth } = setup();
 		const client = oauth.registerClient({ name: 'Claude', redirectUris: [REDIRECT] }, new Date());

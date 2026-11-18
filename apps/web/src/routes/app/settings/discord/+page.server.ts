@@ -110,8 +110,7 @@ export const load: ServerLoad = async ({ locals, url }) => {
 						{ code, state },
 						new Date(),
 					);
-		// 認可コードは 1 回しか使えない。URL に残したままだと、フォームの送信などで読み直すたびに
-		// 同じコードを Discord に送り直してしまい、2 回目からは必ず失敗する。処理したらすぐ URL から消す
+		// 認可コードは 1 回しか使えない。URL に残したままだと、フォームの送信などで読み直すたびに同じコードを Discord に送り直してしまい、2 回目からは必ず失敗する。処理したらすぐ URL から消す
 		const params = new URLSearchParams({
 			linked: callback.ok ? 'ok' : 'error',
 			message: callback.message,
@@ -212,7 +211,7 @@ export const actions: Actions = {
 		}
 		const result = await applyKindSettings(current, settings);
 		if (!result.ok) return fail(502, { error: result.error });
-		return { message: '通知の送り先を保存しました。' };
+		return { message: '通知先を保存しました。' };
 	},
 	/** すべての種類に、同じ送り先とメンションを、まとめて適用する */
 	routingAll: async ({ request, locals }) => {

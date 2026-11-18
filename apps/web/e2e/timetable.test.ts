@@ -501,8 +501,7 @@ test.describe('自分の予定', () => {
 		await page.getByRole('link', { name: '自分の予定' }).click();
 		await expect(page.getByText('まだ予定がありません')).toBeVisible();
 
-		// 開始日は、次の月曜日にする。「この日は除く」の候補にはこれからの回しか出ないので、
-		// 日付を固定すると、その日が過ぎたあとに候補から外れて、このテストが壊れる
+		// 開始日は、次の月曜日にする。「この日は除く」の候補にはこれからの回しか出ないので、日付を固定すると、その日が過ぎたあとに候補から外れて、このテストが壊れる
 		const DAY_MS = 24 * 60 * 60 * 1000;
 		const jstNow = new Date(Date.now() + 9 * 60 * 60 * 1000);
 		const startDate = new Date(jstNow.getTime() + ((8 - jstNow.getUTCDay()) % 7 || 7) * DAY_MS);

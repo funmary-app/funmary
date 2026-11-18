@@ -113,7 +113,7 @@ export function answerCommand(
 	const user = services.auth.findUserById(link.userId);
 	if (!user || user.status !== 'active')
 		return 'この Funmary のアカウントは、いまは利用できません。';
-	// 利用規約への同意を待っている間は、答えず、同意の画面を案内する
+	// 利用規約への同意を待っている間は、答えず、同意画面を案内する
 	if (!hasAcceptedTerms(user.termsAcceptedVersion, services.termsVersion)) {
 		return termsRequiredMessage(`${services.origin}/consent`);
 	}

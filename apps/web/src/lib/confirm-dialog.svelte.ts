@@ -1,5 +1,4 @@
-// 破壊的な操作の前に出す確認のダイアログの状態。ダイアログ (ConfirmDialog.svelte) は最上位のレイアウトに 1 つだけ置き、
-// askConfirm で出して、押されたボタンを待つ。続けて呼ばれたら、前の確認は「やめる」として閉じる
+// 破壊的な操作の前に出す確認のダイアログの状態。ダイアログ (ConfirmDialog.svelte) は最上位のレイアウトに 1 つだけ置き、askConfirm で出して、押されたボタンを待つ。続けて呼ばれたら、前の確認は「やめる」として閉じる
 
 interface PendingConfirm {
 	message: string;

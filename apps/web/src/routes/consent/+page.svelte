@@ -20,18 +20,17 @@
 </svelte:head>
 
 <div class="page page-w-36">
-	<h1>{data.reconsent ? '利用規約が更新されました' : '利用規約への同意'}</h1>
+	<h1>{data.reconsent ? '規約への再同意' : '利用規約への同意'}</h1>
 
 	<FormNotice error={form?.error ?? null} />
 
 	<p>
 		{#if data.reconsent}
-			利用規約かプライバシーポリシーの内容が変わりました。
+			利用規約またはプライバシーポリシーが更新されました。
 		{:else}
 			Funmary を使うには、利用規約とプライバシーポリシーへの同意が必要です。
 		{/if}
-		内容を読んで、同意してください。同意するまでは、アプリ、公開 API、MCP、Discord のコマンドと通知、カレンダーと
-		RSS の購読を含む、すべての機能を止めています。
+		内容を確認し、同意してください。同意すると、アプリ画面、公開 API、MCP、Discord のコマンドと通知、カレンダーや通知の購読を利用できます。
 	</p>
 
 	<ul class="documents">
@@ -56,7 +55,7 @@
 	</form>
 
 	<form method="POST" action="/auth/logout" class="decline" data-sveltekit-reload>
-		<p>同意しない場合は、ログアウトしてください。同意するまで、機能は使えません。</p>
+		<p>同意せずにこの画面を閉じる場合は、ログアウトできます。</p>
 		<Button type="submit" variant="outlined"><Label>同意せずにログアウト</Label></Button>
 	</form>
 </div>

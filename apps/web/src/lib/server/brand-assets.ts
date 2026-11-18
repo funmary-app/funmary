@@ -1,5 +1,4 @@
-// ロゴ、アイコン、OGP の画像 (/brand/<ファイル名>)。ロゴとアイコンはコードのライセンスの対象外 (LICENSE-ASSETS) なので、
-// セルフホストでは BRAND_DIR に同じ名前の自分の画像を置いて差し替えてもらう。置いていない画像は、同梱のものを返す。
+// ロゴ、アイコン、OGP の画像 (/brand/<ファイル名>)。ロゴとアイコンはコードのライセンスの対象外 (LICENSE-ASSETS) なので、セルフホストでは BRAND_DIR に同じ名前の自分の画像を置いて差し替えてもらう。置いていない画像は、同梱のものを返す。
 // static/ に置くと、本番 (adapter-node) はアプリの処理より前に返してしまい、差し替えられないので、ここで返す
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';

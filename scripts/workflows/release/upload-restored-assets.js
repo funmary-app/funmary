@@ -1,6 +1,5 @@
 // 消えたリリースの復元で、ビルドし直したファイルを、作り直した項目に置く (restore-releases.yml の 2 つ目のジョブ、Issue #222)。
-// リリースにしたコミットを checkout し、そのコミット自身の設定でビルドしたあとに動かす。古いコミットでは、
-// リリースに添えるファイルの一部を作らないことがあるので、できたものだけを置く。
+// リリースにしたコミットを checkout し、そのコミット自身の設定でビルドしたあとに動かす。古いコミットでは、リリースに添えるファイルの一部を作らないことがあるので、できたものだけを置く。
 // 環境変数: HEAD_SHA (リリースにしたコミット)、GH_TOKEN (gh が使う)、GITHUB_REPOSITORY (owner/repo)
 import { execFileSync } from 'node:child_process';
 import { existsSync } from 'node:fs';

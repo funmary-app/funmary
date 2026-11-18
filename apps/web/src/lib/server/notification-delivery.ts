@@ -30,7 +30,7 @@ export interface NotificationDeliveryOptions {
 	readonly dryRun: boolean;
 	/** 管理者が Discord 連携を有効にしているか。無効の間は、連携の送り先に送らない */
 	readonly linkEnabled: () => boolean;
-	/** 同意を求めている利用規約の版。持ち主が同意するまで、その人の配信は送らない */
+	/** 同意を求めている利用規約のバージョン。持ち主が同意するまで、その人の配信は送らない */
 	readonly termsVersion: string;
 	readonly log: Logger;
 	readonly fetch?: (url: string, init?: RequestInit) => Promise<Response>;

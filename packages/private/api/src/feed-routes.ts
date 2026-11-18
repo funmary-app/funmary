@@ -15,7 +15,7 @@ const RATE_LIMIT = { windowMs: 15 * 60 * 1000, limit: 60 };
 export interface FeedRoutesDeps {
 	/** トークンの持ち主の通知欄。知らないトークン、取り消したトークン、停止した利用者なら null */
 	readonly loadFeed: (token: string) => FeedInput | typeof TERMS_REQUIRED | null;
-	/** 同意の画面の URL。持ち主が利用規約への同意を待っているとき、購読に返す説明に入れる */
+	/** 同意画面の URL。持ち主が利用規約への同意を待っているとき、購読に返す説明に入れる */
 	readonly consentUrl?: string;
 }
 

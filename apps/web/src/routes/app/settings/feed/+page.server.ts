@@ -1,4 +1,4 @@
-// 通知のフィード (RSS、Atom、JSON Feed) の設定。購読の URL を発行、再発行、無効にする。
+// 通知のフィード (RSS、Atom、JSON Feed) の設定。購読 URL を発行、再発行、無効にする。
 // URL のトークンは DB にハッシュだけを保存するので、URL は発行の直後に 1 回だけ出す
 import { fail, type Actions, type ServerLoad } from '@sveltejs/kit';
 import { DEFAULT_CHANNEL_KINDS, type NotificationKind } from '@funmary/db';
@@ -36,14 +36,14 @@ export const actions: Actions = {
 	revoke: ({ locals }) => {
 		requireSignedIn(locals);
 		getServices().feedTokens.revoke(locals.user.id, 'feed', new Date());
-		return { message: '購読の URL を無効にしました。RSS リーダーには、もう届きません。' };
+		return { message: '購読 URL を無効にしました。フィードリーダーで通知は更新されません。' };
 	},
 	/** フィードに載せる通知の種類を保存する */
 	kinds: async ({ request, locals }) => {
 		requireSignedIn(locals);
 		const services = getServices();
 		if (!services.feedTokens.current(locals.user.id, 'feed')) {
-			return fail(400, { error: '購読の URL を、先に発行してください。' });
+			return fail(400, { error: '購読 URL を、先に発行してください。' });
 		}
 		const kinds = parseChannelKinds(await request.formData());
 		if (!kinds)

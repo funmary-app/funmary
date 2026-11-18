@@ -78,7 +78,7 @@ export interface Services {
 	readonly courses: CourseStore;
 	/** 利用者の通知欄 */
 	readonly notifications: NotificationStore;
-	/** 利用者が登録した通知の送り先 (Discord の Webhook、汎用の Webhook) */
+	/** 利用者が登録した通知先 (Discord の Webhook、汎用の Webhook) */
 	readonly channels: ChannelStore;
 	/** 通知の送信待ちと、送れたか。管理画面の「配信の失敗」はここから出す */
 	readonly deliveries: DeliveryStore;
@@ -134,7 +134,7 @@ export interface Services {
 	readonly build: BuildInfo | null;
 	/** LICENSE の本文と、依存のライセンス一覧。手元の開発では null */
 	readonly legal: LegalInfo | null;
-	/** カレンダー購読の URL のトークン */
+	/** カレンダー購読 URL のトークン */
 	readonly feedTokens: FeedTokenStore;
 	/** 公開 API と MCP サーバー向けの個人用アクセストークン */
 	readonly accessTokens: AccessTokenStore;
@@ -146,11 +146,11 @@ export interface Services {
 	readonly testAccounts: TestAccountStore;
 	/** 大学のアカウントとして許すメールのドメイン (テストアカウントには使えない) */
 	readonly universityDomains: readonly string[];
-	/** MCP の認可 (OAuth 2.1)。同意の画面が、クライアントの確認と認可コードの発行に使う */
+	/** MCP の認可 (OAuth 2.1)。同意画面が、クライアントの確認と認可コードの発行に使う */
 	readonly oauth: OAuthStore;
 	/** 公開 URL の origin (ブックマークレットの戻り先に使う) */
 	readonly origin: string;
-	/** 同意を求めている利用規約とプライバシーポリシーの版 (最終更新日)。同意するまで、すべての機能を止める */
+	/** 同意が必要な規約のバージョン。利用規約とプライバシーポリシーの更新日のうち新しいほう */
 	readonly termsVersion: string;
 	/** セルフホストの運営者の情報。設定されていなければ null */
 	readonly operator: { readonly name: string; readonly url: string } | null;

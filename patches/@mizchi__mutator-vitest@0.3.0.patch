@@ -1,0 +1,100 @@
+diff --git a/dist/plugin.js b/dist/plugin.js
+index eefa4ae7ad81755afcc0e1cc114ee70e55ac6fa3..c0163fe46d7a0009a406b9595c924beaa16a9eac 100644
+--- a/dist/plugin.js
++++ b/dist/plugin.js
+@@ -1,5 +1,5 @@
+ import { instrument, instrumentFlags } from '@mizchi/mutator-core';
+-import { relative } from 'node:path';
++import { normalize, relative } from 'node:path';
+ const SOURCE = /\.[cm]?[jt]sx?$/;
+ /** Collects mutants of every module transformed by the plugin. */
+ export class MutantRegistry {
+@@ -14,7 +14,7 @@ export function mutatorPlugin(registry, options) {
+         enforce: 'pre',
+         transform(code, id) {
+             const file = id.split('?')[0];
+-            if (!SOURCE.test(file) || file.includes('/node_modules/') || !options.include(file))
++            if (!SOURCE.test(file) || file.includes('/node_modules/') || !(options.include(file) || options.include(normalize(file))))
+                 return;
+             const result = instrument(file, code, { ...instrumentFlags(options), ...(options.root ? { identity: relative(options.root, file) } : {}) });
+             registry.byFile.set(file, result.mutants);
+diff --git a/dist/session.js b/dist/session.js
+index 28b922e78d23ebf180e4b531ca139a38c91e6e9d..8333de0437b2fa60e10bbd4f851dfe7703ae93de 100644
+--- a/dist/session.js
++++ b/dist/session.js
+@@ -1,5 +1,5 @@
+ import { existsSync, readFileSync } from 'node:fs';
+-import { isAbsolute, matchesGlob, relative } from 'node:path';
++import { isAbsolute, matchesGlob, normalize, relative } from 'node:path';
+ import { fileURLToPath } from 'node:url';
+ import { DEFAULT_HIT_LIMIT, classifyRun, emptyDryRun, hash, numberDuplicates, testFingerprint, } from '@mizchi/mutator-core';
+ import { createVitest } from 'vitest/node';
+@@ -79,8 +79,8 @@ export async function createSession(options) {
+         },
+         async dryRun(files) {
+             const all = await vitest.globTestSpecifications();
+-            const wanted = files && new Set(files);
+-            const specs = wanted ? all.filter((s) => wanted.has(s.moduleId)) : all;
++            const wanted = files && new Set(files.map((file) => normalize(file)));
++            const specs = wanted ? all.filter((s) => wanted.has(normalize(s.moduleId))) : all;
+             const dry = specs.length > 0 ? collectDryRun(await run(null, DEFAULT_HIT_LIMIT, specs), options.root) : emptyDryRun();
+             dry.deps = collectDeps(vitest, specs.map((s) => s.moduleId), options);
+             for (const [id, location] of dry.index)
+@@ -153,6 +153,7 @@ async function start(options, registry) {
+         // bail is not used: vitest 5 may report a bailed run without its failed test.
+         bail: 0,
+         isolate: true,
++        fsModuleCache: false,
+         pool: options.pool ?? 'forks',
+         includeTaskLocation: true,
+         coverage: { enabled: false },
+diff --git a/src/plugin.ts b/src/plugin.ts
+index 036c86c62a37d991670d013b6a19a83baac00d8c..43f932bdcf2ca8524089ff4dbe9ed7e3ece1595c 100644
+--- a/src/plugin.ts
++++ b/src/plugin.ts
+@@ -1,5 +1,5 @@
+ import { type InstrumentOptions, type Mutant, instrument, instrumentFlags } from '@mizchi/mutator-core';
+-import { relative } from 'node:path';
++import { normalize, relative } from 'node:path';
+ import type { Plugin } from 'vitest/config';
+ 
+ export interface PluginOptions {
+@@ -31,7 +31,7 @@ export function mutatorPlugin(registry: MutantRegistry, options: PluginOptions):
+     enforce: 'pre',
+     transform(code, id) {
+       const file = id.split('?')[0]!;
+-      if (!SOURCE.test(file) || file.includes('/node_modules/') || !options.include(file)) return;
++      if (!SOURCE.test(file) || file.includes('/node_modules/') || !(options.include(file) || options.include(normalize(file)))) return;
+       const result = instrument(file, code, { ...instrumentFlags(options), ...(options.root ? { identity: relative(options.root, file) } : {}) });
+       registry.byFile.set(file, result.mutants);
+       return { code: result.code, map: result.map };
+diff --git a/src/session.ts b/src/session.ts
+index d89a6489e5edf6d29d5fabd8f802ae20bda00ac5..e512c9eb7762297384a349fc7f23cbb5e243793d 100644
+--- a/src/session.ts
++++ b/src/session.ts
+@@ -1,5 +1,5 @@
+ import { existsSync, readFileSync } from 'node:fs';
+-import { isAbsolute, matchesGlob, relative } from 'node:path';
++import { isAbsolute, matchesGlob, normalize, relative } from 'node:path';
+ import { fileURLToPath } from 'node:url';
+ import {
+   type DryRunResult,
+@@ -121,8 +121,8 @@ export async function createSession(options: SessionOptions): Promise<Session> {
+ 
+     async dryRun(files) {
+       const all = await vitest.globTestSpecifications();
+-      const wanted = files && new Set(files);
+-      const specs = wanted ? all.filter((s) => wanted.has(s.moduleId)) : all;
++      const wanted = files && new Set(files.map((file) => normalize(file)));
++      const specs = wanted ? all.filter((s) => wanted.has(normalize(s.moduleId))) : all;
+       const dry = specs.length > 0 ? collectDryRun(await run(null, DEFAULT_HIT_LIMIT, specs), options.root) : emptyDryRun();
+       dry.deps = collectDeps(vitest, specs.map((s) => s.moduleId), options);
+       for (const [id, location] of dry.index) locate(id, location);
+@@ -199,6 +199,7 @@ async function start(options: SessionOptions, registry: MutantRegistry): Promise
+       // bail is not used: vitest 5 may report a bailed run without its failed test.
+       bail: 0,
+       isolate: true,
++      fsModuleCache: false,
+       pool: options.pool ?? 'forks',
+       includeTaskLocation: true,
+       coverage: { enabled: false },

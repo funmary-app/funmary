@@ -104,7 +104,7 @@ describe('公開シラバスの定期処理', () => {
 		expect(job.schedule).toBe('0 5 * * *');
 	});
 
-	it('取得した科目を、年度とシラバスの番号で保存し、成功を見張りに記録する', async () => {
+	it('取得した科目を年度とシラバスの番号で保存し、取得の成功を記録する', async () => {
 		const t = setup();
 		const message = await t.job.run(t.context);
 		expect(t.upserts).toEqual([

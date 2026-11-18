@@ -41,8 +41,8 @@ const EVENT = {
 	time: { kind: 'time', start: '10:00', end: '11:00' },
 };
 
-describe('MCP の書き込みの道具', () => {
-	it('書き込みの範囲がなければ、書き込みの道具は出ない', async () => {
+describe('MCP の書き込みのツール', () => {
+	it('書き込みの範囲がなければ、書き込みのツールは出ない', async () => {
 		const { client } = await setup(['read:lessons', 'read:changes', 'read:notifications']);
 
 		const names = (await client.listTools()).tools.map((tool) => tool.name);
@@ -52,7 +52,7 @@ describe('MCP の書き込みの道具', () => {
 		expect(names).not.toContain('mark_notification_read');
 	});
 
-	it('write:events では、予定の道具が出て、読み取りの印が付かない。削除には、壊す操作の印が付く', async () => {
+	it('write:events で予定の書き込みツールを公開し、削除には destructiveHint を付ける', async () => {
 		const { client } = await setup(['write:events']);
 
 		const tools = (await client.listTools()).tools;
@@ -69,7 +69,7 @@ describe('MCP の書き込みの道具', () => {
 		expect(byName['create_event']?.destructiveHint).toBe(false);
 	});
 
-	it('write:notifications では、既読の道具が出る', async () => {
+	it('write:notifications では、既読のツールが出る', async () => {
 		const { client } = await setup(['write:notifications']);
 
 		const tools = (await client.listTools()).tools;
@@ -81,7 +81,7 @@ describe('MCP の書き込みの道具', () => {
 		for (const tool of tools) expect(tool.annotations?.idempotentHint).toBe(true);
 	});
 
-	it('read:lessons があれば、予定を 1 件読む道具も出る', async () => {
+	it('read:lessons があれば、予定を 1 件読むツールも出る', async () => {
 		const { client } = await setup(['read:lessons']);
 
 		expect((await client.listTools()).tools.map((tool) => tool.name)).toContain('get_event');

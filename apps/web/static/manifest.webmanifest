@@ -1,7 +1,7 @@
 {
 	"name": "Funmary",
 	"short_name": "Funmary",
-	"description": "公立はこだて未来大学の学生向けの、非公式の便利な総合 Web アプリ",
+	"description": "公立はこだて未来大学の学生向けの時間割・休講通知アプリ (非公式)",
 	"lang": "ja",
 	"start_url": "/app",
 	"scope": "/app",

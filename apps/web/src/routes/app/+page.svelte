@@ -23,7 +23,7 @@
 		events: EventView[];
 		next: (LessonView & { inProgress: boolean }) | null;
 		hasRegistrations: boolean;
-		/** カレンダーの購読の URL を発行していない */
+		/** カレンダーの購読 URL を発行していない */
 		suggestCalendar: boolean;
 		usesEstimatedTerms: boolean;
 		fetchedAt: { date: string; time: string } | null;
@@ -121,7 +121,7 @@
 		{:else if today.hasRegistrations}
 			<p>この先 2 週間に授業はありません。</p>
 		{:else}
-			<p>履修科目を登録すると、ここに次の授業の時刻と教室が出ます。</p>
+			<p>履修科目を登録すると、次の授業の時刻と教室をここで確認できます。</p>
 			<p><a href={resolve('app/courses')}>履修科目を登録する</a></p>
 		{/if}
 	</section>
@@ -143,7 +143,7 @@
 						</span>
 						<span class="muted">{busLeg.next.from} → {busLeg.next.to}</span>
 					{:else}
-						<span class="bus-time">今日の発車は、もうありません</span>
+						<span class="bus-time">今日はこのあとの便がありません</span>
 						<span class="muted">{busLeg.from} → {busLeg.to}</span>
 					{/if}
 				</span>
@@ -225,9 +225,7 @@
 		<a href={resolve('app/changes')}>休講、補講、教室変更</a>
 	</p>
 	{#if today.usesEstimatedTerms}
-		<p class="freshness">
-			学期の期間は、大学の学年暦がまだ入っていないため、推定した日付で出しています。
-		</p>
+		<p class="freshness">大学の学年暦が未登録のため、学期の期間は推定の日付で表示しています。</p>
 	{/if}
 
 	<div class="install">

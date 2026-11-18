@@ -1,7 +1,5 @@
-// 学生ポータル (students.fun.ac.jp) との通信の共通の部品。ログインが要るページ (Pt/CSLecture) と、
-// 公開シラバス (Lesson/*) のどちらも、これを通す。
-// 守ること: Cookie を引き継ぐ、リダイレクトは自分でたどってポータルのホスト以外へは行かない、
-// 応答の大きさに上限を設ける、HTML 以外は捨てる。
+// 学生ポータル (students.fun.ac.jp) との通信の共通の部品。ログインが要るページ (Pt/CSLecture) と、公開シラバス (Lesson/*) のどちらも、これを通す。
+// 守ること: Cookie を引き継ぐ、リダイレクトは自分でたどってポータルのホスト以外へは行かない、応答の大きさに上限を設ける、HTML 以外は捨てる。
 import type { ReadableStreamReadResult } from 'node:stream/web';
 import { CookieJar } from 'tough-cookie';
 import desktopUserAgents from 'top-user-agents/desktop';

@@ -107,7 +107,7 @@ test('大学のアカウントでログインでき、ログアウトできる',
 	await page.goto('/login');
 	await page.getByRole('link', { name: 'Google でログイン' }).click();
 
-	// 初めてのログインでは、利用規約への同意の画面が先に出る (同意の流れそのものは、専用のテストで確かめる。
+	// 初めてのログインでは、利用規約への同意画面が先に出る (同意の流れそのものは、専用のテストで確かめる。
 	// 手元で E2E を続けて動かすと、前の回で同意済みの利用者になるので、画面が出たときだけ同意する)
 	await page.waitForURL(/\/(app|consent)/);
 	if (new URL(page.url()).pathname === '/consent') {
@@ -139,7 +139,7 @@ test('大学のアカウントでログインでき、ログアウトできる',
 	// 紹介の画面は、ログインしていても見られ、アプリへの入口を出す
 	await page.goto('/');
 	await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-		'大学の「知りたい」を、すべて。',
+		'授業の予定を、ひとつの時間割に。',
 	);
 	await page.getByRole('link', { name: 'アプリを開く' }).click();
 	await expect(page).toHaveURL('/app');
@@ -155,7 +155,7 @@ test('大学のアカウントでログインでき、ログアウトできる',
 });
 
 test.describe('利用規約への同意', () => {
-	test('初めてのログインでは同意の画面が出て、同意するまでアプリを使えない。同意すると、行こうとした画面へ進む', async ({
+	test('初めてのログインでは同意画面が出て、同意するまでアプリを使えない。同意すると、行こうとした画面へ進む', async ({
 		page,
 	}) => {
 		const email = `e2e-consent-${Date.now()}@fun.ac.jp`;
@@ -164,7 +164,7 @@ test.describe('利用規約への同意', () => {
 		await expect(page).toHaveURL('/consent?next=%2Fapp');
 		await expect(page.getByRole('heading', { level: 1, name: '利用規約への同意' })).toBeVisible();
 
-		// アプリの画面は、同意の画面に送り返される。行こうとした画面は覚えている
+		// アプリの画面は、同意画面に送り返される。行こうとした画面は覚えている
 		await page.goto('/app/week');
 		await expect(page).toHaveURL('/consent?next=%2Fapp%2Fweek');
 
@@ -187,7 +187,7 @@ test.describe('利用規約への同意', () => {
 		await page.getByRole('button', { name: '同意して続ける' }).click();
 		await expect(page).toHaveURL('/app/week');
 
-		// 同意したあとは、同意の画面を開いても、アプリへ進む
+		// 同意したあとは、同意画面を開いても、アプリへ進む
 		await page.goto('/consent');
 		await expect(page).toHaveURL('/app');
 	});

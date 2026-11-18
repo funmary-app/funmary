@@ -1,6 +1,5 @@
 // 学年暦の PDF の読み取り結果を、学期の期間、振替授業日、全学の休講日として取り込む。
-// 管理用コマンドの calendar import と、学年暦の定期処理で使う。値は学年暦から自動で取った値 (auto) として書き、
-// 管理者が入れた値 (manual) は上書きしない。休講日の候補のうち祝日と重なる日は、祝日として扱われるので入れない。
+// 管理用コマンドの calendar import と、学年暦の定期処理で使う。値は学年暦から自動で取った値 (auto) として書き、管理者が入れた値 (manual) は上書きしない。休講日の候補のうち祝日と重なる日は、祝日として扱われるので入れない。
 import type { CalendarDate, Term } from '@funmary/core';
 import type { AcademicCalendarStore } from '@funmary/db';
 import type { AcademicCalendarImportOutcome } from '@funmary/jobs';

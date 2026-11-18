@@ -1,5 +1,4 @@
-// 利用者の Discord 連携 (#163)。OAuth の途中経過 (state) の封印と、
-// 認可コードを受け取ったあとの、ギルドへの参加、スレッドか DM の用意、紐付けの保存をまとめる。
+// 利用者の Discord 連携 (#163)。OAuth の途中経過 (state) の封印と、認可コードを受け取ったあとの、ギルドへの参加、スレッドか DM の用意、紐付けの保存をまとめる。
 import type { DiscordBot, DiscordOAuthClient } from '@funmary/notify';
 import {
 	DEFAULT_CHANNEL_KINDS,

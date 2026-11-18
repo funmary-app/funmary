@@ -1,6 +1,4 @@
-// 科目を見られるか、直せるか (Issue #164)。シラバスにない授業として
-// 利用者や管理者が足した科目 (source が user) には、公開範囲 (visibility) がある。
-// I/O を持たない、画面と公開 API の両方が使う純粋な判定だけをここに置く。
+// 利用者が追加した科目 (source が user) の公開範囲を、画面と公開 API で同じように判定する。
 
 /** @funmary/db の SubjectVisibility と同じ形 (構造的に同じなので、型としてそのまま渡せる) */
 type SubjectVisibility = 'public' | 'link' | 'private';
@@ -14,9 +12,8 @@ export function canEditSubject(
 }
 
 /**
- * この科目を、URL を知っている利用者が開けるか (Issue #164)。
- * シラバスの科目と public、link は誰でも開ける。private は、足した人と管理者、
- * メールアドレスで招待された人 (granted、呼び出し側が事前に確かめる) だけ
+ * 科目の URL を知っている利用者が閲覧できるか判定する。
+ * シラバスの科目と public、link は誰でも開ける。private は、足した人と管理者、メールアドレスで招待された人 (granted、呼び出し側が事前に確かめる) だけ
  */
 export function canViewSubject(
 	subject: {

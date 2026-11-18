@@ -1,7 +1,5 @@
-// MCP の道具が、データを読み書きするための口。道具の定義 (tools.ts) は、この口だけを呼ぶ。
-// - サーバーの /mcp は、DB から読む実装を渡す
-// - 手元で動く MCP (stdio) は、@funmary/client を通して公開 API から読む実装 (client-data.ts) を渡す
-// 返す値は、公開 API (REST) の JSON と同じ形。見つからないときは null を返す。書き込みの失敗は、FunmaryToolFailure を投げる。
+// MCP ツールのデータアクセスを定義する。サーバーの /mcp は DB、手元で動く MCP (stdio) は @funmary/client 経由で公開 API を使う。
+// 戻り値は公開 API の JSON と同じ形で、データが見つからなければ null を返す。書き込みに失敗すると FunmaryToolFailure を投げる。
 
 /** 公開 API と同じ形の JSON */
 export type Json = object;
@@ -70,7 +68,7 @@ export class FunmaryToolFailure extends Error {
 	}
 }
 
-/** 名前が複数の科目に当たったときの、候補つきの文 (道具の答えと、手元の MCP の両方で同じにする) */
+/** 名前が複数の科目に一致したときに、候補を表示するメッセージを作る */
 export function ambiguousMessage(
 	error: string,
 	candidates: readonly { academicYear: number; syllabusId: string; name: string }[],

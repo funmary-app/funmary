@@ -220,7 +220,7 @@ test.describe('公開 API と MCP', () => {
 			scope: 'read:lessons',
 		})}`;
 
-		// ログインしていないと、ログインに送られ、ログインのあとに同意の画面へ戻る
+		// ログインしていないと、ログインに送られ、ログインのあとに同意画面へ戻る
 		const email = `e2e-oauth-${Date.now()}@fun.ac.jp`;
 		await oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
 		await page.goto(authorizeUrl);

@@ -186,7 +186,7 @@ export function formatBusLeg(
 			leg.checkedAt === null
 				? '時刻表を、まだ取り込めていません'
 				: isToday && !options.all
-					? '今日の発車は、もうありません'
+					? '今日はこのあとの便がありません'
 					: '便は、取り込んだ時刻表にありません',
 		];
 	}

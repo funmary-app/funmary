@@ -1,6 +1,6 @@
 # 4. 採用パッケージ
 
-この章は、どのパッケージをなぜ選んだかをまとめます。版の数字は書きません。実際に使っている版は、`pnpm-workspace.yaml` の catalog と各 `package.json` が正本です。
+採用したパッケージと、その理由をまとめます。バージョンは `pnpm-workspace.yaml` の catalog と各 `package.json` で確認できます。
 
 ## 4.1 選ぶ基準と版の方針
 
@@ -35,24 +35,29 @@ UI の部品には SMUI (Svelte Material UI) を使います。Svelte 5 に対�
 | ---------------- | --------------------------------------------- | ------------------------------------------ | ------------------------------------- |
 | 見た目           | Material Design                               | 飾りの少ない標準的なデザイン               | Material Design 3                     |
 | スタイルの仕組み | Sass。テーマをビルドする手順がある            | Tailwind                                   | 独自の CSS と、専用の Vite プラグイン |
-| 入り方           | 部品ごとの npm パッケージ                     | 部品のソースを自分のリポジトリにコピーする | npm のパッケージ                      |
+| 導入方法         | 部品ごとの npm パッケージ                     | 部品のソースを自分のリポジトリにコピーする | npm のパッケージ                      |
 | 気になる点       | 部品ごとに旧 MDC-Web 由来の TypeScript を含む | 部品のソースを自分で保守する               | 依存にナイトリー版のパッケージがある  |
 
 SMUI を使うにあたって、次のように決めています。
 
 - **スタイルは SMUI のテーマ (Sass) にそろえ、Tailwind は使いません。** 2 つの仕組みを並べると、CSS の量と保守の手間が増えるためです。部品の外側の配置 (余白や並べ方) は、各コンポーネントの `<style>` に書きます
-- **コンポーネントのスタイルも SCSS にそろえます。** `<style lang="scss">` で書きます。`sass` はテーマの変換のために入れているので、依存は増えません。150 行を超える長いスタイルは、同じ場所の `.scss` に分けて `<style>` から `@use` で読みます (Sass が中身をそのまま差し込むので、Svelte のスコープは変わりません。`+` で始まる名前は SvelteKit が予約しているので、`page.scss` のように付けます)。書き方の決まりは次の 4 つです
+- **コンポーネントのスタイルは SCSS で書きます。** `<style lang="scss">` を使います。`sass` はテーマの変換にも使っています。スタイルが 150 行を超える場合は同じディレクトリの `.scss` に分け、`<style>` から `@use` で読み込みます。Sass が内容を展開するため、Svelte のスコープは変わりません。`+` で始まる名前は SvelteKit が予約しているため、`page.scss` のように付けます。
   - 画面幅の区切りは、`apps/web/src/lib/styles/_breakpoints.scss` の mixin だけで書きます。区切りの数字をコンポーネントに直接書きません。CSS 変数は `@media` の中で使えないので、ここは Sass で共有します
   - 色と余白の段階は、CSS 変数で書きます。Sass の変数はビルドのときに値が固まるので、色に使うとダークモードに切り替えても変わらないためです
   - コンポーネントの中で SMUI の Sass (`@material/*`) を `@use` しません。部品の CSS がコンポーネントごとに重ねて出力され、容量が増えるためです。SMUI の見た目を変えたいときは、テーマのファイルか、上書き用の `smui-overrides.scss` で変えます
   - 共有する Sass のファイルには、mixin と関数だけを置き、CSS を出力する規則は書きません。どのコンポーネントから `@use` しても CSS が増えないようにするためです。2 つ以上の画面に同じ形で書くスタイルは、`apps/web/src/lib/styles/` に役割ごとのパーシャル (フォーム、入れ物、文字、押せる範囲など) を分けて置き、mixin にします
 - **色は大学の公式サイトとロゴの赤を基調にします。**
-- **テーマは Sass で書き、自前のスクリプトで CSS にします。** ライト用とダーク用のテーマを `apps/web/src/theme/` に置き、`apps/web/scripts/build-theme.js` が CSS にします。どのページでも読む `generated/smui.css` には、色の CSS 変数とダーク用だけを入れます。部品のスタイルは `generated/smui/<部品>.css` に分け、`@smui/<部品>` を import したモジュールに、Vite のプラグイン (`scripts/smui-styles.js`) がその CSS の import を足します。部品の CSS は、その部品を使うページだけで読まれます。ダーク用は、色の CSS 変数だけを `@media (prefers-color-scheme: dark)` で囲んで出し、部品のスタイルを 2 回出しません。この変換は `pnpm dev`、`pnpm build`、`pnpm typecheck` の前に動きます。SMUI 公式の `smui-theme` の compile は、pnpm の置き方では入れた部品のスタイルを見つけられないので使いません
+- **ライトとダークのテーマは Sass で書きます。** `apps/web/src/theme/` に置き、`apps/web/scripts/build-theme.js` で CSS に変換します。色の CSS 変数は `generated/smui.css` にまとめ、部品のスタイルは `generated/smui/<部品>.css` に分けます。ダーク用には `@media (prefers-color-scheme: dark)` で囲んだ色の変数だけを生成し、部品のスタイルは共通で使います。
+
+  Vite プラグイン (`scripts/smui-styles.js`) が `@smui/<部品>` を import したモジュールに CSS の import を足すため、各部品の CSS はその部品を使うページで読み込まれます。
+
+  変換は `pnpm dev`、`pnpm build`、`pnpm typecheck` の前に実行します。SMUI 公式の `smui-theme compile` は、pnpm が配置した部品のスタイルを見つけられないため、自前のスクリプトで変換しています。
+
 - **パッケージは部品ごとに入れます。** まとめ役の `svelte-material-ui` は入れず、`@smui/button` のように、使う部品だけを入れます。使っていない部品の CSS と JavaScript は入りません
 - **文字は LINE Seed JP にします。** `@fontsource/line-seed-jp` の 400 と 700 を最上位のレイアウトで読み込み、SMUI の既定の Roboto に代えて、テーマの `$font-family` と本文の `font-family` の先頭に置きます。LINE Seed JP にない字のために、2 番目に `@fontsource/noto-sans-jp` の Noto Sans JP を置き、後ろには OS の標準フォントを並べます ([3.2](03-quality.md#32-速さと軽さ))
 - **アイコンは unplugin-icons と Material Symbols を使います。** ビルド時に、使ったアイコンだけを SVG の Svelte コンポーネントにして埋め込みます。アイコン用の Web フォントは読み込みません
 - **型の検査は `apps/web` だけ少し緩めます。** SMUI は型のために TypeScript のソースを同梱していて、svelte-check がこちらの設定で検査すると失敗します。パッチは当てず、`apps/web` の tsconfig だけ `noUncheckedIndexedAccess` を外します。`packages/*/*` と `scripts/` は、ルートの tsconfig で検査します
-- **CSS の強さは、読み込む順番ではなくレイヤーで決めます。** 部品の CSS は、全体の CSS よりあとに読まれることがあるためです。弱い順に、全体の要素への指定 (`base.scss`、レイヤー `base`)、SMUI の部品 (`smui`)、SMUI の見た目の上書き (`smui-overrides.scss`、`smui-overrides`) です。画面ごとのスタイルはレイヤーに入れないので、いつもいちばん強くなります
+- **CSS の優先順位はレイヤーで決めます。** 部品の CSS は、全体の CSS よりあとに読み込まれることがあるためです。優先順位の低い順に、全体の要素への指定 (`base.scss`、レイヤー `base`)、SMUI の部品 (`smui`)、SMUI の見た目の上書き (`smui-overrides.scss`、`smui-overrides`) です。画面ごとのスタイルはレイヤーに入れず、これらより優先します
 - **SMUI にある部品は、SMUI を使います。** 容量は、ページごとの JavaScript の上限で守ります。上限は [3.1](03-quality.md#31-目標値) のとおりです。部品の CSS は使うページだけで読まれるので、部品を足しても、ほかのページは重くなりません
   - ただし、選択欄は SMUI の `@smui/select` を使わず、ブラウザの `<select>` のまま、見た目だけ SMUI の入力欄にそろえます。SMUI の選択欄はブラウザの `<select>` ではないので、スマホで OS の選択の画面が出なくなり、選択肢の多い欄 (学期、有効期限など) が選びにくくなるためです。SMUI の部品の中で JavaScript がいちばん重く (1 ページあたり約 31 KB)、フォームで送るのに hidden の input も要ります
 
@@ -70,7 +75,7 @@ SMUI を使うにあたって、次のように決めています。
 | `hono-feed`                                                   | 通知のフィード                   | RSS、Atom、JSON Feed と `304` を 1 つの定義で出せる                                                                                                                                              |
 | `hono-rate-limiter`                                           | 回数制限                         | Hono のミドルウェアとして書ける。メモリで数える方式が 1 プロセスの構成に合う                                                                                                                     |
 | `hono-openapi`、`@valibot/to-json-schema`、`@hono/swagger-ui` | 公開 API の OpenAPI と文書の画面 | Valibot の型から OpenAPI 3.1 を作る。検証と文書が 1 つの定義から出る                                                                                                                             |
-| `@modelcontextprotocol/sdk`、`@hono/mcp`                      | MCP サーバー                     | MCP の公式の SDK と、Streamable HTTP の口を Hono のルートとして置く部品。SDK は道具の引数の型に zod を使うので、MCP の部分だけ zod が入る                                                        |
+| `@modelcontextprotocol/sdk`、`@hono/mcp`                      | MCP サーバー                     | MCP の公式 SDK と、Streamable HTTP を Hono のルートで扱うためのライブラリ。MCP ツールの引数の検証には、SDK が対応する Zod を使う                                                                 |
 | `@hono/standard-validator`、`valibot`                         | 入力、設定、解析結果の検証       | Valibot は小さく、使う関数だけがバンドルに入る                                                                                                                                                   |
 | `citty`                                                       | 管理用コマンド                   | サブコマンド、引数、ヘルプを宣言的に書ける                                                                                                                                                       |
 | `uqr`                                                         | QR コード                        | 依存がなく、SVG を出せる                                                                                                                                                                         |
@@ -130,7 +135,7 @@ SMUI を使うにあたって、次のように決めています。
 | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
 | 時間割の展開         | Funmary の中心の規則で、代わりになるものがない                                                                                                |
 | 休講一覧の解析の仕様 | 取得元ごとの取り決めそのもの。解析の部品はパッケージを使う                                                                                    |
-| 取得元の見張り       | 状態を DB に残し、再起動のあとも続きから数える必要がある。汎用の部品 (cockatiel など) は状態をメモリにしか持たない                            |
+| 取得元の状態         | 状態を DB に残し、再起動のあとも続きから数える必要がある。汎用の部品 (cockatiel など) は状態をメモリにしか持たない                            |
 | 通知の配信管理       | 通知欄と送信待ちの行を DB で扱う、Funmary 固有の流れ                                                                                          |
 | セッション管理       | 乱数の ID を発行し、そのハッシュを DB に保存するだけで、`node:crypto` を使って数十行で書ける。ログインの手順そのものは openid-client に任せる |
 

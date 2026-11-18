@@ -1,7 +1,7 @@
 {
 	"name": "@funmary/mcp",
 	"version": "1.0.2",
-	"description": "Funmary の MCP サーバー。手元で動かす (stdio) 入口と、サーバーと共有する道具の定義",
+	"description": "Funmary のローカル MCP サーバー (stdio) と、Web 版と共通の MCP ツール定義",
 	"license": "(BSD-3-Clause OR Apache-2.0)",
 	"author": "funmary (https://github.com/funmary-app)",
 	"repository": {
@@ -39,7 +39,7 @@
 	},
 	"dependencies": {
 		"@funmary/client": "workspace:*",
-		"@modelcontextprotocol/sdk": "^1.32.1",
+		"@modelcontextprotocol/sdk": "^1.32.2",
 		"zod": "^4.6.7"
 	},
 	"devDependencies": {

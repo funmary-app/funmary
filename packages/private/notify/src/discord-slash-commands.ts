@@ -3,7 +3,7 @@
 // 反映までは最大 1 時間かかる。Bot のトークンは、ログにも例外の文にも出さない。
 const DISCORD_API = 'https://discord.com/api/v10';
 
-/** 利用者が呼べるコマンド。個人の出力は、受け口 (apps/web) が ephemeral で返す */
+/** 利用者が呼べるスラッシュコマンド。応答は実行した本人だけが見られる */
 export const SLASH_COMMANDS = [
 	{
 		name: 'today',

@@ -49,13 +49,13 @@
 </script>
 
 <svelte:head>
-	<title>Discord連携 - Funmary</title>
+	<title>Discord 連携 - Funmary</title>
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
 <div class="page page-w-40">
-	<SettingsBreadcrumb current="Discord連携" />
-	<h1>Discord連携</h1>
+	<SettingsBreadcrumb current="Discord 連携" />
+	<h1>Discord 連携</h1>
 	{#if data.supportInvite}
 		<p>
 			<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- Discord の招待 (外部のサイト) -->
@@ -78,7 +78,7 @@
 		<p>いまは、管理者が Discord 連携を無効にしています。</p>
 	{:else if data.linked}
 		<p>
-			Discord と連携しています。下の「通知の送り先」で、種類ごとに非公開スレッドか DM (または両方)
+			Discord と連携しています。下の「通知先」で、種類ごとに非公開スレッドか DM (または両方)
 			を選べます。
 		</p>
 		<p class="meta">
@@ -97,7 +97,7 @@
 			<h2 id="thread-heading">スレッドの管理</h2>
 			{#if !data.linked.hasThread}
 				<p class="meta">
-					まだ非公開スレッドがありません。下の「通知の送り先」でスレッドを使う設定にすると、自動で作られます。「作り直す」でも、いますぐ作れます。
+					まだ非公開スレッドがありません。下の「通知先」でスレッドを使う設定にすると、自動で作られます。「作り直す」でも、いますぐ作れます。
 				</p>
 			{/if}
 			<div class="thread-actions">
@@ -131,7 +131,7 @@
 
 		{#if data.routing}
 			<section aria-labelledby="routing-heading">
-				<h2 id="routing-heading">通知の送り先</h2>
+				<h2 id="routing-heading">通知先</h2>
 				<p>
 					通知の種類ごとに、送り先 (非公開スレッド、DM、または両方) と、メンションするかを選べます。
 				</p>

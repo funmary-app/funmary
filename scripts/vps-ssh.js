@@ -128,8 +128,7 @@ export function runSsh(config, remote) {
 	try {
 		return execFileSync(config.bin, sshArgs(config, remote), {
 			encoding: 'utf8',
-			// 標準入力は渡さない。readline で端末から読んだあとに渡すと、Windows の ssh は、リモートのコマンドが
-			// 終わってもキーの入力を待ち、終わらない。パスフレーズは、ssh が端末から直接読む。結果は標準出力だけを受け取る
+			// 標準入力は渡さない。readline で端末から読んだあとに渡すと、Windows の ssh は、リモートのコマンドが終わってもキーの入力を待ち、終わらない。パスフレーズは、ssh が端末から直接読む。結果は標準出力だけを受け取る
 			stdio: ['ignore', 'pipe', 'inherit'],
 		});
 	} catch (error) {

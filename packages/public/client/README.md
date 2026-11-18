@@ -1,6 +1,6 @@
 # @funmary/client
 
-[Funmary](https://github.com/funmary-app/funmary) の公開 API (`/api/v1`) の、型付きのクライアントです。Funmary は、公立はこだて未来大学の学生向けの、非公式のアプリです。
+[Funmary](https://github.com/funmary-app/funmary) の公開 API (`/api/v1`) を呼び出す型付きクライアントです。Funmary は公立はこだて未来大学の学生向けの非公式アプリです。
 
 ## 使い方
 

@@ -21,14 +21,14 @@
 	<SettingsBreadcrumb current="Contributors" public />
 	<h1>Contributors</h1>
 	<p class="muted">
-		Funmary のコードを書いてくれた人たちです。GitHub
-		から取得しているので、少し前の状態のことがあります。
+		Funmary のコードに貢献した方を、GitHub
+		から取得して表示しています。最新の貢献は反映されていないことがあります。
 	</p>
 
 	{#if data.error}
 		<p class="muted">{data.error}</p>
 	{:else if data.contributors.length === 0}
-		<p class="muted">まだ誰もいません。</p>
+		<p class="muted">貢献者の一覧を表示できませんでした。</p>
 	{:else}
 		<ul class="contributors">
 			{#each data.contributors as contributor (contributor.login)}
@@ -46,7 +46,7 @@
 	<p class="muted">
 		<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- 外部サイトへのリンク -->
 		<a href="{REPOSITORY_URL}/graphs/contributors" target="_blank" rel="noopener noreferrer">
-			GitHub の貢献の詳細
+			GitHub で貢献者を見る
 		</a>
 	</p>
 </div>

@@ -1,6 +1,5 @@
 // SMUI の部品ごとの CSS を、部品を使うページだけで読ませる。
-// scripts/build-theme.js が部品ごとの CSS を作り、vite.config.js の smuiStyles が、
-// `@smui/<部品>` を import したモジュールの先頭に、その部品の CSS の import を足す。
+// scripts/build-theme.js が部品ごとの CSS を作り、vite.config.js の smuiStyles が、`@smui/<部品>` を import したモジュールの先頭に、その部品の CSS の import を足す。
 // CSS は Vite がページごとのチャンクに分けるので、部品を使わないページでは読まれない。
 import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';

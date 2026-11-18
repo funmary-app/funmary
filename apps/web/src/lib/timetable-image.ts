@@ -60,8 +60,7 @@ function pdfNumber(value: number): string {
 }
 
 /**
- * JPEG の画像を 1 ページに置いただけの PDF を作る。画像を置く用途には、PDF の生成の依存を
- * 足すほどのことはないので、要る部品 (目次と、ページと、画像) だけをここで組み立てる
+ * JPEG の画像を 1 ページに置いただけの PDF を作る。画像を置く用途には、PDF の生成の依存を足すほどのことはないので、要る部品 (目次と、ページと、画像) だけをここで組み立てる
  */
 export function buildTimetablePdf(
 	jpeg: Uint8Array,

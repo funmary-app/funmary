@@ -1,5 +1,5 @@
 // MCP の認可 (OAuth 2.1) の口のうち、画面を持たないもの: 発見用の情報、クライアントの動的登録、トークンの発行。
-// 同意の画面 (/oauth/authorize) は、ログインの Cookie を使うので、SvelteKit 側にある。
+// 同意画面 (/oauth/authorize) は、ログインの Cookie を使うので、SvelteKit 側にある。
 // claude.ai などのコネクタは、この流れでしか認証できない。個人用のアクセストークンは、そのまま使える。
 import { createHash, timingSafeEqual } from 'node:crypto';
 import { ACCESS_TOKEN_SCOPES, type OAuthStore } from '@funmary/db';

@@ -1,5 +1,5 @@
 // 学生ポータルの休講、補講、教室変更を取得して記録する定期処理。
-// 取得、解析、変更の検知、見張りの記録、管理者への知らせ、監視サービスへの知らせを、順に行う。
+// 取得結果を記録し、不調への移行を管理者に知らせる。取得に成功したら監視サービスにも通知する。
 // 外との通信と保存は、すべて deps で受け取る (テストで差し替えられる)。
 import { createHash } from 'node:crypto';
 import {
@@ -215,13 +215,13 @@ export function createScrapePortalJob(deps: ScrapePortalDeps): JobDefinition {
 				today,
 			});
 			if (detected.kind === 'suspicious') {
-				return fail(`件数が急に減ったので、更新しません: ${detected.reason}`, {
+				return fail(detected.reason, {
 					title: 'ポータルの休講一覧の件数が急に減りました',
 				});
 			}
 
 			deps.changes.apply(detected.next, at);
-			// 通知の送り先を科目で決められるよう、通知の仕組みに渡す前に照合する
+			// 通知先を科目で決められるよう、通知の仕組みに渡す前に照合する
 			const unmatchedSummary = await match(at);
 			await deps.onEvents?.(detected.events);
 			const count = (type: ChangeEvent['type']) =>

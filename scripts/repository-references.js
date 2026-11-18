@@ -1,5 +1,4 @@
-// 文書や設定に書いたリポジトリの参照 (owner/repo) を拾う。repository.json を読み込めないファイル (Markdown、シェル、YAML) の値が、
-// repository.json と食い違っていないかを repository-references.test.js で確かめるために使う。
+// Markdown、シェル、YAML に直接書いたリポジトリ名が repository.json と一致するか、テストで確認する。
 
 // GitHub のホスト名の直後、シェルの既定値 (${VAR:-...}) の中、パスや名前の途中でない位置にある、funmary と funmary-mirror の owner/repo を拾う
 const REFERENCE =

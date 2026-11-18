@@ -13,6 +13,11 @@ coverage/
 test-results/
 playwright-report/
 blob-report/
+.mutator/
+
+# Python スキルの実行時キャッシュ
+__pycache__/
+*.py[co]
 
 # 環境変数 (秘密情報を含む)
 .env

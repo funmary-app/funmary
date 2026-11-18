@@ -275,8 +275,7 @@ export interface PublicLegDeparture {
 	/** HH:MM (日本時間)。24 時以降は 24:10 のように書く */
 	readonly time: string;
 	/**
-	 * 到着する停留所に着く時刻 (HH:MM)。時刻表に便をたどる情報はないので、到着する停留所の発車表から、
-	 * 同じ行き先で系統が重なる、あとの便を結んで求める。結べなければ null
+	 * 到着する停留所に着く時刻 (HH:MM)。時刻表に便をたどる情報はないので、到着する停留所の発車表から、同じ行き先で系統が重なる、あとの便を結んで求める。結べなければ null
 	 */
 	readonly arrivalTime: string | null;
 	/** この便に乗る停留所と、降りる停留所。亀田支所前から先で路線が分かれるので、選んだ停留所を通らない系統の便は、亀田支所前と未来大の間になる */
@@ -312,8 +311,7 @@ interface LegSource {
 /**
  * 「A から未来大へ」「未来大から A へ」の発車。A は未来大を通る任意の停留所。
  * 向きは、時刻表の経由と行き先の文字から決める (@funmary/core の filterByDirection)。
- * 亀田支所前から先で路線が二つに分かれる (五稜郭の側と昭和の側) ので、A が通らない系統の便は、
- * 亀田支所前と未来大の間の便として足す (共通の区間なので、A の位置によらず乗れる)。
+ * 亀田支所前から先で路線が二つに分かれる (五稜郭の側と昭和の側) ので、A が通らない系統の便は、亀田支所前と未来大の間の便として足す (共通の区間なので、A の位置によらず乗れる)。
  * 未来大そのもの、一覧にない停留所は null。A の発車表がまだなければ、発車は空
  */
 export function getBusLeg(
@@ -347,8 +345,7 @@ export function getBusLeg(
 	const generation = generationForDate(stored.catalog.generations, current.date);
 	const timetableOf = (stopId: string) =>
 		generation ? (sources.bus?.getTimetable(stopId, generation.code) ?? null) : null;
-	// 同じ名前で、向きごとに別のバス停コードを持つ停留所がある (昭和営業所前など)。1 つのコードの発車表には、
-	// 片方の向きの便しかないので、同じ名前のコードの発車表をまとめて、1 つの停留所として向きを決める
+	// 同じ名前で、向きごとに別のバス停コードを持つ停留所がある (昭和営業所前など)。1 つのコードの発車表には、片方の向きの便しかないので、同じ名前のコードの発車表をまとめて、1 つの停留所として向きを決める
 	const sameStop = stored.catalog.stops.filter(
 		(candidate) => candidate.id !== university.id && sameStopName(candidate.name, stop.name),
 	);

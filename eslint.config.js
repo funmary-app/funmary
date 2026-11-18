@@ -12,6 +12,7 @@ export default defineConfig(
 			'**/.svelte-kit/',
 			'**/dist/',
 			'**/coverage/',
+			'**/.mutator/',
 			'packages/public/client/src/generated/',
 			'**/playwright-report/',
 			'**/test-results/',

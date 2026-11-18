@@ -50,7 +50,7 @@ describe('予定の JSON', () => {
 				startDate: '2026-10-20',
 				time: { kind: 'time', start: '11:00', end: '10:00' },
 			}),
-		).toEqual({ ok: false, error: '終わりの時刻は、始まりより後にしてください。' });
+		).toEqual({ ok: false, error: '終了時刻は開始時刻より後にしてください。' });
 		expect(
 			parse({ title: 'あ'.repeat(101), startDate: '2026-10-20', time: { kind: 'allDay' } }),
 		).toEqual({ ok: false, error: '予定の名前は 100 文字までにしてください。' });

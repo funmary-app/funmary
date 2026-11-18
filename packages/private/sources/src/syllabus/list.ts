@@ -1,6 +1,5 @@
 // 公開シラバスの検索結果 (Lesson/SyllabusList) を解析する。
-// 列は位置ではなく、data-col-responsive-title 属性の名前で読む。ページ送りは ASP.NET の
-// __doPostBack なので、次のページを頼むときに送る hidden の値も、ここで取り出す。
+// 列は位置ではなく、data-col-responsive-title 属性の名前で読む。ページ送りは ASP.NET の __doPostBack なので、次のページを頼むときに送る hidden の値も、ここで取り出す。
 import type { Element, Root } from 'hast';
 import { fromHtml } from 'hast-util-from-html';
 import { select, selectAll } from 'hast-util-select';

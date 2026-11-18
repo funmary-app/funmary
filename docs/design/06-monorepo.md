@@ -10,16 +10,16 @@ funmary/
 ├── packages/
 │   ├── public/        # npm に公開するパッケージ (3 つだけ。公開の手順は 5.6)
 │   │   ├── client/    # @funmary/client: 公開 API の型付きのクライアント
-│   │   ├── mcp/       # @funmary/mcp: MCP の道具の定義と、手元で動く MCP (stdio)
-│   │   └── funmary/   # funmary: コマンドと、クライアントと MCP の入口
+│   │   ├── mcp/       # @funmary/mcp: MCP ツールの定義と、ローカルの MCP サーバー (stdio)
+│   │   └── funmary/   # funmary: コマンドと、クライアント・MCP の公開 API
 │   └── private/       # 公開しないパッケージ (すべて private)
-│       ├── core/      # I/O のない処理: 時間割の展開、変更の差分、ICS の生成、祝日と学期の判定
+│       ├── core/      # I/O のない処理: 時間割の展開、変更の検出、祝日と学期の判定
 │       ├── db/        # スキーマ、マイグレーション、クエリ、暗号化とトークンの処理
 │       ├── auth/      # Google ログイン、セッション、招待コード
 │       ├── api/       # Hono のアプリ (/api、/auth、/cal、/feed、/mcp、/discord、/healthz)
-│       ├── sources/   # 外部からの取得: 学生ポータル、公開シラバス、学年暦、祝日。取得元ごとの見張りもここ
+│       ├── sources/   # 外部からの取得: 学生ポータル、公開シラバス、学年暦、祝日
 │       ├── notify/    # 通知の送信: Discord、利用者の Webhook、管理者への通知
-│       ├── jobs/      # 定期処理のタスクと、実行するかの判定
+│       ├── jobs/      # 定期処理の実行と取得結果の記録
 │       └── log/       # ログの出力
 ├── deploy/            # systemd の unit、nginx の設定、更新スクリプト
 ├── docs/              # 設計書 (この文書)、セルフホストの手順

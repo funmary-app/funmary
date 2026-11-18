@@ -23,7 +23,7 @@ export interface CalendarFeedSources extends TimetableSources {
 	readonly auth: Pick<AuthStore, 'findUserById'>;
 	/** 公開 URL の origin。授業の詳細画面の URL に使う */
 	readonly origin: string;
-	/** 同意を求めている利用規約の版。持ち主が同意するまで、購読は予定を返さない */
+	/** 同意を求めている利用規約のバージョン。持ち主が同意するまで、購読は予定を返さない */
 	readonly termsVersion: string;
 }
 

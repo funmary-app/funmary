@@ -174,7 +174,7 @@
 	{/if}
 
 	{#if !data.hasStops || data.stopId === null}
-		<p>時刻表は、まだ取り込めていません。しばらくしてからもう一度開いてください。</p>
+		<p>時刻表をまだ表示できません。しばらくしてから、もう一度開いてください。</p>
 	{:else}
 		<div class="bus-workspace">
 			<div class="overview">
@@ -197,7 +197,7 @@
 					{:else if leg && !isToday}
 						<p class="muted">{DAY_LABELS[day]}ダイヤの発車はありません。</p>
 					{:else if leg}
-						<p class="muted">今日の発車は、もうありません。</p>
+						<p class="muted">今日はこのあとの便がありません。</p>
 						<p class="muted next-stops">{leg.from.name} → {leg.to.name}</p>
 					{:else}
 						<p class="muted">この向きの時刻表はありません。</p>
@@ -270,7 +270,7 @@
 					{#if leg.departures.length === 0}
 						<p class="empty">
 							{#if leg.checkedAt === null}
-								この停留所の時刻表は、まだ取り込めていません。
+								この停留所の時刻表は、まだ取り込まれていません。
 							{:else}
 								この日の、{leg.from.name}から{leg.to
 									.name}へ向かう便は、取り込んだ時刻表にありません。
@@ -283,11 +283,11 @@
 							{/each}
 						</ul>
 						{#if isToday && nextIndex === -1}
-							<p class="muted">今日の発車は、もうありません。</p>
+							<p class="muted">今日はこのあとの便がありません。</p>
 						{/if}
 					{/if}
 				{:else}
-					<p>この停留所の時刻表は、取り込んだ時刻表にありません。</p>
+					<p>取り込み済みの時刻表に、この停留所の情報はありません。</p>
 				{/if}
 			</section>
 		</div>

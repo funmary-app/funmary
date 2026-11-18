@@ -27,7 +27,7 @@ function services(
 		enabled?: boolean;
 		linked?: { userId: string } | null;
 		status?: 'active' | 'suspended';
-		/** 利用者が同意した規約の版。省くと、いまの版に同意済み */
+		/** 利用者が同意した規約のバージョン。省くと、いまの版に同意済み */
 		accepted?: string | null;
 		/** 取得に最後に成功した日時。省くと、直前に成功したことにする */
 		lastSuccessAt?: Date | null;
@@ -97,7 +97,7 @@ describe('answerCommand', () => {
 		expect(text).toContain('利用できません');
 	});
 
-	it('利用規約に同意するまでは、どのコマンドにも答えず、同意の画面を案内する', () => {
+	it('利用規約に同意するまでは、どのコマンドにも答えず、同意画面を案内する', () => {
 		for (const command of ['today', 'next', 'week', 'changes']) {
 			const text = answerCommand(
 				services({ linked: { userId: 'u1' }, accepted: null }),
@@ -105,7 +105,7 @@ describe('answerCommand', () => {
 				'discord-1',
 				NOW,
 			);
-			expect(text, command).toContain('同意するまで、すべての機能を停止しています');
+			expect(text, command).toContain('利用規約とプライバシーポリシーへの同意が必要です');
 			expect(text, command).toContain('https://funmary.example.com/consent');
 		}
 	});

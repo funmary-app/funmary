@@ -16,7 +16,7 @@
 	<title>Funmary</title>
 	<meta
 		name="description"
-		content="公立はこだて未来大学の学生向けの便利な総合 Web アプリ (非公式)"
+		content="公立はこだて未来大学の学生向けの時間割・休講通知アプリ (非公式)"
 	/>
 	{#if data.inviteCode}
 		<!-- URL に招待コードが入っているので、検索に載せず、外のリンクの参照元にも渡さない -->

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { qrCode, subscriptionLinks } from './calendar-subscription.ts';
 
 describe('subscriptionLinks', () => {
-	it('購読の URL と、webcal の URL と、Google カレンダーに追加する URL を作る', () => {
+	it('購読 URL と、webcal の URL と、Google カレンダーに追加する URL を作る', () => {
 		const links = subscriptionLinks('https://funmary.example.com', 'abc_-');
 		expect(links.url).toBe('https://funmary.example.com/cal/abc_-.ics');
 		expect(links.webcal).toBe('webcal://funmary.example.com/cal/abc_-.ics');

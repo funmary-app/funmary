@@ -6,7 +6,7 @@ SQLite に保存します。定義は `packages/private/db/src/schema.ts` に、
 
 | 区分             | テーブル                                                     | 内容                                                                                                                  |
 | ---------------- | ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
-| アカウント       | `users`、`sessions`、`user_permissions`                      | 利用者 (同意した規約の版を含む)、ログイン中のセッション、利用者ごとの権限                                             |
+| アカウント       | `users`、`sessions`、`user_permissions`                      | 利用者 (同意した規約のバージョンを含む)、ログイン中のセッション、利用者ごとの権限                                     |
 |                  | `invite_codes`                                               | 招待コード。コードはハッシュで保存し、使用回数、期限、発行者、メモを持つ                                              |
 |                  | `terms_acceptances`                                          | 利用規約への同意の履歴                                                                                                |
 |                  | `test_accounts`                                              | 管理者が用意するテストアカウント                                                                                      |
@@ -23,7 +23,7 @@ SQLite に保存します。定義は `packages/private/db/src/schema.ts` に、
 | 購読と API       | `feed_tokens`、`access_tokens`                               | カレンダーと RSS の URL のトークン、公開 API と MCP のアクセストークン (名前、範囲、期限)。どちらもハッシュで保存する |
 |                  | `oauth_clients`、`oauth_codes`、`oauth_refresh_tokens`       | MCP の認可 (OAuth 2.1) で、登録されたクライアント、認可コード、リフレッシュトークン                                   |
 | 通知             | `notifications`                                              | 通知欄の中身。利用者ごとに 1 行                                                                                       |
-|                  | `channels`、`deliveries`                                     | 利用者ごとの通知の送り先 (Webhook の URL や署名の鍵は暗号化する)、送った記録 (再送の管理)                             |
+|                  | `channels`、`deliveries`                                     | 利用者ごとの通知先 (Webhook の URL や署名の鍵は暗号化する)、送った記録 (再送の管理)                                   |
 |                  | `discord_links`、`daily_digest_settings`                     | Discord との連携 (トークンは暗号化する)、毎日のまとめの設定                                                           |
 | 運用             | `source_status`、`job_runs`、`settings`、`audit_log_entries` | 取得元ごとの状態、定期処理の実行記録、管理画面で変える設定、管理操作の監査記録                                        |
 | まだ使っていない | `absences`、`shares`、`hope_calendars`、`hope_events`        | 欠席の記録、時間割の共有リンク、HOPE の課題。テーブルだけあり、機能は予定                                             |

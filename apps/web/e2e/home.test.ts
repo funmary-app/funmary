@@ -4,7 +4,7 @@ import { expect, test } from '@playwright/test';
 test('ログインしていなければ、アプリの紹介と、はじめる入口を出す', async ({ page }) => {
 	await page.goto('/');
 	await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-		'大学の「知りたい」を、すべて。',
+		'授業の予定を、ひとつの時間割に。',
 	);
 	await expect(page.getByRole('link', { name: '大学のアカウントではじめる' })).toHaveAttribute(
 		'href',

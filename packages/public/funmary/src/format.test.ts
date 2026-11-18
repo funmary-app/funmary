@@ -177,7 +177,7 @@ describe('formatBusLeg', () => {
 
 	it('便がないときは、理由に合わせた文を出す', () => {
 		const late = formatBusLeg(leg, { nowTime: '23:00', limit: 3, all: false }, plain, 100);
-		expect(late[1]).toBe('今日の発車は、もうありません');
+		expect(late[1]).toBe('今日はこのあとの便がありません');
 		const none = formatBusLeg(
 			{ ...leg, departures: [], checkedAt: null },
 			{ nowTime: '08:00', limit: 3, all: false },

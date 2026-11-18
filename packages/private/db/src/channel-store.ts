@@ -1,6 +1,4 @@
-// 利用者が登録した通知の送り先 (チャネル)。Webhook の URL (と、汎用の Webhook の署名の鍵) は
-// 暗号化して保存し、読み出すときだけ復号する。Discord 連携 (Bot が送る) の送り先は、連携のたびに利用者へ作って、
-// 解除したら消す (discordLink)
+// 利用者が登録した通知先 (チャネル)。Webhook の URL (と、汎用の Webhook の署名の鍵) は暗号化して保存し、読み出すときだけ復号する。Discord 連携 (Bot が送る) の送り先は、連携のたびに利用者へ作って、解除したら消す (discordLink)
 import { and, count, eq, inArray, notInArray } from 'drizzle-orm';
 import type { Database } from './database.ts';
 import type { NotificationKind } from './notification-store.ts';

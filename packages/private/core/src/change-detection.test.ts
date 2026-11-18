@@ -121,12 +121,14 @@ describe('detectChanges: 件数の急な減少', () => {
 	const many = (n: number) =>
 		Array.from({ length: n }, (_, i) => tracked({ period: (i % 6) + 1, lessonName: `授業 ${i}` }));
 
-	it('前回は未来の項目が 10 件以上あったのに、今回が半分に満たなければ、更新せず不審とする', () => {
-		const result = detectChanges({ previous: many(12), scraped: [], today: TODAY });
-		expect(result).toMatchObject({ kind: 'suspicious' });
-		expect(detectChanges({ previous: many(12), scraped: many(5), today: TODAY }).kind).toBe(
+	it('今回が半分未満なら、更新を見送り、前回と今回の件数を伝える', () => {
+		expect(detectChanges({ previous: many(12), scraped: [], today: TODAY }).kind).toBe(
 			'suspicious',
 		);
+		expect(detectChanges({ previous: many(12), scraped: many(5), today: TODAY })).toEqual({
+			kind: 'suspicious',
+			reason: '今日以降の項目が前回の 12 件から 5 件に減ったため、更新を見送りました。',
+		});
 	});
 
 	it('半分以上残っていれば、ふつうに更新する', () => {

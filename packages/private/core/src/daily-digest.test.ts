@@ -90,5 +90,7 @@ describe('isDigestTime', () => {
 		expect(isDigestTime('07:03')).toBe(false);
 		expect(isDigestTime('24:00')).toBe(false);
 		expect(isDigestTime('7:00')).toBe(false);
+		expect(isDigestTime('午前07:00')).toBe(false);
+		expect(isDigestTime('07:00頃')).toBe(false);
 	});
 });

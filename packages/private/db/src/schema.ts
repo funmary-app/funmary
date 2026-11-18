@@ -60,8 +60,7 @@ export const termsAcceptances = sqliteTable(
 );
 
 /**
- * 管理者が用意するテストアカウント。大学のアカウントでない Google のアカウント (メールアドレス) で、
- * ログインして試せるようにする。管理者ごとに持ち、データは引き継がない (必要なときだけ、管理者のデータを写す)
+ * 管理者が用意するテストアカウント。大学のアカウントでない Google のアカウント (メールアドレス) で、ログインして試せるようにする。管理者ごとに持ち、データは引き継がない (必要なときだけ、管理者のデータを写す)
  */
 export const testAccounts = sqliteTable(
 	'test_accounts',
@@ -733,8 +732,7 @@ export const channels = sqliteTable(
 			.notNull()
 			.references(() => users.id, { onDelete: 'cascade' }),
 		/**
-		 * discord は利用者が登録した Discord の Webhook、generic は利用者が自分で用意した Webhook、
-		 * discordLink は Discord 連携 (Bot が送る) の送り先
+		 * discord は利用者が登録した Discord の Webhook、generic は利用者が自分で用意した Webhook、discordLink は Discord 連携 (Bot が送る) の送り先
 		 */
 		kind: text('kind', { enum: ['discord', 'generic', 'discordLink', 'push', 'email'] }).notNull(),
 		/** Webhook の URL (と、generic の署名の鍵) やプッシュ通知の購読情報。暗号化する。discordLink は送り先を discord_links から引くので、中身は使わない */
@@ -780,7 +778,7 @@ export const deliveries = sqliteTable(
 // ---------------------------------------------------------------------------
 // 運用
 
-/** 取得元の見張り */
+/** 取得元の状態 */
 export const sourceStatus = sqliteTable('source_status', {
 	source: text('source').primaryKey(),
 	lastSuccessAt: integer('last_success_at', { mode: 'timestamp_ms' }),

@@ -1,6 +1,4 @@
-// MCP の道具の定義 (名前、説明、引数、必要な範囲、処理)。サーバーの /mcp と、手元で動く MCP (stdio) が、この 1 つを共有する。
-// 処理は、データの取り出し口 (FunmaryData) を通してだけ読み書きするので、どちらでも中身が食い違わない。
-// 読み取りの道具には readOnlyHint を付ける。書き込みの道具は readOnlyHint: false で、クライアントが実行の前に利用者へ承認を求められる。
+// Web 版とローカル版でツールの処理を共通化する。データの読み書きには、各サーバーの FunmaryData 実装を使う。
 import { z } from 'zod';
 import { ambiguousMessage, FunmaryToolFailure, type CourseRef, type FunmaryData } from './data.ts';
 
@@ -22,7 +20,7 @@ export interface ToolAnnotations {
 
 export interface ToolDefinition<Shape extends z.ZodRawShape = z.ZodRawShape> {
 	readonly name: string;
-	/** アクセストークンの範囲 (read:lessons など)。この範囲を持つときだけ、道具を出す */
+	/** アクセストークンの範囲 (read:lessons など)。この範囲を持つときだけ、ツールを出す */
 	readonly scope: string;
 	readonly description: string;
 	readonly inputSchema?: Shape;
@@ -318,7 +316,7 @@ const eventShape = {
 		.describe('繰り返しから除く日 (YYYY-MM-DD。始まりの日で数える)'),
 };
 
-/** 履修の道具が、科目を指すための項目 */
+/** 履修のツールが、科目を指すための項目 */
 const courseRefShape = {
 	academicYear: z.number().optional().describe('年度 (例: 2026)。name で指すときは省ける'),
 	syllabusId: z.string().optional().describe('シラバスの番号 (授業コード)'),
@@ -483,7 +481,7 @@ const writeNotifications = [
 	}),
 ];
 
-/** すべての道具。出す順は、読み取り、書き込みの順 */
+/** すべてのツール。出す順は、読み取り、書き込みの順 */
 export const TOOLS: readonly ToolDefinition[] = [
 	...readLessons,
 	...readTransit,
@@ -492,7 +490,7 @@ export const TOOLS: readonly ToolDefinition[] = [
 	...writeNotifications,
 ];
 
-/** 道具の処理で起きた失敗を、利用者に見せる文にする。想定外の例外は、そのまま投げる */
+/** ツールの処理で起きた失敗を、利用者に見せる文にする。想定外の例外は、そのまま投げる */
 export function failureMessage(caught: unknown): string | null {
 	if (caught instanceof FunmaryToolFailure) return caught.message;
 	if (typeof caught === 'object' && caught !== null && 'name' in caught) {

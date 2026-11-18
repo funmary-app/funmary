@@ -24,7 +24,7 @@ async function connectedClient(server: ReturnType<typeof buildMcpServer>) {
 }
 
 describe('buildMcpServer', () => {
-	it('範囲に合わせて、道具の一覧が変わる', async () => {
+	it('範囲に合わせて、ツールの一覧が変わる', async () => {
 		const src = deps();
 		const server = buildMcpServer(src, { userId: 'u1', scopes: ['read:lessons'] });
 		const client = await connectedClient(server);
@@ -46,7 +46,7 @@ describe('buildMcpServer', () => {
 		expect(tools.every((tool) => tool.annotations?.readOnlyHint)).toBe(true);
 	});
 
-	it('すべての読み取りの範囲を持つトークンでは、14 の道具がそろう', async () => {
+	it('すべての読み取りの範囲を持つトークンでは、14 のツールがそろう', async () => {
 		const src = deps();
 		const server = buildMcpServer(src, {
 			userId: 'u1',
@@ -161,7 +161,7 @@ describe('OAuth 向けの案内', () => {
 });
 
 describe('利用規約への同意を待っている利用者', () => {
-	it('データの道具は出さず、同意が要ることと URL を、道具の答えで知らせる', async () => {
+	it('データのツールは出さず、同意が要ることと URL を、ツールの答えで知らせる', async () => {
 		const server = buildTermsRequiredMcpServer('https://funmary.example.com/consent');
 		const client = await connectedClient(server);
 
@@ -174,7 +174,7 @@ describe('利用規約への同意を待っている利用者', () => {
 		expect(client.getInstructions()).toContain('https://funmary.example.com/consent');
 	});
 
-	it('HTTP の口でも、持ち主が同意していなければ、データの道具の代わりにこの道具を出す', async () => {
+	it('HTTP 経由でも、トークンの持ち主が未同意なら案内用のツールだけが使える', async () => {
 		const src = deps();
 		const userId = src.users.createUser(
 			{ googleSub: 'a', email: 'a@fun.ac.jp', name: null, role: 'user' },
@@ -215,7 +215,7 @@ describe('利用規約への同意を待っている利用者', () => {
 		expect(res.status).toBe(200);
 		expect(await res.text()).toContain('https://funmary.example.com/consent');
 
-		// 同意すれば、ふつうの道具が出る
+		// 同意すれば、ふつうのツールが出る
 		src.users.acceptTerms(userId, '2026-10-03', NOW);
 		const accepted = await call('initialize');
 		expect(await accepted.text()).not.toContain('https://funmary.example.com/consent');
@@ -294,8 +294,8 @@ describe('トランスポートが投げるクライアントの誤り', () => {
 	});
 });
 
-describe('バスの道具', () => {
-	it('read:transit を持つトークンにだけ、バスの道具を出す', async () => {
+describe('バスのツール', () => {
+	it('read:transit を持つトークンにだけ、バスのツールを出す', async () => {
 		const withScope = await connectedClient(
 			buildMcpServer(deps(), { userId: 'u1', scopes: ['read:transit'] }),
 		);
@@ -313,7 +313,7 @@ describe('バスの道具', () => {
 		);
 	});
 
-	it('バスの機能を使わない設定では、read:transit があっても道具を出さない', async () => {
+	it('バスの機能を使わない設定では、read:transit があってもツールを出さない', async () => {
 		const client = await connectedClient(
 			buildMcpServer(
 				{ ...deps(), bus: null },

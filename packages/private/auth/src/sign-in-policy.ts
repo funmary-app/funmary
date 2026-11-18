@@ -41,8 +41,7 @@ export interface SignInInput {
 	/** 登録の前に受け取った招待コード。なければ null */
 	readonly invite: InviteCodeState | null;
 	/**
-	 * このメールアドレスが、管理者が用意したテストアカウントか。そうなら、大学のドメインでなくても、
-	 * 登録の方式を問わずに入れる (メールアドレスの確認は、これまでどおり要る)
+	 * このメールアドレスが、管理者が用意したテストアカウントか。そうなら、大学のドメインでなくても、登録の方式を問わずに入れる (メールアドレスの確認は、これまでどおり要る)
 	 */
 	readonly testAccount?: boolean;
 	readonly now: Date;
