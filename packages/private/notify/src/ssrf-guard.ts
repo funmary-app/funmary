@@ -1,10 +1,7 @@
-// 汎用の Webhook への送信を SSRF から守る部品。利用者が指定した URL の宛先が、
-// Funmary のサーバーの内側 (自分自身、VPS の内部のサービス、クラウドのメタデータ) にならないようにする。
+// 汎用の Webhook への送信を SSRF から守る部品。利用者が指定した URL の宛先が、Funmary のサーバーの内側 (自分自身、VPS の内部のサービス、クラウドのメタデータ) にならないようにする。
 //
 // - https だけを許し、ポートは 443 と 8443 だけにする (checkWebhookUrl)。これは URL の形だけで決まる
-// - 名前を引いた結果の IP が、ループバック、プライベート、リンクローカル、ユニークローカル、マルチキャスト、
-//   予約済みの範囲なら、接続しない (guardedLookup)。DNS リバインディング (検査のあとに DNS が変わる攻撃) を防ぐため、
-//   検査した IP にそのまま接続する。undici の Agent の connect.lookup を使うと、検査と接続が同じ結果になる。
+// - 名前を引いた結果の IP が、ループバック、プライベート、リンクローカル、ユニークローカル、マルチキャスト、予約済みの範囲なら、接続しない (guardedLookup)。DNS リバインディング (検査のあとに DNS が変わる攻撃) を防ぐため、検査した IP にそのまま接続する。undici の Agent の connect.lookup を使うと、検査と接続が同じ結果になる。
 //   undici は `all: true` (複数の候補を返す形) で引くので、複数あれば内側のものだけを取り除く。すべて内側なら拒む
 import { lookup as dnsLookup, type LookupAddress, type LookupOptions } from 'node:dns';
 import { BlockList } from 'node:net';
@@ -32,8 +29,7 @@ export function checkWebhookUrl(url: string): UrlCheck {
 /** 内側とみなす IP の範囲。IPv4 と IPv6 の両方を登録する */
 function createBlockList(): BlockList {
 	const list = new BlockList();
-	// IPv4: ループバック、プライベート (10/8、172.16/12、192.168/16)、リンクローカル、CGNAT (100.64/10)、
-	// 「このネットワーク」(0/8)、ブロードキャスト、マルチキャストと予約済み (224/4 以降)
+	// IPv4: ループバック、プライベート (10/8、172.16/12、192.168/16)、リンクローカル、CGNAT (100.64/10)、「このネットワーク」(0/8)、ブロードキャスト、マルチキャストと予約済み (224/4 以降)
 	list.addSubnet('127.0.0.0', 8, 'ipv4');
 	list.addSubnet('10.0.0.0', 8, 'ipv4');
 	list.addSubnet('172.16.0.0', 12, 'ipv4');
@@ -64,8 +60,7 @@ export function isBlockedAddress(blockList: BlockList, address: string, family: 
 }
 
 /**
- * node:dns の lookup と同じ形 (net.connect の lookup オプションに渡せる)。`options.all` が true なら
- * 複数のアドレスの配列を、そうでなければ 1 つのアドレスを callback に渡す (dns.lookup の決まりと同じ)
+ * `net.connect` の `lookup` オプションに渡せる。`dns.lookup` と同様に、`options.all` が `true` ならアドレスの配列を、それ以外はアドレスを 1 件コールバックに渡す。
  */
 export type LookupFunction = (
 	hostname: string,

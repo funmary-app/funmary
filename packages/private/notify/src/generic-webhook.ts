@@ -1,5 +1,4 @@
-// 利用者が自分で用意した Webhook への送信。Funmary 共通の JSON の形で送り、
-// Standard Webhooks の署名を付ける。SSRF から守るため、送信にはいつも SSRF 対策済みの undici の Agent を使う。
+// 利用者が自分で用意した Webhook への送信。Funmary 共通の JSON の形で送り、Standard Webhooks の署名を付ける。SSRF から守るため、送信にはいつも SSRF 対策済みの undici の Agent を使う。
 // 失敗の扱いは Discord の Webhook と違う: 410 (使えなくなった) だけを止める理由にし、ほかは最大 5 回まで再送する
 import { fetch as undiciFetch } from 'undici';
 import { retryAfterMs, type DeliveryMessage, type SendOutcome } from './user-delivery.ts';
@@ -46,8 +45,7 @@ export interface GenericWebhookOptions {
 	readonly fetch?: (url: string, init?: RequestInit) => Promise<Response>;
 }
 
-// 複数の送り先で使い回す、SSRF から守る Agent (undici は Agent をオリジンごとに使い回す設計なので、
-// リクエストのたびに作らない)
+// 複数の送り先で使い回す、SSRF から守る Agent (undici は Agent をオリジンごとに使い回す設計なので、リクエストのたびに作らない)
 let sharedDispatcher: ReturnType<typeof createSsrfSafeAgent> | undefined;
 function defaultFetch(url: string, init?: RequestInit): Promise<Response> {
 	sharedDispatcher ??= createSsrfSafeAgent();

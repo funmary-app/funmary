@@ -1,6 +1,5 @@
 // 汎用の Webhook に、Funmary からの送信だと確かめられる署名を付ける。
-// 形式は Standard Webhooks (https://www.standardwebhooks.com/) に合わせる。鍵は Webhook ごとに作り、
-// 登録した直後に 1 回だけ見せて、保存は暗号化する (保存は呼び出し側の @funmary/db が行う)
+// 形式は Standard Webhooks (https://www.standardwebhooks.com/) に合わせる。鍵は Webhook ごとに作り、登録した直後に 1 回だけ見せて、保存は暗号化する (保存は呼び出し側の @funmary/db が行う)
 import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 
 /** 鍵の実体のバイト数。Standard Webhooks の実装 (公式ライブラリ) と同じ "whsec_" + base64 の形にする */
@@ -53,8 +52,7 @@ function timingSafeEqualString(a: string, b: string): boolean {
 }
 
 /**
- * 受け取った署名が正しいかを確かめる。Funmary 自身は送るだけで使わないが、受け取る側の実装の例と、
- * このファイルのテスト (公式の Standard Webhooks のライブラリとの相互の確認) に使う
+ * 受け取った署名が正しいかを確かめる。Funmary 自身は送るだけで使わないが、受け取る側の実装の例と、このファイルのテスト (公式の Standard Webhooks のライブラリとの相互の確認) に使う
  */
 export function verifyWebhookSignature(
 	options: Omit<SignWebhookOptions, 'timestamp'> & { readonly timestampSeconds: number },
