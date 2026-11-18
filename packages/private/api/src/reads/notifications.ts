@@ -1,5 +1,4 @@
-// 利用者の通知欄の一覧。画面の通知欄、通知のフィード (RSS など)、
-// 公開 API と MCP の list_notifications が、この関数を通して同じ通知を読む。
+// 利用者の通知欄の一覧。画面の通知欄、通知のフィード (RSS など)、公開 API と MCP の list_notifications が、この関数を通して同じ通知を読む。
 import type { NotificationKind, NotificationStore, StoredNotification } from '@funmary/db';
 
 /** 絞る前に読む件数の既定値。利用者 1 人の通知は多くないので、これで十分足りる */
