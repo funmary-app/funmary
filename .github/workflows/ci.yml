@@ -33,7 +33,12 @@ jobs:
     outputs:
       skip: ${{ steps.decide.outputs.skip }}
     steps:
+      # ほかのジョブはこの判定を待つので、要るものだけを取って早く終える (ルートのファイルは、いつも取られる)
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: |
+            .github/actions
+            scripts/workflows/ci
       - uses: ./.github/actions/setup
         with:
           install: false
