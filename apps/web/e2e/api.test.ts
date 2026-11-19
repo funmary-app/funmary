@@ -2,10 +2,19 @@
 import { createHash } from 'node:crypto';
 import { createServer } from 'node:http';
 import type { AddressInfo } from 'node:net';
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import { oidc, seedSubjects, signIn, useMockOidc, answerConfirm } from './support.ts';
 
 useMockOidc();
+
+/**
+ * トークンの画面を開く。範囲のチェックボックスは、画面の準備 (hydration) のときに初めの状態へ戻るので、
+ * 読み込みが落ち着いてから触る。早く触ると、範囲を選ばないまま発行を押したことになり、トークンが出ない
+ */
+async function openTokens(page: Page) {
+	await page.goto('/app/settings/tokens');
+	await page.waitForLoadState('networkidle');
+}
 
 test.describe('公開 API と MCP', () => {
 	test('個人用のアクセストークンを発行、一覧、無効化でき、API から自分の時間割を読める', async ({
@@ -68,7 +77,7 @@ test.describe('公開 API と MCP', () => {
 		const email = `e2e-write-${Date.now()}@fun.ac.jp`;
 		await oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
 		await signIn(page);
-		await page.goto('/app/settings/tokens');
+		await openTokens(page);
 
 		// 書き込みの範囲は、初めはオフ。読み取りだけのトークンでは、予定を足せない
 		await expect(page.getByLabel('予定を足す、直す、消す')).not.toBeChecked();
@@ -89,7 +98,7 @@ test.describe('公開 API と MCP', () => {
 		});
 		expect(denied.status()).toBe(403);
 
-		await page.goto('/app/settings/tokens');
+		await openTokens(page);
 		await page.getByLabel('名前 (どこで使うかのメモ)').fill('予定の登録用');
 		await page.getByLabel('予定を足す、直す、消す').check();
 		await page.getByRole('button', { name: '発行する' }).click();
@@ -112,7 +121,7 @@ test.describe('公開 API と MCP', () => {
 		// 画面の予定の一覧に出て、設定の履歴に、どのトークンが足したかが残る
 		await page.goto('/app/events');
 		await expect(page.getByText('E2E の予定').first()).toBeVisible();
-		await page.goto('/app/settings/tokens');
+		await openTokens(page);
 		const history = page.getByRole('region', { name: '書き込みの履歴' });
 		await expect(history).toContainText('予定「E2E の予定」を足した');
 		await expect(history).toContainText('予定の登録用');
@@ -133,7 +142,7 @@ test.describe('公開 API と MCP', () => {
 		const email = `e2e-courses-${Date.now()}@fun.ac.jp`;
 		await oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
 		await signIn(page);
-		await page.goto('/app/settings/tokens');
+		await openTokens(page);
 		await expect(
 			page.getByLabel('履修登録、自分だけの曜日と時限、略称を書き換える'),
 		).not.toBeChecked();
@@ -170,7 +179,7 @@ test.describe('公開 API と MCP', () => {
 
 		await page.goto('/app/courses');
 		await expect(page.getByText('架空の演習Ⅱ1-AB').first()).toBeVisible();
-		await page.goto('/app/settings/tokens');
+		await openTokens(page);
 		const history = page.getByRole('region', { name: '書き込みの履歴' });
 		await expect(history).toContainText('履修科目に「架空の演習Ⅱ1-AB」を登録した');
 		await expect(history).toContainText('履修の登録用');
@@ -313,7 +322,7 @@ test.describe('公開 API と MCP', () => {
 		expect(oldAccess.status()).toBe(401);
 
 		// 設定の画面から無効にすると、リフレッシュもできなくなる
-		await page.goto('/app/settings/tokens');
+		await openTokens(page);
 		const item = page.getByRole('listitem').filter({ hasText: 'テスト用のクライアント (OAuth)' });
 		await expect(item).toHaveCount(1);
 		await item.getByRole('button', { name: '無効にする' }).click();
