@@ -46,7 +46,10 @@ allowBuilds:
 minimumReleaseAgeExclude:
   - '@modelcontextprotocol/sdk@1.32.0'
   - hono-feed@1.2.0
-
-patchedDependencies:
-  # Vitest のディスクキャッシュを無効にし、Windows のパス区切りをそろえて計測する
-  '@mizchi/mutator-vitest@0.3.0': patches/@mizchi__mutator-vitest@0.3.0.patch
+  # 0.4.5 で Windows のパス区切りと Vitest のディスクキャッシュの不具合が直った
+  - '@mizchi/mutator@0.4.5'
+  - '@mizchi/mutator-core@0.4.5'
+  - '@mizchi/mutator-jest@0.4.5'
+  - '@mizchi/mutator-playwright@0.4.5'
+  - '@mizchi/mutator-typecheck@0.4.5'
+  - '@mizchi/mutator-vitest@0.4.5'
