@@ -1,90 +1,79 @@
-// 依存の更新の方針は CONTRIBUTING.md の "依存の更新" を参照
 {
-	$schema: 'https://docs.renovatebot.com/renovate-schema.json',
-	extends: ['config:recommended', 'helpers:pinGitHubActionDigests', ':timezone(Asia/Tokyo)'],
-
-	// 毎週月曜の 10 時台 (日本時間)
-	schedule: ['* 10 * * 1'],
-	// 公開から 3 日たっていない版は取り込まない
-	minimumReleaseAge: '3 days',
+	$schema: "https://docs.renovatebot.com/renovate-schema.json",
+	extends: [
+		"config:recommended",
+		"helpers:pinGitHubActionDigests",
+		":timezone(Asia/Tokyo)",
+	],
+	schedule: ["* 10 * * 1"],
+	minimumReleaseAge: "3 days",
 	lockFileMaintenance: {
 		enabled: true,
 		automerge: true,
-		schedule: ['* 10 * * 1'],
-		commitMessageAction: 'lockfile を更新',
-		commitMessageTopic: '',
-		commitMessageExtra: '',
+		schedule: ["* 10 * * 1"],
+		commitMessageAction: "lockfile を更新",
+		commitMessageTopic: "",
+		commitMessageExtra: "",
 	},
 	vulnerabilityAlerts: {
-		schedule: ['at any time'],
+		schedule: ["at any time"],
 	},
-
-	// AI エージェントのスキルの中にある、動かさない .github/workflows などを読まない。
-	// 初期設定 (config:recommended) の除外も、ここに書き直す (書くと置き換わるため)
 	ignorePaths: [
-		'**/node_modules/**',
-		'**/bower_components/**',
-		'**/vendor/**',
-		'**/examples/**',
-		'**/__tests__/**',
-		'**/test/**',
-		'**/tests/**',
-		'**/__fixtures__/**',
-		'**/.agents/**',
+		"**/node_modules/**",
+		"**/bower_components/**",
+		"**/vendor/**",
+		"**/examples/**",
+		"**/__tests__/**",
+		"**/test/**",
+		"**/tests/**",
+		"**/__fixtures__/**",
+		"**/.agents/**",
 	],
-
-	labels: ['dependencies'],
-	dependencyDashboardTitle: '依存の更新の一覧 (Dependency Dashboard)',
-
-	// コミットメッセージと PR のタイトルを日本語にする。例: "chore(deps): 依存を更新: svelte → ^5.58.0"
-	commitMessageAction: '依存を更新:',
-	commitMessageTopic: '{{depName}}',
-	commitMessageExtra: '→ {{#if newValue}}{{{newValue}}}{{else}}{{{newDigestShort}}}{{/if}}',
-
+	labels: ["dependencies"],
+	dependencyDashboard: {
+		title: "依存の更新の一覧 (Dependency Dashboard)",
+	},
+	commitMessageAction: "依存を更新:",
+	commitMessageTopic: "{{depName}}",
+	commitMessageExtra: "→ {{#if newValue}}{{{newValue}}}{{else}}{{{newDigestShort}}}{{/if}}",
 	customManagers: [
 		{
-			// ワークフローの run に書いた gitleaks の Docker イメージの版も更新する
-			customType: 'regex',
-			managerFilePatterns: ['/^\\.github/workflows/.+\\.ya?ml$/'],
-			matchStrings: ['ghcr\\.io/gitleaks/gitleaks:(?<currentValue>v[\\d.]+)'],
-			depNameTemplate: 'ghcr.io/gitleaks/gitleaks',
-			datasourceTemplate: 'docker',
+			customType: "regex",
+			managerFilePatterns: ["/^\\.github/workflows/.+\\.ya?ml$/"],
+			matchStrings: ["ghcr\\.io/gitleaks/gitleaks:(?<currentValue>v[\\d.]+)"],
+			depNameTemplate: "ghcr.io/gitleaks/gitleaks",
+			datasourceTemplate: "docker",
 		},
 	],
-
 	packageRules: [
 		{
-			// パッチとマイナーは 1 つの PR にまとめ、CI が通れば自動でマージする
-			matchUpdateTypes: ['minor', 'patch', 'digest'],
-			groupName: 'パッチとマイナー',
-			groupSlug: 'non-major',
-			commitMessageTopic: 'パッチとマイナー',
-			commitMessageExtra: '',
+			matchUpdateTypes: ["minor", "patch", "digest"],
+			groupName: "パッチとマイナー",
+			groupSlug: "non-major",
+			commitMessageTopic: "パッチとマイナー",
+			commitMessageExtra: "",
 			automerge: true,
 		},
 		{
-			// SMUI は版をそろえて使う
-			matchPackageNames: ['@smui/**', '@smui-extra/**', 'smui-theme'],
-			groupName: 'SMUI',
-			groupSlug: 'smui',
-			commitMessageTopic: 'SMUI',
-			commitMessageExtra: '',
+			matchPackageNames: ["@smui/**", "@smui-extra/**", "smui-theme"],
+			groupName: "SMUI",
+			groupSlug: "smui",
+			commitMessageTopic: "SMUI",
+			commitMessageExtra: "",
 		},
 		{
-			// 開発と CI の Node.js は、対応の下限の 24 系から上げない
-			matchDepNames: ['node'],
-			matchUpdateTypes: ['major'],
+			matchDepNames: ["node"],
+			matchUpdateTypes: ["major"],
 			enabled: false,
 		},
 		{
-			matchPackageNames: ['@types/node'],
-			allowedVersions: '24.x',
+			matchPackageNames: ["@types/node"],
+			allowedVersions: "24.x",
 		},
 		{
-			// メジャーの更新は変更点を読んでから手でマージする
-			matchUpdateTypes: ['major'],
+			matchUpdateTypes: ["major"],
 			automerge: false,
-			labels: ['dependencies', 'major'],
+			labels: ["dependencies", "major"],
 		},
 	],
 }
