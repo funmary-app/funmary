@@ -42,8 +42,14 @@ cat > "$stubs/npm" <<'EOF'
 #!/bin/sh
 mkdir -p node_modules/better-sqlite3
 echo "npm $*" >> "$STUB_DIR/calls"
+command -v node > "$STUB_DIR/npm-node"
 EOF
-chmod +x "$stubs"/*
+# npm と同じ場所の node と、PATH で先に見つかる別の node (sudo の /usr/local/bin にあるもの)
+printf '#!/bin/sh\nexit 0\n' > "$stubs/node"
+other_node_dir="$work/other-node"
+mkdir -p "$other_node_dir"
+printf '#!/bin/sh\nexit 0\n' > "$other_node_dir/node"
+chmod +x "$stubs"/* "$other_node_dir/node"
 
 # --- リリースを作る ------------------------------------------------------------
 
@@ -101,6 +107,11 @@ check "npm install (better-sqlite3) を、展開した中で行う" test -d "$FU
 check "funmary-admin と funmary-update を置き、実行できる" test -x "$FUNMARY_BIN_DIR/funmary-admin" -a -x "$FUNMARY_SBIN_DIR/funmary-update"
 check "再起動はしない (unit がないので)" equals "$(restarts)" 0
 check "ビルド結果の hash を、リリースの中に残す" equals "$(cat "$FUNMARY_BASE/releases/build-aaaaaaa/.build-hash")" hash-a
+
+echo "update.sh: npm は、同じ場所にある node で動かす"
+new_scene
+PATH="$other_node_dir:$PATH" update build-aaaaaaa >/dev/null 2>&1
+check "PATH で先に見つかる node ではなく、npm と同じ場所の node を使う" equals "$(cat "$STUB_DIR/npm-node")" "$stubs/node"
 
 echo "update.sh: unit があるときの切り替え"
 new_scene

@@ -81,7 +81,9 @@ if [ ! -d "$release_dir" ]; then
   cp "$tmp/build-hash.txt" "$staged/.build-hash"
 
   # better-sqlite3 を入れる (ビルド済みのファイルを取得する)。失敗したら、途中の状態を残さない
-  (cd "$staged" && "$NPM" install --omit=dev --no-audit --no-fund --loglevel=error)
+  # npm は PATH で最初に見つかった node で動き、sudo の PATH では /usr/local/bin が /usr/bin より先に来る。
+  # サーバーと同じ node で動かすため、npm と同じ場所を PATH の先頭に置く
+  (cd "$staged" && PATH="$(dirname "$NPM"):$PATH" "$NPM" install --omit=dev --no-audit --no-fund --loglevel=error)
   # アプリ自身が自分のコードを書き換えられないように、root の持ち物にする (root で動かしているときだけ)
   if [ "$(id -u)" -eq 0 ]; then chown -R root:root "$staged"; fi
   chmod -R go-w "$staged"
