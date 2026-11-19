@@ -25,9 +25,9 @@
 			{#each data.events as event (event.id)}
 				<li>
 					<p class="title">
-						<a href={resolve('/app/events/shared/[ref]', { ref: String(event.id) })}
-							>{event.title}</a
-						>
+						<a href={resolve('/app/events/shared/[ref]', { ref: String(event.id) })}>
+							{event.title}
+						</a>
 						{#if event.subscribed}<span class="badge">加えています</span>{/if}
 					</p>
 					<p class="meta">{event.when}、{event.time}</p>

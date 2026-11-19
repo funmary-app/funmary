@@ -290,11 +290,11 @@
 			<ul class="days">
 				{#each data.substituteDays as day (day.date)}
 					<li>
-						<span
-							><time datetime={day.date}>{formatDate(day.date)}</time> は {weekdayName(
+						<span>
+							<time datetime={day.date}>{formatDate(day.date)}</time> は {weekdayName(
 								day.weekday,
-							)}曜の授業</span
-						>
+							)}曜の授業
+						</span>
 						<form
 							method="POST"
 							action="?/deleteSubstituteDay"
@@ -340,11 +340,11 @@
 			<ul class="days">
 				{#each data.noClassDays as day (day.date)}
 					<li>
-						<span
-							><time datetime={day.date}>{formatDate(day.date)}</time>{day.label
+						<span>
+							<time datetime={day.date}>{formatDate(day.date)}</time>{day.label
 								? ` (${day.label})`
-								: ''}</span
-						>
+								: ''}
+						</span>
 						<form
 							method="POST"
 							action="?/deleteNoClassDay"

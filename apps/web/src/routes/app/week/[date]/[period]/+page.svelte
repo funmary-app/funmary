@@ -133,8 +133,9 @@
 			</ul>
 		{/if}
 		<p>
-			見つからない科目は、<a href={resolve('app/courses?tab=search')}>科目を探す</a
-			>から登録できます。
+			見つからない科目は、<a href={resolve('app/courses?tab=search')}>
+				科目を探す
+			</a>から登録できます。
 		</p>
 	</section>
 

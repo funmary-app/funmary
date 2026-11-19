@@ -95,11 +95,11 @@
 					{/if}
 					<!-- /auth は SvelteKit の画面ではなく、サーバーが処理するので、通常の移動にする -->
 					<Button href="/auth/google" variant="unelevated" data-sveltekit-reload>
-						<Label
-							>{registration === 'open'
+						<Label>
+							{registration === 'open'
 								? '大学のアカウントではじめる'
-								: '大学のアカウントでログイン'}</Label
-						>
+								: '大学のアカウントでログイン'}
+						</Label>
 					</Button>
 					<p class="note">
 						@fun.ac.jp の Google アカウントを使います。スマホでも PC でも使えます。

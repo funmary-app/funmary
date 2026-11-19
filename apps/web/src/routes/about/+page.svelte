@@ -81,9 +81,9 @@
 	<p>
 		ロゴの文字には、フォント「07あかずきんポップ」を使っています。
 		<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- 外部サイトへのリンク -->
-		<a href="https://flopdesign.booth.pm/items/1748058" target="_blank" rel="noopener noreferrer"
-			>フリーダウンロード (BOOTH)</a
-		>
+		<a href="https://flopdesign.booth.pm/items/1748058" target="_blank" rel="noopener noreferrer">
+			フリーダウンロード (BOOTH)
+		</a>
 	</p>
 </div>
 

@@ -129,9 +129,9 @@
 			<div class="days" role="grid" aria-label={month.label}>
 				<div role="row" class="week">
 					{#each WEEKDAY_HEADERS as header, i (header)}
-						<span role="columnheader" class={['head', { sunday: i === 0, saturday: i === 6 }]}
-							>{header}</span
-						>
+						<span role="columnheader" class={['head', { sunday: i === 0, saturday: i === 6 }]}>
+							{header}
+						</span>
 					{/each}
 				</div>
 				{#each month.weeks as week, w (w)}

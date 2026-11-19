@@ -53,9 +53,9 @@
 	</p>
 	<p>
 		<!-- API の文書は SvelteKit の外 (Hono が配る) なので、external で画面の中の移動にしない -->
-		<a href={data.docsUrl} target="_blank" rel="external noopener noreferrer"
-			>API の文書 (Swagger UI)</a
-		>
+		<a href={data.docsUrl} target="_blank" rel="external noopener noreferrer">
+			API の文書 (Swagger UI)
+		</a>
 	</p>
 
 	<FormNotice error={form?.error} message={form?.message} />
@@ -195,9 +195,9 @@
 			上でトークンを発行し、<code>Authorization: Bearer &lt;トークン&gt;</code> のヘッダとして付けて登録します。Claude
 			Code なら、次のコマンドです。
 		</p>
-		<code class="mcp-url"
-			>claude mcp add --transport http funmary {data.mcpUrl} --header "Authorization: Bearer &lt;トークン&gt;"</code
-		>
+		<code class="mcp-url">
+			claude mcp add --transport http funmary {data.mcpUrl} --header "Authorization: Bearer &lt;トークン&gt;"
+		</code>
 
 		<h3>REST API</h3>
 		<p>

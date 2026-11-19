@@ -251,9 +251,9 @@
 				<Body>
 					{#each data.responseTimes.buckets as bucket (bucket.upTo)}
 						<Row>
-							<Cell class="numeric"
-								>{bucket.upTo === null ? '2500 ms 超' : `${bucket.upTo} ms 以内`}</Cell
-							>
+							<Cell class="numeric">
+								{bucket.upTo === null ? '2500 ms 超' : `${bucket.upTo} ms 以内`}
+							</Cell>
 							<Cell class="numeric">{bucket.count}</Cell>
 							<Cell class="bar-cell">
 								<span class="bar" style:inline-size={`${(bucket.count / maxBucket) * 100}%`}></span>

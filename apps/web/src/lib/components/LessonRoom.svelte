@@ -4,8 +4,9 @@
 </script>
 
 {#if room}
-	{tentative ? `${room} ` : room}{#if tentative}<span class="tentative">(仮。ふだんの教室)</span
-		>{/if}
+	{tentative ? `${room} ` : room}{#if tentative}<span class="tentative">
+			(仮。ふだんの教室)
+		</span>{/if}
 {:else}
 	<span class="tentative">教室未定</span>
 {/if}

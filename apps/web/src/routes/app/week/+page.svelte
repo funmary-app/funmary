@@ -164,23 +164,24 @@
 {#snippet eventCard(event: EventView, showTime: boolean = true)}
 	<div class="event">
 		{#if event.added}
-			<a href={resolve('/app/events/shared/[ref]', { ref: String(event.eventId) })}>{event.title}</a
-			>
+			<a href={resolve('/app/events/shared/[ref]', { ref: String(event.eventId) })}>
+				{event.title}
+			</a>
 		{:else}
 			<a href={resolve('/app/events/[id]', { id: String(event.eventId) })}>{event.title}</a>
 		{/if}
 		{#if showTime}
 			<!-- 「予定」行は、どの時限かが行から分からないので、時刻や時限の文を出す -->
-			<span class="time"
-				>{event.time}{event.continued ? ' (続き)' : ''}{event.added ? ' (加えた予定)' : ''}</span
-			>
+			<span class="time">
+				{event.time}{event.continued ? ' (続き)' : ''}{event.added ? ' (加えた予定)' : ''}
+			</span>
 		{:else if event.continued || event.added}
 			<!-- 時限の行は、行自体が時限を示しているので、時刻や時限は繰り返さない (続きと加えた予定だけ出す) -->
-			<span class="time"
-				>{event.continued ? '(続き)' : ''}{event.continued && event.added ? ' ' : ''}{event.added
+			<span class="time">
+				{event.continued ? '(続き)' : ''}{event.continued && event.added ? ' ' : ''}{event.added
 					? '(加えた予定)'
-					: ''}</span
-			>
+					: ''}
+			</span>
 		{/if}
 		{#if event.location}<span class="room">{event.location}</span>{/if}
 	</div>
@@ -278,10 +279,10 @@
 					<th scope="col"><span class="visually-hidden">時限</span></th>
 					{#each data.days as day (day.date)}
 						<th scope="col" class={{ today: day.date === data.today, off: isDayOff(day.note) }}>
-							<span class="date"
-								>{formatMonthDay(day.date)}
-								<span class="weekday">{formatWeekday(day.date)}</span></span
-							>
+							<span class="date">
+								{formatMonthDay(day.date)}
+								<span class="weekday">{formatWeekday(day.date)}</span>
+							</span>
 							{#if day.note}
 								{@const badge = NOTE_BADGES[day.note.kind]}
 								<span class={['day-badge', day.note.kind]}>
@@ -311,9 +312,9 @@
 						<th scope="row">
 							{row.period} 限
 							{#if row.start && row.end}
-								<span class="time"
-									><span class="start">{row.start}-</span><span class="end">{row.end}</span></span
-								>
+								<span class="time">
+									<span class="start">{row.start}-</span><span class="end">{row.end}</span>
+								</span>
 							{/if}
 						</th>
 						{#each row.cells as cell (cell.date)}
@@ -343,9 +344,10 @@
 										<a
 											href={resolve('/app/subjects/[year]/[code]', lesson.subjectPath)}
 											title={lesson.subjectName}
-											>{(showAbbreviations && data.abbreviations.get(lesson.subjectId)) ||
-												lesson.subjectName}</a
 										>
+											{(showAbbreviations && data.abbreviations.get(lesson.subjectId)) ||
+												lesson.subjectName}
+										</a>
 										<StatusBadge status={lesson.status} />
 										<span class="room">
 											<LessonRoom room={lesson.room} tentative={lesson.roomIsTentative} />
@@ -380,19 +382,19 @@
 		<Content>
 			<div class="export-group" role="group" aria-label="形式">
 				<p class="export-label">形式</p>
-				<RadioField name="timetable-image-format" value="png" bind:group={exportFormat}
-					>PNG</RadioField
-				>
-				<RadioField name="timetable-image-format" value="pdf" bind:group={exportFormat}
-					>PDF</RadioField
-				>
+				<RadioField name="timetable-image-format" value="png" bind:group={exportFormat}>
+					PNG
+				</RadioField>
+				<RadioField name="timetable-image-format" value="pdf" bind:group={exportFormat}>
+					PDF
+				</RadioField>
 			</div>
 			<div class="export-group" role="group" aria-label="大きさ">
 				<p class="export-label">大きさ</p>
 				{#each TIMETABLE_IMAGE_SIZES as size (size.id)}
-					<RadioField name="timetable-image-size" value={size.id} bind:group={exportSizeId}
-						>{size.label} ({size.width} x {size.height})</RadioField
-					>
+					<RadioField name="timetable-image-size" value={size.id} bind:group={exportSizeId}>
+						{size.label} ({size.width} x {size.height})
+					</RadioField>
 				{/each}
 			</div>
 		</Content>

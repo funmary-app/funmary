@@ -103,8 +103,10 @@
 								<CheckboxField
 									name="kinds"
 									value={option.kind}
-									checked={webhook.kinds.includes(option.kind)}>{option.label}</CheckboxField
+									checked={webhook.kinds.includes(option.kind)}
 								>
+									{option.label}
+								</CheckboxField>
 							{/each}
 						</fieldset>
 						<Button type="submit" variant="outlined"><Label>保存する</Label></Button>
@@ -153,12 +155,12 @@
 		{#if canAdd}
 			<fieldset class="kind-choice">
 				<legend>種類</legend>
-				<RadioField name="newKind" value="discord" bind:group={newKind} form="add-form"
-					>Discord の Webhook</RadioField
-				>
-				<RadioField name="newKind" value="generic" bind:group={newKind} form="add-form"
-					>汎用の Webhook (自分で用意した URL)</RadioField
-				>
+				<RadioField name="newKind" value="discord" bind:group={newKind} form="add-form">
+					Discord の Webhook
+				</RadioField>
+				<RadioField name="newKind" value="generic" bind:group={newKind} form="add-form">
+					汎用の Webhook (自分で用意した URL)
+				</RadioField>
 			</fieldset>
 			{#if newKind === 'discord'}
 				<ol class="steps">
@@ -220,8 +222,9 @@
 						<CheckboxField name="kinds" value={option.kind} checked>{option.label}</CheckboxField>
 					{/each}
 				</fieldset>
-				<Button type="submit" variant="unelevated"><Label>登録して、テスト通知を送る</Label></Button
-				>
+				<Button type="submit" variant="unelevated">
+					<Label>登録して、テスト通知を送る</Label>
+				</Button>
 			</form>
 		{:else}
 			<p>登録できる Webhook は {data.limit} 個までで、上限に達しています。</p>

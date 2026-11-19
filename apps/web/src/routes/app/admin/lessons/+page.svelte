@@ -151,9 +151,9 @@
 							<p class="name">{lesson.lessonName}</p>
 							<p class="meta">
 								紐付け先:
-								<a href={resolve('/app/subjects/[year]/[code]', lesson.subject.path)}
-									>{lesson.subject.name}</a
-								>{lesson.subject.independent ? ' (シラバスにない授業)' : ''}
+								<a href={resolve('/app/subjects/[year]/[code]', lesson.subject.path)}>
+									{lesson.subject.name}
+								</a>{lesson.subject.independent ? ' (シラバスにない授業)' : ''}
 							</p>
 							{@render seen(lesson)}
 							<details>

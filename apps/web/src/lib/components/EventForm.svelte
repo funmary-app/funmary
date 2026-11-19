@@ -85,20 +85,26 @@
 				name="timeKind"
 				value="allDay"
 				group={timeKind}
-				onchange={() => (chosen.timeKind = 'allDay')}>終日</RadioField
+				onchange={() => (chosen.timeKind = 'allDay')}
 			>
+				終日
+			</RadioField>
 			<RadioField
 				name="timeKind"
 				value="time"
 				group={timeKind}
-				onchange={() => (chosen.timeKind = 'time')}>時刻で決める</RadioField
+				onchange={() => (chosen.timeKind = 'time')}
 			>
+				時刻で決める
+			</RadioField>
 			<RadioField
 				name="timeKind"
 				value="period"
 				group={timeKind}
-				onchange={() => (chosen.timeKind = 'period')}>時限で決める</RadioField
+				onchange={() => (chosen.timeKind = 'period')}
 			>
+				時限で決める
+			</RadioField>
 		</div>
 		{#if timeKind === 'time'}
 			<div class="row">
@@ -156,23 +162,25 @@
 							<CheckboxField
 								name="weekday"
 								value={weekday.value}
-								checked={values.weekdays.includes(weekday.value)}>{weekday.label}</CheckboxField
+								checked={values.weekdays.includes(weekday.value)}
 							>
+								{weekday.label}
+							</CheckboxField>
 						{/each}
 					</div>
 				</fieldset>
 			{:else if repeat === 'monthly'}
 				<fieldset class="inner">
 					<legend>毎月の決め方</legend>
-					<RadioField name="monthlyMode" value="day" group={values.monthlyMode}
-						>開始日と同じ日付</RadioField
-					>
-					<RadioField name="monthlyMode" value="nth" group={values.monthlyMode}
-						>開始日と同じ、第何曜日 (例: 第 2 火曜日)</RadioField
-					>
-					<RadioField name="monthlyMode" value="last" group={values.monthlyMode}
-						>開始日と同じ曜日の、最終週</RadioField
-					>
+					<RadioField name="monthlyMode" value="day" group={values.monthlyMode}>
+						開始日と同じ日付
+					</RadioField>
+					<RadioField name="monthlyMode" value="nth" group={values.monthlyMode}>
+						開始日と同じ、第何曜日 (例: 第 2 火曜日)
+					</RadioField>
+					<RadioField name="monthlyMode" value="last" group={values.monthlyMode}>
+						開始日と同じ曜日の、最終週
+					</RadioField>
 				</fieldset>
 			{/if}
 
@@ -182,20 +190,26 @@
 					name="endKind"
 					value="never"
 					group={endKind}
-					onchange={() => (chosen.endKind = 'never')}>終わりなし</RadioField
+					onchange={() => (chosen.endKind = 'never')}
 				>
+					終わりなし
+				</RadioField>
 				<RadioField
 					name="endKind"
 					value="until"
 					group={endKind}
-					onchange={() => (chosen.endKind = 'until')}>日付まで</RadioField
+					onchange={() => (chosen.endKind = 'until')}
 				>
+					日付まで
+				</RadioField>
 				<RadioField
 					name="endKind"
 					value="count"
 					group={endKind}
-					onchange={() => (chosen.endKind = 'count')}>回数まで</RadioField
+					onchange={() => (chosen.endKind = 'count')}
 				>
+					回数まで
+				</RadioField>
 				{#if endKind === 'until'}
 					<TextField
 						class="narrow"
@@ -228,8 +242,9 @@
 								name="exclude"
 								value={candidate.date}
 								checked={values.excludedDates.includes(candidate.date)}
-								>{candidate.label}</CheckboxField
 							>
+								{candidate.label}
+							</CheckboxField>
 						{/each}
 					</div>
 				</fieldset>
@@ -243,12 +258,12 @@
 	<fieldset>
 		<legend>公開範囲</legend>
 		<RadioField name="visibility" value="private" group={values.visibility}>自分だけ</RadioField>
-		<RadioField name="visibility" value="link" group={values.visibility}
-			>共有のリンクを知っている人 (Funmary にログインした人だけ)</RadioField
-		>
-		<RadioField name="visibility" value="public" group={values.visibility}
-			>Funmary にログインしている全員 (「みんなの予定」に載る)</RadioField
-		>
+		<RadioField name="visibility" value="link" group={values.visibility}>
+			共有のリンクを知っている人 (Funmary にログインした人だけ)
+		</RadioField>
+		<RadioField name="visibility" value="public" group={values.visibility}>
+			Funmary にログインしている全員 (「みんなの予定」に載る)
+		</RadioField>
 		<p class="hint">
 			公開した予定に、あなたの名前やメールアドレスは出ません。公開をやめると、ほかの人の時間割から消えます。
 		</p>
