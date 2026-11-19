@@ -1,7 +1,7 @@
 // Google のログインの通し。Google の代わりに、テスト用の OpenID Connect のサーバーを使う (support.ts)。
 // サーバーは本物の RS256 で署名した ID トークンを返すので、アプリは本番と同じ手順 (PKCE、state、nonce、署名の検証) を通る。
 import { expect, test, type Page } from '@playwright/test';
-import { oidc, signIn, useMockOidc, answerConfirm, checkBox } from './support.ts';
+import { oidc, signIn, useMockOidc, answerConfirm } from './support.ts';
 
 useMockOidc();
 
@@ -111,7 +111,7 @@ test('大学のアカウントでログインでき、ログアウトできる',
 	// 手元で E2E を続けて動かすと、前の回で同意済みの利用者になるので、画面が出たときだけ同意する)
 	await page.waitForURL(/\/(app|consent)/);
 	if (new URL(page.url()).pathname === '/consent') {
-		await checkBox(page, '利用規約とプライバシーポリシーに同意します');
+		await page.getByLabel('利用規約とプライバシーポリシーに同意します').check();
 		await page.getByRole('button', { name: '同意して続ける' }).click();
 	}
 
@@ -183,12 +183,35 @@ test.describe('利用規約への同意', () => {
 		await page.getByRole('button', { name: '同意して続ける' }).click();
 		// チェックを入れていないと、ブラウザが送らせない
 		await expect(page).toHaveURL('/consent?next=%2Fapp%2Fweek');
-		await checkBox(page, '利用規約とプライバシーポリシーに同意します');
+		await page.getByLabel('利用規約とプライバシーポリシーに同意します').check();
 		await page.getByRole('button', { name: '同意して続ける' }).click();
 		await expect(page).toHaveURL('/app/week');
 
 		// 同意したあとは、同意画面を開いても、アプリへ進む
 		await page.goto('/consent');
+		await expect(page).toHaveURL('/app');
+	});
+
+	test('画面の準備 (hydration) が済む前に入れたチェックは、準備が済んでも外れない', async ({
+		page,
+	}) => {
+		const email = `e2e-early-check-${Date.now()}@fun.ac.jp`;
+		await oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
+		// 画面の JavaScript の読み込みを止め、サーバーが描いた画面だけを先に出す (通信の遅い端末と同じ状態)
+		let release = () => {};
+		const loaded = new Promise<void>((resolve) => (release = resolve));
+		await page.route('**/_app/immutable/**/*.js', async (route) => {
+			await loaded;
+			await route.continue();
+		});
+		await page.goto('/auth/google', { waitUntil: 'commit' });
+		const agree = page.getByLabel('利用規約とプライバシーポリシーに同意します');
+		await agree.check();
+
+		release();
+		await expect(page.locator('.mdc-checkbox--upgraded', { has: agree })).toBeAttached();
+		await expect(agree).toBeChecked();
+		await page.getByRole('button', { name: '同意して続ける' }).click();
 		await expect(page).toHaveURL('/app');
 	});
 
@@ -203,7 +226,7 @@ test.describe('利用規約への同意', () => {
 
 		await page.goto('/auth/google');
 		await page.goto('/consent?next=https%3A%2F%2Fevil.example%2F');
-		await checkBox(page, '利用規約とプライバシーポリシーに同意します');
+		await page.getByLabel('利用規約とプライバシーポリシーに同意します').check();
 		await page.getByRole('button', { name: '同意して続ける' }).click();
 		await expect(page).toHaveURL('/app');
 	});

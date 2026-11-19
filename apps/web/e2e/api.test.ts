@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto';
 import { createServer } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { expect, test } from '@playwright/test';
-import { oidc, seedSubjects, signIn, useMockOidc, answerConfirm, checkBox } from './support.ts';
+import { oidc, seedSubjects, signIn, useMockOidc, answerConfirm } from './support.ts';
 
 useMockOidc();
 
@@ -20,7 +20,7 @@ test.describe('公開 API と MCP', () => {
 		await expect(page.getByRole('heading', { level: 1, name: '公開 API と MCP' })).toBeVisible();
 
 		await page.getByLabel('名前 (どこで使うかのメモ)').fill('e2e のテスト');
-		await checkBox(page, '今日や週の授業');
+		await page.getByLabel('今日や週の授業').check();
 		await page.getByRole('button', { name: '発行する' }).click();
 		await expect(page.getByText('を発行しました', { exact: false })).toBeVisible();
 
@@ -73,7 +73,7 @@ test.describe('公開 API と MCP', () => {
 		// 書き込みの範囲は、初めはオフ。読み取りだけのトークンでは、予定を足せない
 		await expect(page.getByLabel('予定を足す、直す、消す')).not.toBeChecked();
 		await page.getByLabel('名前 (どこで使うかのメモ)').fill('読むだけ');
-		await checkBox(page, '今日や週の授業');
+		await page.getByLabel('今日や週の授業').check();
 		await page.getByRole('button', { name: '発行する' }).click();
 		// 発行したトークンは、欄が描かれたあとに入る
 		await expect(page.locator('#new-token')).toHaveValue(/^fmy_/);
@@ -91,7 +91,7 @@ test.describe('公開 API と MCP', () => {
 
 		await page.goto('/app/settings/tokens');
 		await page.getByLabel('名前 (どこで使うかのメモ)').fill('予定の登録用');
-		await checkBox(page, '予定を足す、直す、消す');
+		await page.getByLabel('予定を足す、直す、消す').check();
 		await page.getByRole('button', { name: '発行する' }).click();
 		// 発行したトークンは、欄が描かれたあとに入る
 		await expect(page.locator('#new-token')).toHaveValue(/^fmy_/);
@@ -138,7 +138,7 @@ test.describe('公開 API と MCP', () => {
 			page.getByLabel('履修登録、自分だけの曜日と時限、略称を書き換える'),
 		).not.toBeChecked();
 		await page.getByLabel('名前 (どこで使うかのメモ)').fill('履修の登録用');
-		await checkBox(page, '履修登録、自分だけの曜日と時限、略称を書き換える');
+		await page.getByLabel('履修登録、自分だけの曜日と時限、略称を書き換える').check();
 		await page.getByRole('button', { name: '発行する' }).click();
 		// 発行したトークンは、欄が描かれたあとに入る
 		await expect(page.locator('#new-token')).toHaveValue(/^fmy_/);

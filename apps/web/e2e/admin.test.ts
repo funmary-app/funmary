@@ -10,7 +10,6 @@ import {
 	signInAs,
 	answerConfirm,
 	testDataDir,
-	checkBox,
 } from './support.ts';
 
 useMockOidc();
@@ -834,7 +833,7 @@ test.describe('テストアカウント', () => {
 		await oidc.setIdentity({ sub: tester, email: tester, email_verified: true });
 		await guestPage.goto('/auth/google/test');
 		await expect(guestPage).toHaveURL(/\/consent/);
-		await checkBox(guestPage, '利用規約とプライバシーポリシーに同意します');
+		await guestPage.getByLabel('利用規約とプライバシーポリシーに同意します').check();
 		await guestPage.getByRole('button', { name: '同意して続ける' }).click();
 		await expect(guestPage).toHaveURL('/app');
 

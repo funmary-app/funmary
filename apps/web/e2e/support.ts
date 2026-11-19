@@ -44,32 +44,14 @@ export function useMockOidc() {
 }
 
 /**
- * SMUI のチェックボックスにチェックを入れる。チェックボックスは、画面の準備 (hydration) のときに初めの状態へ戻るので、
- * 準備が済んだ印 (mdc-checkbox--upgraded。部品の onMount で付く) を待ってから触る。早く触ると、チェックが外れたまま送られる
- */
-export async function checkBox(page: Page, label: string) {
-	const box = page.getByLabel(label);
-	await expect(page.locator('.mdc-checkbox--upgraded', { has: box })).toBeAttached();
-	await box.check();
-}
-
-/**
  * ログインする。初めてのログインでは、利用規約への同意画面が出るので、同意して先へ進む
  * (ほとんどのテストは、同意済みの利用者として始めたいため)。同意の流れそのものは、専用のテストで確かめる
  */
 export async function signIn(page: Page) {
 	await page.goto('/auth/google');
 	if (new URL(page.url()).pathname !== '/consent') return;
-	// 同意のチェックボックスは、画面の準備 (hydration) のときに外れた状態へ戻る。準備を待つと、ログインのたびに時間がかかるので、
-	// チェックと送信を、ページの中で一度に行う (間に準備が割り込めない)。画面を操作する同意の流れは、login.test.ts で確かめる
-	await page
-		.getByRole('button', { name: '同意して続ける' })
-		.evaluate((button: HTMLButtonElement) => {
-			const agree = button.form?.querySelector<HTMLInputElement>('input[name="agree"]');
-			if (!agree) throw new Error('同意のチェックボックスが見つかりません');
-			agree.checked = true;
-			button.form?.requestSubmit(button);
-		});
+	await page.getByLabel('利用規約とプライバシーポリシーに同意します').check();
+	await page.getByRole('button', { name: '同意して続ける' }).click();
 	await expect(page).not.toHaveURL(/\/consent/);
 }
 

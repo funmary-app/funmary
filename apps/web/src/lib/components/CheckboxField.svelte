@@ -25,9 +25,19 @@
 		onchange?: (event: Event) => void;
 		children: Snippet;
 	} = $props();
+
+	// サーバーとブラウザで同じになる id。ラベルと欄をつなぎ、下で、サーバーが描いた欄を探すのにも使う
+	const inputId = $props.id();
+
+	// 画面の準備 (hydration) では、欄が checked の初めの値に戻される。通信が遅いと、その前に利用者がチェックを入れていることが
+	// あるので、サーバーが描いた欄の今の状態を引き継ぐ。画面の移動で新しく作るときは、まだ欄がないので何もしない
+	if (typeof document !== 'undefined') {
+		const rendered = document.getElementById(inputId);
+		if (rendered instanceof HTMLInputElement) checked = rendered.checked;
+	}
 </script>
 
-<FormField>
+<FormField {inputId}>
 	<Checkbox
 		bind:checked
 		value={value ?? 'on'}
