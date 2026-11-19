@@ -50,3 +50,8 @@ minimumReleaseAgeExclude:
   - '@mizchi/mutator-playwright@0.4.5'
   - '@mizchi/mutator-typecheck@0.4.5'
   - '@mizchi/mutator-vitest@0.4.5'
+
+overrides:
+  # drizzle-kit が使う @esbuild-kit/core-utils は esbuild 0.18 に固定していて、開発サーバーの脆弱性 (GHSA-67mh-4wv8-2f99) がある。
+  # @esbuild-kit は更新が止まっているので、esbuild だけを直った版に上げる。drizzle-kit が自前の esbuild を使わなくなったら消す
+  '@esbuild-kit/core-utils>esbuild': ^0.25.12
