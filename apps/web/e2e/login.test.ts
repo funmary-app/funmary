@@ -1,7 +1,7 @@
 // Google のログインの通し。Google の代わりに、テスト用の OpenID Connect のサーバーを使う (support.ts)。
 // サーバーは本物の RS256 で署名した ID トークンを返すので、アプリは本番と同じ手順 (PKCE、state、nonce、署名の検証) を通る。
 import { expect, test, type Page } from '@playwright/test';
-import { oidc, signIn, useMockOidc, answerConfirm } from './support.ts';
+import { oidc, signIn, useMockOidc, answerConfirm, checkBox } from './support.ts';
 
 useMockOidc();
 
@@ -111,7 +111,7 @@ test('大学のアカウントでログインでき、ログアウトできる',
 	// 手元で E2E を続けて動かすと、前の回で同意済みの利用者になるので、画面が出たときだけ同意する)
 	await page.waitForURL(/\/(app|consent)/);
 	if (new URL(page.url()).pathname === '/consent') {
-		await page.getByLabel('利用規約とプライバシーポリシーに同意します').check();
+		await checkBox(page, '利用規約とプライバシーポリシーに同意します');
 		await page.getByRole('button', { name: '同意して続ける' }).click();
 	}
 
@@ -183,7 +183,7 @@ test.describe('利用規約への同意', () => {
 		await page.getByRole('button', { name: '同意して続ける' }).click();
 		// チェックを入れていないと、ブラウザが送らせない
 		await expect(page).toHaveURL('/consent?next=%2Fapp%2Fweek');
-		await page.getByLabel('利用規約とプライバシーポリシーに同意します').check();
+		await checkBox(page, '利用規約とプライバシーポリシーに同意します');
 		await page.getByRole('button', { name: '同意して続ける' }).click();
 		await expect(page).toHaveURL('/app/week');
 
@@ -203,7 +203,7 @@ test.describe('利用規約への同意', () => {
 
 		await page.goto('/auth/google');
 		await page.goto('/consent?next=https%3A%2F%2Fevil.example%2F');
-		await page.getByLabel('利用規約とプライバシーポリシーに同意します').check();
+		await checkBox(page, '利用規約とプライバシーポリシーに同意します');
 		await page.getByRole('button', { name: '同意して続ける' }).click();
 		await expect(page).toHaveURL('/app');
 	});
