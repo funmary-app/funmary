@@ -985,7 +985,7 @@ export interface operations {
     getApiV1AcademicCalendar: {
         parameters: {
             query?: {
-                year?: number;
+                year?: string;
             };
             header?: never;
             path?: never;
@@ -1115,7 +1115,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                year: number;
+                year: string;
                 syllabusId: string;
             };
             cookie?: never;
@@ -1749,7 +1749,7 @@ export interface operations {
         parameters: {
             query?: {
                 q?: string;
-                year?: number;
+                year?: string;
                 term?: string;
             };
             header?: never;
@@ -1798,7 +1798,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                year: number;
+                year: string;
                 syllabusId: string;
             };
             cookie?: never;
@@ -1984,7 +1984,7 @@ export interface operations {
         parameters: {
             query?: {
                 stopId?: string;
-                limit?: number;
+                limit?: string;
             };
             header?: never;
             path?: never;
@@ -2056,7 +2056,7 @@ export interface operations {
                 stopId: string;
                 direction: "toUniversity" | "fromUniversity";
                 day?: "weekday" | "holiday";
-                limit?: number;
+                limit?: string;
             };
             header?: never;
             path?: never;
@@ -2425,8 +2425,8 @@ export interface operations {
             query?: {
                 kinds?: string;
                 since?: string;
-                afterId?: number;
-                limit?: number;
+                afterId?: string;
+                limit?: string;
             };
             header?: never;
             path?: never;

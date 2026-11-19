@@ -77,8 +77,7 @@ export const openApiWebhooks: NonNullable<Documentation['webhooks']> = {
 			parameters: signatureParameters,
 			requestBody: {
 				required: true,
-				// webhooks の型は OpenAPI 3.0 の SchemaObject で、3.1 の type: ['string', 'null'] を受け付けない。出力は 3.1 の文書なので、型だけ合わせる
-				content: { 'application/json': { schema: eventSchema as never } },
+				content: { 'application/json': { schema: eventSchema } },
 			},
 			responses: {
 				'200': { description: '受け取った' },
