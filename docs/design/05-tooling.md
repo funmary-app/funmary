@@ -59,6 +59,8 @@ tsconfig では、6 系で非推奨になった設定 (`baseUrl`、`moduleResolu
 
 Promise を `await` し忘れるなど、実行時の不具合につながる書き方を検出するため、型情報を使うルールを有効にしています。検査には時間がかかります。
 
+`.svelte` の型の検査では、svelte-eslint-parser の実験的な機能 (`SVELTE_ESLINT_PARSER_EXPERIMENTAL_TS_SYS_HOOK`) を有効にしています。この機能がないと、TypeScript はディスクの `.svelte` をそのまま読み、parser が変換した内容と食い違うので、`.svelte` を 1 つ検査するたびに型情報を作り直します。有効にすると、リポジトリ全体の lint は 50 秒ほどから 35 秒ほどになります。環境変数は `eslint.svelte-ts-sys-hook.js` で設定し、`eslint.config.js` の最初に読み込みます。parser は読み込まれたときに環境変数を見るので、ほかの import より先に設定する必要があるためです。実験的な機能なので、svelte-eslint-parser の更新で動かなくなったら、このファイルを消せば元の動きに戻ります。
+
 Prettier は、タブでのインデント、シングルクォート、1 行 100 文字を基本にしています。Markdown と YAML だけは、インデントにスペースを使います。
 
 ## 5.4 よく使うコマンド

@@ -1,3 +1,5 @@
+// eslint-plugin-svelte より先に読み込む
+import './eslint.svelte-ts-sys-hook.js';
 import js from '@eslint/js';
 import { defineConfig } from 'eslint/config';
 import prettier from 'eslint-config-prettier';
