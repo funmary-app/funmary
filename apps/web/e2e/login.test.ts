@@ -116,8 +116,9 @@ test('大学のアカウントでログインでき、ログアウトできる',
 	}
 
 	await expect(page).toHaveURL('/app');
-	// メールアドレスの @ より前は、押すまで出さない
-	const menu = page.getByRole('navigation', { name: 'メニュー' });
+	// メールアドレスの @ より前は、押すまで出さない。メールアドレスは PC の左のメニューにだけ出る
+	// (スマホの下のメニューも同じ名前で、画面の CSS が効く前は両方が見えるので、メールアドレスで絞る)
+	const menu = page.getByRole('navigation', { name: 'メニュー' }).filter({ hasText: '@fun.ac.jp' });
 	await expect(menu).toContainText('••••••••@fun.ac.jp');
 	await expect(menu).not.toContainText('taro@');
 	await menu.getByRole('button', { name: 'メールアドレスを表示する' }).click();
