@@ -2,6 +2,7 @@ pnpm-lock.yaml
 packages/private/db/migrations/
 packages/public/client/src/generated/
 skills-lock.json
+renovate.json5
 LICENSE-*
 .agents/
 .private/
