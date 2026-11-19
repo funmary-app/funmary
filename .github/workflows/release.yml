@@ -40,7 +40,7 @@ jobs:
         run: node scripts/workflows/release/publish-release.js
       # Deploy に、リリースにしたコミットを渡す。Deploy の head_sha は起動した時点の main の最新で、この版と違うことがある
       - run: node -e "require('node:fs').writeFileSync('released-sha', process.env.HEAD_SHA)"
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: released-sha
           path: released-sha
