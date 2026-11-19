@@ -47,7 +47,22 @@ jobs:
         run: node scripts/workflows/ci/ci-skip.js
 
   check:
+    # 必須の検査はこのジョブの名前で登録している。中身は下の 4 つのジョブに分けて並べて動かし、ここでは結果だけをまとめる
     name: 検査とビルド
+    needs: [lint, typecheck, unit-test, build]
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # 飛ばしたジョブ (skipped) は通ったものとする
+      - env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          echo "$RESULTS"
+          ! printf '%s\n' $RESULTS | grep -qE '^(failure|cancelled)$'
+
+  lint:
+    name: 整形と lint
     needs: skip
     # main への push では skip が動かない (飛ばしたことになる) ので、!cancelled() で待ってから動く
     if: ${{ !cancelled() && needs.skip.outputs.skip != 'true' }}
@@ -58,15 +73,45 @@ jobs:
       - uses: ./.github/actions/setup
       - run: pnpm format:check
       - run: pnpm lint
+
+  typecheck:
+    name: 型の検査
+    needs: skip
+    if: ${{ !cancelled() && needs.skip.outputs.skip != 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup
       - run: pnpm typecheck
       # typescript-eslint と svelte-check は 6 系で動くので、7 系と判定が食い違っていないかを確かめる
       - run: pnpm typecheck:ts6
-      - run: pnpm test
       # npm で配るクライアントの型は、サーバーの OpenAPI の定義から作る。作り直して差分が出たら、コミットし忘れ
       - name: クライアントの型の確認
         run: |
           pnpm generate:client
           git diff --exit-code -- packages/public/client/src/generated
+
+  unit-test:
+    name: 単体テスト
+    needs: skip
+    if: ${{ !cancelled() && needs.skip.outputs.skip != 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup
+      - run: pnpm test
+
+  build:
+    name: ビルドとリリースの確認
+    needs: skip
+    if: ${{ !cancelled() && needs.skip.outputs.skip != 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup
       - run: pnpm build
       # VPS への反映のスクリプトは、実機でしか動かせないので、偽の systemctl と npm で動きを確かめる
       - name: 反映のスクリプトの検査
