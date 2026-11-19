@@ -14,10 +14,10 @@
 	"dependencies": {
 		"@funmary/core": "workspace:*",
 		"better-sqlite3": "catalog:",
-		"drizzle-orm": "^0.45.4"
+		"drizzle-orm": "1.0.0-rc.5"
 	},
 	"devDependencies": {
 		"@types/better-sqlite3": "^9.6.0",
-		"drizzle-kit": "^0.31.11"
+		"drizzle-kit": "1.0.0-rc.5"
 	}
 }

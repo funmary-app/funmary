@@ -6,10 +6,9 @@ import BetterSqlite3 from 'better-sqlite3';
 import { drizzle, type BetterSQLite3Database } from 'drizzle-orm/better-sqlite3';
 import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
 import { readMigrationFiles } from 'drizzle-orm/migrator';
-import * as schema from './schema.ts';
 
 export interface Database {
-	readonly db: BetterSQLite3Database<typeof schema>;
+	readonly db: BetterSQLite3Database;
 	/** better-sqlite3 そのもの。PRAGMA やバックアップなど、Drizzle で書けない操作に使う */
 	readonly sqlite: BetterSqlite3.Database;
 	close(): void;
@@ -44,7 +43,7 @@ export function openDatabase(path: string, options: OpenOptions): Database {
 		}
 		checkIntegrity(sqlite, path, options.backupDir);
 		const migrationsFolder = options.migrationsFolder ?? DEFAULT_MIGRATIONS_FOLDER;
-		const db = drizzle(sqlite, { schema });
+		const db = drizzle({ client: sqlite });
 		if (hasPendingMigrations(sqlite, migrationsFolder) && hasUserTables(sqlite)) {
 			backup(sqlite, options.backupDir, (options.now ?? (() => new Date()))());
 		}
