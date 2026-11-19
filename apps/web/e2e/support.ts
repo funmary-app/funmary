@@ -56,11 +56,21 @@ export async function signIn(page: Page) {
 }
 
 /**
+ * いま動いているテストのサーバーが DB を置く場所。全体の設定を変えるテストは、2 つ目のサーバーと別の DB を使う
+ * (playwright.config.js のプロジェクトの metadata.dataDir)
+ */
+export function testDataDir(): string {
+	const { dataDir } = test.info().project.metadata as { dataDir?: string };
+	return dataDir ?? E2E_DATA_DIR;
+}
+
+/**
  * テストのサーバーと同じ DB を開き、fn を 1 つのトランザクションで動かす。テストのサーバーと書き込みを取り合うので、初めに書き込みの鍵を取る (IMMEDIATE)。読んでから書くトランザクションは、その間にサーバーが書くと、待たずに database is locked で失敗する (WAL のため)
  */
 function withTestDatabase<T>(fn: (database: Database) => T): T {
-	const database = openDatabase(join(E2E_DATA_DIR, 'funmary.db'), {
-		backupDir: join(E2E_DATA_DIR, 'backups'),
+	const dataDir = testDataDir();
+	const database = openDatabase(join(dataDir, 'funmary.db'), {
+		backupDir: join(dataDir, 'backups'),
 	});
 	try {
 		return database.sqlite.transaction(() => fn(database)).immediate();

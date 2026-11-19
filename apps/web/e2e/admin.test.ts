@@ -2,8 +2,15 @@
 import { join } from 'node:path';
 import { expect, test, type Page } from '@playwright/test';
 import { openDatabase } from '@funmary/db';
-import { E2E_DATA_DIR } from '../e2e-data-dir.ts';
-import { oidc, signIn, useMockOidc, seedSubjects, signInAs, answerConfirm } from './support.ts';
+import {
+	oidc,
+	signIn,
+	useMockOidc,
+	seedSubjects,
+	signInAs,
+	answerConfirm,
+	testDataDir,
+} from './support.ts';
 
 useMockOidc();
 
@@ -194,8 +201,9 @@ test.describe('管理画面', () => {
 test.describe('曜日と時限の確認', () => {
 	/** ログイン済みの利用者を、直接 DB でモデレーターにする (昇格の画面はまだない、#15) */
 	function promoteToModerator(email: string) {
-		const database = openDatabase(join(E2E_DATA_DIR, 'funmary.db'), {
-			backupDir: join(E2E_DATA_DIR, 'backups'),
+		const dataDir = testDataDir();
+		const database = openDatabase(join(dataDir, 'funmary.db'), {
+			backupDir: join(dataDir, 'backups'),
 		});
 		try {
 			database.sqlite.prepare(`UPDATE users SET role = 'moderator' WHERE email = ?`).run(email);
