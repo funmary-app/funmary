@@ -81,6 +81,22 @@ describe('openDatabase', () => {
 		expect(() => open()).toThrow(/migration/i);
 		expect(readdirSync(join(dir, 'backups'))).toHaveLength(1);
 	});
+
+	it('マイグレーションの記録の表が古い形 (Drizzle 1.0 より前) なら、新しい形に変える前にバックアップを取る', () => {
+		const database = open();
+		const applied = database.sqlite.prepare('SELECT hash FROM __drizzle_migrations').all();
+		// Drizzle 1.0 より前の表には、name と applied_at の列がない
+		database.sqlite.exec(
+			'ALTER TABLE __drizzle_migrations DROP COLUMN applied_at; ALTER TABLE __drizzle_migrations DROP COLUMN name;',
+		);
+		database.close();
+		opened = [];
+
+		const reopened = open();
+		expect(readdirSync(join(dir, 'backups'))).toHaveLength(1);
+		// 当てたマイグレーションは当て直さず、記録はそのまま残る
+		expect(reopened.sqlite.prepare('SELECT hash FROM __drizzle_migrations').all()).toEqual(applied);
+	});
 });
 
 describe('checkHealth', () => {
