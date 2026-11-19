@@ -118,11 +118,40 @@ jobs:
         run: |
           shellcheck deploy/update.sh deploy/funmary-update deploy/funmary-admin deploy/tests/deploy.test.sh
           bash deploy/tests/deploy.test.sh
+      # main への push では、Release がビルドし直さずに置けるよう、本物の版の名前でリリースを作る
+      - name: リリースの版の名前
+        id: version
+        env:
+          HEAD_SHA: ${{ github.sha }}
+          IS_PUSH: ${{ github.event_name == 'push' }}
+        run: |
+          if [ "$IS_PUSH" = true ]; then
+            node --input-type=module -e "import { releaseVersion } from './scripts/workflows/release/release-version.js'; console.log('name=' + releaseVersion(process.env.HEAD_SHA));" >> "$GITHUB_OUTPUT"
+          else
+            echo "name=build-0000000" >> "$GITHUB_OUTPUT"
+          fi
+      - run: pnpm package-release "$VERSION"
+        env:
+          VERSION: ${{ steps.version.outputs.name }}
+      # smoke-release.js はリリースの中に依存を入れるので、その前に置くものを分けておく
+      - if: github.event_name == 'push'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: release
+          path: |
+            release/funmary-${{ steps.version.outputs.name }}.tar.gz
+            release/funmary-${{ steps.version.outputs.name }}.tar.gz.sha256
+            release/build-hash.txt
+            release/THIRD_PARTY_LICENSES.txt
+          if-no-files-found: error
+          # ジョブを再実行したときに、前の実行が置いたものを置き換える
+          overwrite: true
+          retention-days: 7
       # 環境変数ファイルの空の値 (HOST= など) のままでも、本番と同じ入口で起動できるかを確かめる
       - name: リリースの起動の確認
-        run: |
-          pnpm package-release build-0000000
-          node scripts/smoke-release.js build-0000000
+        run: node scripts/smoke-release.js "$VERSION"
+        env:
+          VERSION: ${{ steps.version.outputs.name }}
 
   e2e:
     name: E2E テスト

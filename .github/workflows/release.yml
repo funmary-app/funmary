@@ -23,6 +23,8 @@ jobs:
     timeout-minutes: 15
     permissions:
       contents: write
+      # CI が置いたリリース (release) を取るため
+      actions: read
     env:
       HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
     steps:
@@ -32,8 +34,15 @@ jobs:
           # リリースノートに、前回のリリースからの変更を書くために、履歴がすべて要る
           fetch-depth: 0
       - uses: ./.github/actions/setup
-      - run: pnpm build
-      - name: tar.gz を作り、GitHub Releases に置く
+        with:
+          install: false
+      # tar.gz は CI が作って置いている。ここでビルドし直すと、依存を入れるところから 30 秒ほど余計にかかる
+      - name: CI が作ったリリースを受け取る
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CI_RUN_ID: ${{ github.event.workflow_run.id }}
+        run: gh run download "$CI_RUN_ID" --repo "$GITHUB_REPOSITORY" --name release --dir release
+      - name: GitHub Releases に置く
         env:
           GH_TOKEN: ${{ github.token }}
           GITHUB_REPOSITORY: ${{ github.repository }}
