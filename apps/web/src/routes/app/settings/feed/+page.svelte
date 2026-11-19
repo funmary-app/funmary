@@ -117,8 +117,10 @@
 							<CheckboxField
 								name="kinds"
 								value={option.kind}
-								checked={data.kinds.includes(option.kind)}>{option.label}</CheckboxField
+								checked={data.kinds.includes(option.kind)}
 							>
+								{option.label}
+							</CheckboxField>
 						{/each}
 					</fieldset>
 					<Button type="submit" variant="unelevated"><Label>保存する</Label></Button>

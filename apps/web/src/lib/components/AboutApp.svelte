@@ -41,13 +41,13 @@
 </script>
 
 <p class="about">
-	<span
-		>Funmary {version}{#if about.build}、{about.build.builtAt} ビルド{/if}</span
-	>
+	<span>
+		Funmary {version}{#if about.build}、{about.build.builtAt} ビルド{/if}
+	</span>
 	<span>{client}</span>
-	<button type="button" onclick={copy}
-		>{copyState.copied ? 'コピーしました' : '情報をコピー'}</button
-	>
+	<button type="button" onclick={copy}>
+		{copyState.copied ? 'コピーしました' : '情報をコピー'}
+	</button>
 </p>
 
 <style lang="scss">

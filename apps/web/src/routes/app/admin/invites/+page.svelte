@@ -98,9 +98,9 @@
 			</fieldset>
 			<div class="actions">
 				<Button type="submit" variant="unelevated"><Label>保存する</Label></Button>
-				<span class="muted" aria-live="polite"
-					>{registrationDirty ? '保存していない変更があります' : ''}</span
-				>
+				<span class="muted" aria-live="polite">
+					{registrationDirty ? '保存していない変更があります' : ''}
+				</span>
 			</div>
 		</form>
 	</section>
@@ -205,11 +205,11 @@
 							<input type="hidden" name="userId" value={user.id} />
 							<input type="hidden" name="granted" value={String(!user.canInvite)} />
 							<Button type="submit" variant={user.canInvite ? 'outlined' : 'unelevated'}>
-								<Label
-									>{user.canInvite ? '許可を外す' : '許可する'}<span class="visually-hidden"
-										>: {user.email}</span
-									></Label
-								>
+								<Label>
+									{user.canInvite ? '許可を外す' : '許可する'}<span class="visually-hidden">
+										: {user.email}
+									</span>
+								</Label>
 							</Button>
 						</form>
 					</li>

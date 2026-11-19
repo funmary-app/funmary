@@ -28,12 +28,13 @@
 	>
 		{#if revealed}<IconHidden aria-hidden="true" />{:else}<IconShown aria-hidden="true" />{/if}
 	</button>
-	<span class="address"
-		>{#if revealed}{name}{:else}<span aria-hidden="true">••••••••</span
-			>{/if}{domain}{#if !revealed}<span class="visually-hidden">
-				(@ より前は非表示です)</span
-			>{/if}</span
-	>
+	<span class="address">
+		{#if revealed}{name}{:else}<span aria-hidden="true">
+				••••••••
+			</span>{/if}{domain}{#if !revealed}<span class="visually-hidden">
+				(@ より前は非表示です)
+			</span>{/if}
+	</span>
 </span>
 
 <style lang="scss">

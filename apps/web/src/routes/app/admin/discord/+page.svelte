@@ -93,9 +93,9 @@
 		<p>
 			Bot が設定されていません。環境変数 <code>DISCORD_BOT_TOKEN</code> と
 			<code>DISCORD_GUILD_ID</code>
-			を書いて、再起動すると使えます。それまでは、環境変数の Webhook (<code
-				>ADMIN_DISCORD_WEBHOOK_URL</code
-			>) があれば、そちらに送ります。
+			を書いて、再起動すると使えます。それまでは、環境変数の Webhook (<code>
+				ADMIN_DISCORD_WEBHOOK_URL
+			</code>) があれば、そちらに送ります。
 		</p>
 	{:else}
 		<p>
@@ -128,9 +128,9 @@
 			<form method="POST" action="?/presence" use:enhance>
 				<input type="hidden" name="enabled" value={String(!data.view.presence.enabled)} />
 				<Button type="submit" variant="outlined">
-					<Label
-						>{data.view.presence.enabled ? 'オンライン表示を切る' : 'オンライン表示を入れる'}</Label
-					>
+					<Label>
+						{data.view.presence.enabled ? 'オンライン表示を切る' : 'オンライン表示を入れる'}
+					</Label>
 				</Button>
 			</form>
 		</section>
@@ -167,12 +167,12 @@
 					<fieldset>
 						<legend>付け方</legend>
 						<RadioField name="mode" value="none" bind:group={joinRoleMode}>付けない</RadioField>
-						<RadioField name="mode" value="custom" bind:group={joinRoleMode}
-							>独自に選んだロールを付ける</RadioField
-						>
-						<RadioField name="mode" value="invite" bind:group={joinRoleMode}
-							>登録済みの招待リンクと同じロールを付ける</RadioField
-						>
+						<RadioField name="mode" value="custom" bind:group={joinRoleMode}>
+							独自に選んだロールを付ける
+						</RadioField>
+						<RadioField name="mode" value="invite" bind:group={joinRoleMode}>
+							登録済みの招待リンクと同じロールを付ける
+						</RadioField>
 					</fieldset>
 					{#if joinRoleMode === 'custom'}
 						<fieldset>
@@ -182,8 +182,10 @@
 									name="roleIds"
 									value={role.id}
 									checked={data.joinRole.mode === 'custom' &&
-										data.joinRole.roleIds.includes(role.id)}>{role.name}</CheckboxField
+										data.joinRole.roleIds.includes(role.id)}
 								>
+									{role.name}
+								</CheckboxField>
 							{:else}
 								<p class="meta">サーバーにロールがありません。</p>
 							{/each}

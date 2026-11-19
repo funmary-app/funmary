@@ -30,8 +30,9 @@
 				>
 					<input type="hidden" name="id" value={code.id} />
 					<Button type="submit" variant="outlined">
-						<Label>取り消す<span class="visually-hidden">: {code.note ?? '(メモなし)'}</span></Label
-						>
+						<Label>
+							取り消す<span class="visually-hidden">: {code.note ?? '(メモなし)'}</span>
+						</Label>
 					</Button>
 				</form>
 			</li>
