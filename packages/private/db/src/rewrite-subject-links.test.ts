@@ -44,7 +44,13 @@ describe('マイグレーション 0004: 授業の URL の書き換え', () => {
 		for (const link of links) insert.run(userId, link);
 
 		const sql = readFileSync(
-			join(import.meta.dirname, '..', 'migrations', '0004_rewrite_subject_links.sql'),
+			join(
+				import.meta.dirname,
+				'..',
+				'migrations',
+				'20260928125050_rewrite_subject_links',
+				'migration.sql',
+			),
 			'utf8',
 		);
 		database.sqlite.exec(sql);

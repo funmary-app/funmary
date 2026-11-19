@@ -44,9 +44,6 @@ allowBuilds:
   simple-git-hooks: true
 
 minimumReleaseAgeExclude:
-  - '@modelcontextprotocol/sdk@1.32.0'
-  - hono-feed@1.2.0
-  # 0.4.5 で Windows のパス区切りと Vitest のディスクキャッシュの不具合が直った
   - '@mizchi/mutator@0.4.5'
   - '@mizchi/mutator-core@0.4.5'
   - '@mizchi/mutator-jest@0.4.5'

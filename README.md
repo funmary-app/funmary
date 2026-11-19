@@ -69,7 +69,7 @@ Funmary (ファンマリー) は、公立はこだて未来大学の学生向け
 | パッケージ管理 | pnpm workspace                              |
 | 検査           | TypeScript、ESLint、Prettier、commitlint    |
 | テスト         | Vitest、Playwright                          |
-| 依存の更新     | Renovate                                    |
+| 依存の更新     | Dependabot                                  |
 
 サーバーは VPS 1 台で稼働し、Node.js のプロセスと SQLite のデータベースはそれぞれ 1 つです。構成と採用理由は[設計書](docs/design/README.md)にまとめています。
 

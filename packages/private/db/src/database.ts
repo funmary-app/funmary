@@ -6,10 +6,9 @@ import BetterSqlite3 from 'better-sqlite3';
 import { drizzle, type BetterSQLite3Database } from 'drizzle-orm/better-sqlite3';
 import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
 import { readMigrationFiles } from 'drizzle-orm/migrator';
-import * as schema from './schema.ts';
 
 export interface Database {
-	readonly db: BetterSQLite3Database<typeof schema>;
+	readonly db: BetterSQLite3Database;
 	/** better-sqlite3 そのもの。PRAGMA やバックアップなど、Drizzle で書けない操作に使う */
 	readonly sqlite: BetterSqlite3.Database;
 	close(): void;
@@ -44,8 +43,10 @@ export function openDatabase(path: string, options: OpenOptions): Database {
 		}
 		checkIntegrity(sqlite, path, options.backupDir);
 		const migrationsFolder = options.migrationsFolder ?? DEFAULT_MIGRATIONS_FOLDER;
-		const db = drizzle(sqlite, { schema });
-		if (hasPendingMigrations(sqlite, migrationsFolder) && hasUserTables(sqlite)) {
+		const db = drizzle({ client: sqlite });
+		const changesSchema =
+			hasPendingMigrations(sqlite, migrationsFolder) || hasLegacyMigrationsTable(sqlite);
+		if (changesSchema && hasUserTables(sqlite)) {
 			backup(sqlite, options.backupDir, (options.now ?? (() => new Date()))());
 		}
 		try {
@@ -99,6 +100,17 @@ function hasPendingMigrations(sqlite: BetterSqlite3.Database, migrationsFolder: 
 		applied: number;
 	};
 	return applied < total;
+}
+
+/**
+ * Drizzle 1.0 より前に作ったマイグレーションの記録の表か。migrate() は、この表に列を足して作り替えるので、
+ * 当てるマイグレーションがなくても DB が変わる
+ */
+function hasLegacyMigrationsTable(sqlite: BetterSqlite3.Database): boolean {
+	const columns = sqlite.prepare('PRAGMA table_info(__drizzle_migrations)').all() as {
+		name: string;
+	}[];
+	return columns.length > 0 && !columns.some((column) => column.name === 'name');
 }
 
 function hasUserTables(sqlite: BetterSqlite3.Database): boolean {

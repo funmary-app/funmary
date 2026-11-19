@@ -1,4 +1,4 @@
-// リリースの tar.gz を作り、GitHub Releases に置く (release.yml)。
+// release/ にあるリリースの tar.gz を、GitHub Releases に置く (release.yml)。tar.gz は CI が pnpm package-release で作る。
 // 環境変数: HEAD_SHA (リリースにするコミット)、GH_TOKEN (gh が使う)、GITHUB_REPOSITORY (owner/repo)
 import { execFileSync } from 'node:child_process';
 import { writeFileSync } from 'node:fs';
@@ -13,9 +13,6 @@ if (!/^[\w.-]+\/[\w.-]+$/.test(repo)) {
 }
 
 const notes = releaseNotesFromGit({ repo, version, sha });
-
-// pnpm は Linux の Actions で動かすので、シェルを通さずに呼べる
-execFileSync('pnpm', ['package-release', version], { stdio: 'inherit' });
 
 writeFileSync('release/notes.md', notes);
 console.log(`リリースノート:\n${notes}`);

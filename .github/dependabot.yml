@@ -1,0 +1,47 @@
+version: 2
+
+updates:
+  # pnpm workspace はルートから全パッケージと catalog を更新する
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '10:00'
+      timezone: Asia/Tokyo
+    # 公開直後に乗っ取られた版や、すぐに取り下げられた版を避ける
+    cooldown:
+      default-days: 3
+    labels: [dependencies]
+    commit-message:
+      prefix: chore
+      include: scope
+    groups:
+      # SMUI は版をそろえて使うので、ほかとは別の PR にする
+      smui:
+        patterns: ['@smui/*', '@smui-extra/*', 'smui-theme']
+      # patterns: ['*'] のグループは cooldown が効かなくなるので、除外の指定でまとめる
+      non-major:
+        exclude-patterns: ['@smui/*', '@smui-extra/*', 'smui-theme']
+        update-types: [minor, patch]
+    ignore:
+      # Node.js の対応の下限 (24 系) に合わせる
+      - dependency-name: '@types/node'
+        update-types: [version-update:semver-major]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '10:00'
+      timezone: Asia/Tokyo
+    cooldown:
+      default-days: 3
+    labels: [dependencies]
+    commit-message:
+      prefix: ci
+      include: scope
+    groups:
+      actions:
+        update-types: [major, minor, patch]

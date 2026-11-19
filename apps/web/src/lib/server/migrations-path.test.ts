@@ -14,10 +14,10 @@ afterEach(() => {
 	rmSync(root, { recursive: true, force: true });
 });
 
-/** dir の下に、マイグレーションのフォルダ (meta/_journal.json のあるもの) を作る */
+/** dir の下に、マイグレーションのフォルダ (マイグレーションごとのフォルダに migration.sql があるもの) を作る */
 function makeMigrations(dir: string) {
-	mkdirSync(join(dir, 'migrations', 'meta'), { recursive: true });
-	writeFileSync(join(dir, 'migrations', 'meta', '_journal.json'), '{}');
+	mkdirSync(join(dir, 'migrations', '20260924174109_initial'), { recursive: true });
+	writeFileSync(join(dir, 'migrations', '20260924174109_initial', 'migration.sql'), '');
 }
 
 describe('findMigrationsFolder', () => {
@@ -40,8 +40,9 @@ describe('findMigrationsFolder', () => {
 		expect(findMigrationsFolder(root)).toBe(join(root, 'migrations'));
 	});
 
-	it('meta/_journal.json のない migrations (別の用途のフォルダ) は使わない', () => {
-		mkdirSync(join(root, 'migrations'), { recursive: true });
+	it('マイグレーション (<名前>/migration.sql) のない migrations (別の用途のフォルダ) は使わない', () => {
+		mkdirSync(join(root, 'migrations', 'notes'), { recursive: true });
+		writeFileSync(join(root, 'migrations', 'notes', 'README.md'), '');
 		expect(findMigrationsFolder(root)).toBeUndefined();
 	});
 

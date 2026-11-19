@@ -116,8 +116,9 @@ test('大学のアカウントでログインでき、ログアウトできる',
 	}
 
 	await expect(page).toHaveURL('/app');
-	// メールアドレスの @ より前は、押すまで出さない
-	const menu = page.getByRole('navigation', { name: 'メニュー' });
+	// メールアドレスの @ より前は、押すまで出さない。メールアドレスは PC の左のメニューにだけ出る
+	// (スマホの下のメニューも同じ名前で、画面の CSS が効く前は両方が見えるので、メールアドレスで絞る)
+	const menu = page.getByRole('navigation', { name: 'メニュー' }).filter({ hasText: '@fun.ac.jp' });
 	await expect(menu).toContainText('••••••••@fun.ac.jp');
 	await expect(menu).not.toContainText('taro@');
 	await menu.getByRole('button', { name: 'メールアドレスを表示する' }).click();
@@ -189,6 +190,29 @@ test.describe('利用規約への同意', () => {
 
 		// 同意したあとは、同意画面を開いても、アプリへ進む
 		await page.goto('/consent');
+		await expect(page).toHaveURL('/app');
+	});
+
+	test('画面の準備 (hydration) が済む前に入れたチェックは、準備が済んでも外れない', async ({
+		page,
+	}) => {
+		const email = `e2e-early-check-${Date.now()}@fun.ac.jp`;
+		await oidc.setIdentity({ sub: email, email, email_verified: true, hd: 'fun.ac.jp' });
+		// 画面の JavaScript の読み込みを止め、サーバーが描いた画面だけを先に出す (通信の遅い端末と同じ状態)
+		let release = () => {};
+		const loaded = new Promise<void>((resolve) => (release = resolve));
+		await page.route('**/_app/immutable/**/*.js', async (route) => {
+			await loaded;
+			await route.continue();
+		});
+		await page.goto('/auth/google', { waitUntil: 'commit' });
+		const agree = page.getByLabel('利用規約とプライバシーポリシーに同意します');
+		await agree.check();
+
+		release();
+		await expect(page.locator('.mdc-checkbox--upgraded', { has: agree })).toBeAttached();
+		await expect(agree).toBeChecked();
+		await page.getByRole('button', { name: '同意して続ける' }).click();
 		await expect(page).toHaveURL('/app');
 	});
 

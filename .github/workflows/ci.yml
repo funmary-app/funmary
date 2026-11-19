@@ -33,7 +33,12 @@ jobs:
     outputs:
       skip: ${{ steps.decide.outputs.skip }}
     steps:
+      # ほかのジョブはこの判定を待つので、要るものだけを取って早く終える (ルートのファイルは、いつも取られる)
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: |
+            .github/actions
+            scripts/workflows/ci
       - uses: ./.github/actions/setup
         with:
           install: false
@@ -47,7 +52,22 @@ jobs:
         run: node scripts/workflows/ci/ci-skip.js
 
   check:
+    # 必須の検査はこのジョブの名前で登録している。中身は下の 4 つのジョブに分けて並べて動かし、ここでは結果だけをまとめる
     name: 検査とビルド
+    needs: [lint, typecheck, unit-test, build]
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # 飛ばしたジョブ (skipped) は通ったものとする
+      - env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          echo "$RESULTS"
+          ! printf '%s\n' $RESULTS | grep -qE '^(failure|cancelled)$'
+
+  lint:
+    name: 整形と lint
     needs: skip
     # main への push では skip が動かない (飛ばしたことになる) ので、!cancelled() で待ってから動く
     if: ${{ !cancelled() && needs.skip.outputs.skip != 'true' }}
@@ -58,26 +78,85 @@ jobs:
       - uses: ./.github/actions/setup
       - run: pnpm format:check
       - run: pnpm lint
+
+  typecheck:
+    name: 型の検査
+    needs: skip
+    if: ${{ !cancelled() && needs.skip.outputs.skip != 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup
       - run: pnpm typecheck
       # typescript-eslint と svelte-check は 6 系で動くので、7 系と判定が食い違っていないかを確かめる
       - run: pnpm typecheck:ts6
-      - run: pnpm test
       # npm で配るクライアントの型は、サーバーの OpenAPI の定義から作る。作り直して差分が出たら、コミットし忘れ
       - name: クライアントの型の確認
         run: |
           pnpm generate:client
           git diff --exit-code -- packages/public/client/src/generated
+
+  unit-test:
+    name: 単体テスト
+    needs: skip
+    if: ${{ !cancelled() && needs.skip.outputs.skip != 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup
+      - run: pnpm test
+
+  build:
+    name: ビルドとリリースの確認
+    needs: skip
+    if: ${{ !cancelled() && needs.skip.outputs.skip != 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup
       - run: pnpm build
       # VPS への反映のスクリプトは、実機でしか動かせないので、偽の systemctl と npm で動きを確かめる
       - name: 反映のスクリプトの検査
         run: |
           shellcheck deploy/update.sh deploy/funmary-update deploy/funmary-admin deploy/tests/deploy.test.sh
           bash deploy/tests/deploy.test.sh
+      # main への push では、Release がビルドし直さずに置けるよう、本物の版の名前でリリースを作る
+      - name: リリースの版の名前
+        id: version
+        env:
+          HEAD_SHA: ${{ github.sha }}
+          IS_PUSH: ${{ github.event_name == 'push' }}
+        run: |
+          if [ "$IS_PUSH" = true ]; then
+            node --input-type=module -e "import { releaseVersion } from './scripts/workflows/release/release-version.js'; console.log('name=' + releaseVersion(process.env.HEAD_SHA));" >> "$GITHUB_OUTPUT"
+          else
+            echo "name=build-0000000" >> "$GITHUB_OUTPUT"
+          fi
+      - run: pnpm package-release "$VERSION"
+        env:
+          VERSION: ${{ steps.version.outputs.name }}
+      # smoke-release.js はリリースの中に依存を入れるので、その前に置くものを分けておく
+      - if: github.event_name == 'push'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: release
+          path: |
+            release/funmary-${{ steps.version.outputs.name }}.tar.gz
+            release/funmary-${{ steps.version.outputs.name }}.tar.gz.sha256
+            release/build-hash.txt
+            release/THIRD_PARTY_LICENSES.txt
+          if-no-files-found: error
+          # ジョブを再実行したときに、前の実行が置いたものを置き換える
+          overwrite: true
+          retention-days: 7
       # 環境変数ファイルの空の値 (HOST= など) のままでも、本番と同じ入口で起動できるかを確かめる
       - name: リリースの起動の確認
-        run: |
-          pnpm package-release build-0000000
-          node scripts/smoke-release.js build-0000000
+        run: node scripts/smoke-release.js "$VERSION"
+        env:
+          VERSION: ${{ steps.version.outputs.name }}
 
   e2e:
     name: E2E テスト

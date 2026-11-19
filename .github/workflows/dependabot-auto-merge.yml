@@ -1,0 +1,41 @@
+name: Dependabot の自動マージ
+
+# Dependabot の PR のうち、パッチとマイナーの更新だけ自動マージを有効にする。マージは ruleset の必須の検査が通ってから行われる。
+# メジャーの更新は major のラベルを付けて、手でマージする。
+# GITHUB_TOKEN で有効にした自動マージは、main への push で CI が動かず、Release と Deploy も走らない。そのため GitHub App のトークンを使う
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  auto-merge:
+    name: 自動マージの設定
+    # github.actor も見るのは、Dependabot の PR に人が push したときに動かさないため
+    if: github.event.pull_request.user.login == 'dependabot[bot]' && github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - id: metadata
+        uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98 # v3.1.0
+      - if: steps.metadata.outputs.update-type == 'version-update:semver-major'
+        run: gh pr edit "$PR_URL" --add-label major
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ github.token }}
+      # Dependabot が起こしたワークフローは、Actions の secret ではなく Dependabot の secret を読む
+      - id: app-token
+        if: steps.metadata.outputs.update-type == 'version-update:semver-patch' || steps.metadata.outputs.update-type == 'version-update:semver-minor'
+        uses: actions/create-github-app-token@f418cff399f7aef4c2f0ad47e25ca7a6abbdd6fc # v3.4.0
+        with:
+          client-id: ${{ secrets.AUTO_MERGE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.AUTO_MERGE_APP_PRIVATE_KEY }}
+      # このリポジトリは merge commit だけを許しているので --merge にする
+      - if: steps.app-token.outcome == 'success'
+        run: gh pr merge --auto --merge "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}

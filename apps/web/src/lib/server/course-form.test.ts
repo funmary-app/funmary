@@ -27,25 +27,23 @@ describe('parseSlotForm', () => {
 		});
 	});
 
-	it('教室が空なら null にする', () => {
-		expect(parseSlotForm(form({ ...valid, room: '  ' }))).toEqual({
-			ok: true,
-			value: { subjectId: 3, weekday: 2, period: 4, room: null },
+	it('科目が選ばれていなければ、そのことを伝える', () => {
+		expect(parseSlotForm(form({ ...valid, subjectId: '' }))).toEqual({
+			ok: false,
+			error: '科目が選ばれていません',
 		});
 	});
 
-	it('月曜から土曜、1 限から 6 限の外は受け付けない', () => {
-		for (const weekday of ['0', '7', 'x']) {
-			expect(parseSlotForm(form({ ...valid, weekday })).ok).toBe(false);
-		}
-		for (const period of ['0', '7', '']) {
-			expect(parseSlotForm(form({ ...valid, period })).ok).toBe(false);
-		}
-	});
-
-	it('長すぎる教室名と、改行を含む教室名は受け付けない', () => {
-		expect(parseSlotForm(form({ ...valid, room: 'あ'.repeat(101) })).ok).toBe(false);
-		expect(parseSlotForm(form({ ...valid, room: '363\n364' })).ok).toBe(false);
+	// 曜日、時限、教室の規則そのものは、@funmary/core の parseSlotInput のテストで確かめる
+	it('曜日と時限の値の誤りは、それぞれの欄の誤りとして伝える', () => {
+		expect(parseSlotForm(form({ ...valid, weekday: '0' }))).toEqual({
+			ok: false,
+			error: '曜日は月曜から土曜の中から選んでください',
+		});
+		expect(parseSlotForm(form({ ...valid, period: '7' }))).toEqual({
+			ok: false,
+			error: '時限を選んでください',
+		});
 	});
 });
 
@@ -55,10 +53,5 @@ describe('parseSlotFields', () => {
 			ok: true,
 			value: { weekday: 2, period: 4, room: '363' },
 		});
-	});
-
-	it('曜日と時限の範囲は、parseSlotForm と同じ検査をする', () => {
-		expect(parseSlotFields(form({ weekday: '0', period: '4', room: '' })).ok).toBe(false);
-		expect(parseSlotFields(form({ weekday: '2', period: '7', room: '' })).ok).toBe(false);
 	});
 });

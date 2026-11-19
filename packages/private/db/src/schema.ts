@@ -1,5 +1,7 @@
 // DB のスキーマ。変えたら `pnpm --filter @funmary/db generate` でマイグレーションを作る。
 // マイグレーションは列やテーブルを足す方向だけにし、1 つ前の版のアプリがそのまま動くようにする。
+// 一意の制約は、列の .unique() ではなく、表の後ろの uniqueIndex で書く。Drizzle 1.0 は .unique() を列の制約として扱い、
+// これまでの DB の一意のインデックスと食い違うので、表を作り直すマイグレーションを作ってしまう。
 import { sql } from 'drizzle-orm';
 import {
 	type AnySQLiteColumn,
@@ -20,31 +22,38 @@ const createdAt = () =>
 // ---------------------------------------------------------------------------
 // アカウント
 
-export const users = sqliteTable('users', {
-	/** 推測できない乱数の ID */
-	id: text('id').primaryKey(),
-	email: text('email').notNull().unique(),
-	/** Google の ID トークンの sub */
-	googleSub: text('google_sub').notNull().unique(),
-	name: text('name'),
-	role: text('role', { enum: ['user', 'moderator', 'admin'] })
-		.notNull()
-		.default('user'),
-	status: text('status', { enum: ['active', 'suspended'] })
-		.notNull()
-		.default('active'),
-	invitedBy: text('invited_by').references((): AnySQLiteColumn => users.id, {
-		onDelete: 'set null',
-	}),
-	inviteCodeId: integer('invite_code_id').references((): AnySQLiteColumn => inviteCodes.id, {
-		onDelete: 'set null',
-	}),
-	createdAt: createdAt(),
-	lastLoginAt: integer('last_login_at', { mode: 'timestamp_ms' }),
-	/** 同意した利用規約とプライバシーポリシーの版 (最終更新日)。一度も同意していなければ null */
-	termsAcceptedVersion: text('terms_accepted_version'),
-	termsAcceptedAt: integer('terms_accepted_at', { mode: 'timestamp_ms' }),
-});
+export const users = sqliteTable(
+	'users',
+	{
+		/** 推測できない乱数の ID */
+		id: text('id').primaryKey(),
+		email: text('email').notNull(),
+		/** Google の ID トークンの sub */
+		googleSub: text('google_sub').notNull(),
+		name: text('name'),
+		role: text('role', { enum: ['user', 'moderator', 'admin'] })
+			.notNull()
+			.default('user'),
+		status: text('status', { enum: ['active', 'suspended'] })
+			.notNull()
+			.default('active'),
+		invitedBy: text('invited_by').references((): AnySQLiteColumn => users.id, {
+			onDelete: 'set null',
+		}),
+		inviteCodeId: integer('invite_code_id').references((): AnySQLiteColumn => inviteCodes.id, {
+			onDelete: 'set null',
+		}),
+		createdAt: createdAt(),
+		lastLoginAt: integer('last_login_at', { mode: 'timestamp_ms' }),
+		/** 同意した利用規約とプライバシーポリシーの版 (最終更新日)。一度も同意していなければ null */
+		termsAcceptedVersion: text('terms_accepted_version'),
+		termsAcceptedAt: integer('terms_accepted_at', { mode: 'timestamp_ms' }),
+	},
+	(table) => [
+		uniqueIndex('users_email_unique').on(table.email),
+		uniqueIndex('users_google_sub_unique').on(table.googleSub),
+	],
+);
 
 /** 利用規約への同意の履歴。いつ、どの版に同意したかの記録で、消さない */
 export const termsAcceptances = sqliteTable(
@@ -70,10 +79,13 @@ export const testAccounts = sqliteTable(
 			.notNull()
 			.references(() => users.id, { onDelete: 'cascade' }),
 		/** 小文字にそろえて保存する。全体で 1 つだけ */
-		email: text('email').notNull().unique(),
+		email: text('email').notNull(),
 		createdAt: createdAt(),
 	},
-	(table) => [index('test_accounts_owner').on(table.ownerId)],
+	(table) => [
+		index('test_accounts_owner').on(table.ownerId),
+		uniqueIndex('test_accounts_email_unique').on(table.email),
+	],
 );
 
 export const sessions = sqliteTable(
@@ -91,21 +103,25 @@ export const sessions = sqliteTable(
 	(table) => [index('sessions_user_id').on(table.userId)],
 );
 
-export const inviteCodes = sqliteTable('invite_codes', {
-	id: integer('id').primaryKey({ autoIncrement: true }),
-	/** 招待コードの SHA-256 */
-	codeHash: text('code_hash').notNull().unique(),
-	maxUses: integer('max_uses').notNull().default(1),
-	usedCount: integer('used_count').notNull().default(0),
-	expiresAt: integer('expires_at', { mode: 'timestamp_ms' }),
-	createdBy: text('created_by').references((): AnySQLiteColumn => users.id, {
-		onDelete: 'set null',
-	}),
-	/** 誰に渡したかなどのメモ */
-	note: text('note'),
-	createdAt: createdAt(),
-	revokedAt: integer('revoked_at', { mode: 'timestamp_ms' }),
-});
+export const inviteCodes = sqliteTable(
+	'invite_codes',
+	{
+		id: integer('id').primaryKey({ autoIncrement: true }),
+		/** 招待コードの SHA-256 */
+		codeHash: text('code_hash').notNull(),
+		maxUses: integer('max_uses').notNull().default(1),
+		usedCount: integer('used_count').notNull().default(0),
+		expiresAt: integer('expires_at', { mode: 'timestamp_ms' }),
+		createdBy: text('created_by').references((): AnySQLiteColumn => users.id, {
+			onDelete: 'set null',
+		}),
+		/** 誰に渡したかなどのメモ */
+		note: text('note'),
+		createdAt: createdAt(),
+		revokedAt: integer('revoked_at', { mode: 'timestamp_ms' }),
+	},
+	(table) => [uniqueIndex('invite_codes_code_hash_unique').on(table.codeHash)],
+);
 
 /**
  * 利用者ごとに付けた権限 (例: invite:create は招待コードの発行)。
@@ -368,13 +384,14 @@ export const userEvents = sqliteTable(
 			.notNull()
 			.default('private'),
 		/** 限定公開 (link) の共有のリンクの値。限定公開でなければ null。再発行すると変わる */
-		shareToken: text('share_token').unique(),
+		shareToken: text('share_token'),
 		createdAt: createdAt(),
 		updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull(),
 	},
 	(table) => [
 		index('user_events_owner').on(table.ownerId, table.startDate),
 		index('user_events_public').on(table.visibility),
+		uniqueIndex('user_events_share_token_unique').on(table.shareToken),
 	],
 );
 
@@ -489,14 +506,17 @@ export const feedTokens = sqliteTable(
 			.notNull()
 			.references(() => users.id, { onDelete: 'cascade' }),
 		kind: text('kind', { enum: ['calendar', 'feed'] }).notNull(),
-		tokenHash: text('token_hash').notNull().unique(),
+		tokenHash: text('token_hash').notNull(),
 		/** 載せる予定や通知の種類など */
 		options: text('options', { mode: 'json' }).$type<Record<string, unknown>>(),
 		createdAt: createdAt(),
 		lastUsedAt: integer('last_used_at', { mode: 'timestamp_ms' }),
 		revokedAt: integer('revoked_at', { mode: 'timestamp_ms' }),
 	},
-	(table) => [index('feed_tokens_user').on(table.userId)],
+	(table) => [
+		index('feed_tokens_user').on(table.userId),
+		uniqueIndex('feed_tokens_token_hash_unique').on(table.tokenHash),
+	],
 );
 
 /** 公開 API と MCP サーバー向けの個人用アクセストークン。1 人が複数を同時に持てる */
@@ -509,7 +529,7 @@ export const accessTokens = sqliteTable(
 			.references(() => users.id, { onDelete: 'cascade' }),
 		/** どこで使うかの、本人のためのメモ */
 		name: text('name').notNull(),
-		tokenHash: text('token_hash').notNull().unique(),
+		tokenHash: text('token_hash').notNull(),
 		/** read:lessons、read:changes、read:notifications など */
 		scopes: text('scopes', { mode: 'json' }).notNull().$type<string[]>(),
 		expiresAt: integer('expires_at', { mode: 'timestamp_ms' }).notNull(),
@@ -517,7 +537,10 @@ export const accessTokens = sqliteTable(
 		lastUsedAt: integer('last_used_at', { mode: 'timestamp_ms' }),
 		revokedAt: integer('revoked_at', { mode: 'timestamp_ms' }),
 	},
-	(table) => [index('access_tokens_user').on(table.userId)],
+	(table) => [
+		index('access_tokens_user').on(table.userId),
+		uniqueIndex('access_tokens_token_hash_unique').on(table.tokenHash),
+	],
 );
 
 /** アクセストークン (公開 API、MCP) からの書き込みの履歴。利用者が、どのクライアントが何をしたかを確かめる。1 人につき最新の分だけ残す */
@@ -573,7 +596,7 @@ export const oauthRefreshTokens = sqliteTable(
 	'oauth_refresh_tokens',
 	{
 		id: integer('id').primaryKey({ autoIncrement: true }),
-		tokenHash: text('token_hash').notNull().unique(),
+		tokenHash: text('token_hash').notNull(),
 		familyId: text('family_id').notNull(),
 		clientId: text('client_id')
 			.notNull()
@@ -592,7 +615,10 @@ export const oauthRefreshTokens = sqliteTable(
 		usedAt: integer('used_at', { mode: 'timestamp_ms' }),
 		revokedAt: integer('revoked_at', { mode: 'timestamp_ms' }),
 	},
-	(table) => [index('oauth_refresh_tokens_family').on(table.familyId)],
+	(table) => [
+		index('oauth_refresh_tokens_family').on(table.familyId),
+		uniqueIndex('oauth_refresh_tokens_token_hash_unique').on(table.tokenHash),
+	],
 );
 
 export const shares = sqliteTable(
@@ -602,7 +628,7 @@ export const shares = sqliteTable(
 		userId: text('user_id')
 			.notNull()
 			.references(() => users.id, { onDelete: 'cascade' }),
-		tokenHash: text('token_hash').notNull().unique(),
+		tokenHash: text('token_hash').notNull(),
 		visibility: text('visibility', { enum: ['anyone', 'signedIn'] }).notNull(),
 		showRooms: integer('show_rooms', { mode: 'boolean' }).notNull().default(true),
 		showChanges: integer('show_changes', { mode: 'boolean' }).notNull().default(true),
@@ -610,7 +636,10 @@ export const shares = sqliteTable(
 		createdAt: createdAt(),
 		revokedAt: integer('revoked_at', { mode: 'timestamp_ms' }),
 	},
-	(table) => [index('shares_user').on(table.userId)],
+	(table) => [
+		index('shares_user').on(table.userId),
+		uniqueIndex('shares_token_hash_unique').on(table.tokenHash),
+	],
 );
 
 export const hopeCalendars = sqliteTable('hope_calendars', {
@@ -648,27 +677,31 @@ export const hopeEvents = sqliteTable(
  * 利用者の Discord アカウントと Funmary のアカウントの紐付け。1 人につき 1 行。
  * トークンは暗号化して保存する。解除すると行ごと消す (再連携できるようにするため)
  */
-export const discordLinks = sqliteTable('discord_links', {
-	userId: text('user_id')
-		.primaryKey()
-		.references(() => users.id, { onDelete: 'cascade' }),
-	/** Discord のユーザー ID。1 つの Discord アカウントは 1 人にしか紐付けられない */
-	discordUserId: text('discord_user_id').notNull().unique(),
-	accessTokenEncrypted: text('access_token_encrypted').notNull(),
-	refreshTokenEncrypted: text('refresh_token_encrypted').notNull(),
-	tokenExpiresAt: integer('token_expires_at', { mode: 'timestamp_ms' }).notNull(),
-	/** 本人だけの非公開スレッドの ID。まだ用意していない、完全に削除したあとは null */
-	threadChannelId: text('thread_channel_id'),
-	/** DM チャンネルの ID。まだ用意していない間は null */
-	dmChannelId: text('dm_channel_id'),
-	/**
-	 * 通知の種類ごとの送り先とメンション (#163)。
-	 * JSON (Partial<Record<NotificationKind, { destination: 'thread' | 'dm' | 'both'; mention: boolean }>>)。
-	 * 無い種類は、スレッド、メンション無しとみなす
-	 */
-	kindSettings: text('kind_settings', { mode: 'json' }).$type<Record<string, unknown>>(),
-	createdAt: createdAt(),
-});
+export const discordLinks = sqliteTable(
+	'discord_links',
+	{
+		userId: text('user_id')
+			.primaryKey()
+			.references(() => users.id, { onDelete: 'cascade' }),
+		/** Discord のユーザー ID。1 つの Discord アカウントは 1 人にしか紐付けられない */
+		discordUserId: text('discord_user_id').notNull(),
+		accessTokenEncrypted: text('access_token_encrypted').notNull(),
+		refreshTokenEncrypted: text('refresh_token_encrypted').notNull(),
+		tokenExpiresAt: integer('token_expires_at', { mode: 'timestamp_ms' }).notNull(),
+		/** 本人だけの非公開スレッドの ID。まだ用意していない、完全に削除したあとは null */
+		threadChannelId: text('thread_channel_id'),
+		/** DM チャンネルの ID。まだ用意していない間は null */
+		dmChannelId: text('dm_channel_id'),
+		/**
+		 * 通知の種類ごとの送り先とメンション (#163)。
+		 * JSON (Partial<Record<NotificationKind, { destination: 'thread' | 'dm' | 'both'; mention: boolean }>>)。
+		 * 無い種類は、スレッド、メンション無しとみなす
+		 */
+		kindSettings: text('kind_settings', { mode: 'json' }).$type<Record<string, unknown>>(),
+		createdAt: createdAt(),
+	},
+	(table) => [uniqueIndex('discord_links_discord_user_id_unique').on(table.discordUserId)],
+);
 
 /**
  * 予定のまとめ (今日か明日の授業と予定を Discord に送るもの、#207) の、利用者ごとの設定。
