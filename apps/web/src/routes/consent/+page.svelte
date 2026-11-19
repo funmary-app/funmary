@@ -39,8 +39,9 @@
 			(最終更新日: {data.termsUpdatedAt})
 		</li>
 		<li>
-			<a href={resolve('privacy')} target="_blank" rel="noopener noreferrer">プライバシーポリシー</a
-			>
+			<a href={resolve('privacy')} target="_blank" rel="noopener noreferrer">
+				プライバシーポリシー
+			</a>
 			(最終更新日: {data.privacyUpdatedAt})
 		</li>
 	</ul>

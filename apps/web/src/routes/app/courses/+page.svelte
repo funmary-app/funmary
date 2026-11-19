@@ -103,8 +103,9 @@
 					? `${label}の授業が始まっています。`
 					: `${label}の授業が ${formatDate(start)} から始まります。`}
 				{label}の科目が、まだ 1 つも登録されていません。
-				<a href={resolve('app/courses/import')}>ポータルの時間割を取り込む</a
-				>か、「科目を探す」から登録してください。
+				<a href={resolve('app/courses/import')}>
+					ポータルの時間割を取り込む
+				</a>か、「科目を探す」から登録してください。
 			</p>
 		{/if}
 
@@ -173,11 +174,11 @@
 												<input type="hidden" name="subjectId" value={subject.id} />
 												<input type="hidden" name="weekday" value={slot.weekday} />
 												<input type="hidden" name="period" value={slot.period} />
-												<Button type="submit" variant="outlined"
-													><Label
-														>消す<span class="visually-hidden">: {formatSlot(slot)}</span></Label
-													></Button
-												>
+												<Button type="submit" variant="outlined">
+													<Label>
+														消す<span class="visually-hidden">: {formatSlot(slot)}</span>
+													</Label>
+												</Button>
 											</form>
 										</li>
 									{/each}

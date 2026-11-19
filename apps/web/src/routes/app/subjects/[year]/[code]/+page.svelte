@@ -117,10 +117,9 @@
 						<form method="POST" action="?/removePersonalSlot" use:enhance class="inline">
 							<input type="hidden" name="weekday" value={slot.weekday} />
 							<input type="hidden" name="period" value={slot.period} />
-							<Button type="submit" variant="outlined"
-								><Label>消す<span class="visually-hidden">: {formatSlot(slot)}</span></Label
-								></Button
-							>
+							<Button type="submit" variant="outlined">
+								<Label>消す<span class="visually-hidden">: {formatSlot(slot)}</span></Label>
+							</Button>
 						</form>
 					</li>
 				{/each}
@@ -183,9 +182,9 @@
 		<ul class="links">
 			<li>
 				<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-				<a href={data.subject.syllabusUrl} target="_blank" rel="noopener noreferrer"
-					>シラバスの原文 (大学のサイト)</a
-				>
+				<a href={data.subject.syllabusUrl} target="_blank" rel="noopener noreferrer">
+					シラバスの原文 (大学のサイト)
+				</a>
 			</li>
 		</ul>
 	{/if}
@@ -219,9 +218,9 @@
 				<fieldset>
 					<legend>公開範囲</legend>
 					{#each Object.entries(VISIBILITY_LABELS) as [value, label] (value)}
-						<RadioField name="visibility" {value} group={data.subject.visibility}
-							>{label}</RadioField
-						>
+						<RadioField name="visibility" {value} group={data.subject.visibility}>
+							{label}
+						</RadioField>
 					{/each}
 				</fieldset>
 				<Button type="submit" variant="outlined"><Label>公開範囲を変える</Label></Button>
@@ -253,9 +252,9 @@
 									<span>{email}</span>
 									<form method="POST" action="?/revokeAccess" use:enhance class="inline">
 										<input type="hidden" name="email" value={email} />
-										<Button type="submit" variant="outlined"
-											><Label>外す<span class="visually-hidden">: {email}</span></Label></Button
-										>
+										<Button type="submit" variant="outlined">
+											<Label>外す<span class="visually-hidden">: {email}</span></Label>
+										</Button>
 									</form>
 								</li>
 							{/each}
@@ -266,9 +265,9 @@
 			<details>
 				<summary>この授業を消す</summary>
 				<form method="POST" action="?/deleteSubject" use:enhance class="edit">
-					<CheckboxField name="confirm" required
-						>ほかの利用者の履修登録と、曜日と時限も消え、元に戻せないことを確かめました</CheckboxField
-					>
+					<CheckboxField name="confirm" required>
+						ほかの利用者の履修登録と、曜日と時限も消え、元に戻せないことを確かめました
+					</CheckboxField>
 					<Button type="submit" variant="outlined"><Label>消す</Label></Button>
 				</form>
 			</details>

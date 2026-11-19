@@ -126,9 +126,9 @@
 	>
 		<span class="times">
 			<span>{departure.time}</span>
-			{#if departure.arrivalTime}<span class="arrow" aria-label="から">→</span><span
-					>{departure.arrivalTime}</span
-				>{/if}
+			{#if departure.arrivalTime}<span class="arrow" aria-label="から">→</span><span>
+					{departure.arrivalTime}
+				</span>{/if}
 		</span>
 		<span class="detail">
 			<span class="routes">{departure.routes.join(' ')}</span>

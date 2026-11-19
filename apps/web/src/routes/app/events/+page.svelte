@@ -32,9 +32,9 @@
 	<div class="actions">
 		<Button href={resolve('app/events/new')} variant="unelevated"><Label>予定を足す</Label></Button>
 
-		<Button href={resolve('app/events/browse')} variant="outlined"
-			><Label>みんなの予定を探す</Label></Button
-		>
+		<Button href={resolve('app/events/browse')} variant="outlined">
+			<Label>みんなの予定を探す</Label>
+		</Button>
 	</div>
 
 	<section aria-labelledby="mine-heading">

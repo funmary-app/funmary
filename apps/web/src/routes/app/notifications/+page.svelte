@@ -59,8 +59,10 @@
 						href={filter.kind
 							? `${resolve('app/notifications')}?kind=${filter.kind}`
 							: resolve('app/notifications')}
-						aria-current={data.kind === filter.kind ? 'page' : undefined}>{filter.label}</a
+						aria-current={data.kind === filter.kind ? 'page' : undefined}
 					>
+						{filter.label}
+					</a>
 				</li>
 			{/each}
 		</ul>
@@ -87,7 +89,8 @@
 							<span class="title">
 								{#if !item.read}<span class="dot" aria-hidden="true"></span><span
 										class="visually-hidden"
-										>未読:
+									>
+										未読:
 									</span>{/if}{item.title}
 							</span>
 							{#if item.body}<span class="body">{item.body}</span>{/if}

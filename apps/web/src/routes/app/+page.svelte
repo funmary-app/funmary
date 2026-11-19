@@ -165,14 +165,14 @@
 							{#if lesson.start}<time class="muted">{lesson.start}</time>{/if}
 						</span>
 						<span class="what">
-							<a href={resolve('/app/subjects/[year]/[code]', lesson.subjectPath)}
-								>{lesson.subjectName}</a
-							>
+							<a href={resolve('/app/subjects/[year]/[code]', lesson.subjectPath)}>
+								{lesson.subjectName}
+							</a>
 							<StatusBadge status={lesson.status} />
 						</span>
-						<span class="room"
-							><LessonRoom room={lesson.room} tentative={lesson.roomIsTentative} /></span
-						>
+						<span class="room">
+							<LessonRoom room={lesson.room} tentative={lesson.roomIsTentative} />
+						</span>
 					</li>
 				{/each}
 			</ul>
@@ -190,14 +190,14 @@
 						<span class="when">{event.time}</span>
 						<span class="what">
 							{#if event.added}
-								<a href={resolve('/app/events/shared/[ref]', { ref: String(event.eventId) })}
-									>{event.title}</a
-								>
+								<a href={resolve('/app/events/shared/[ref]', { ref: String(event.eventId) })}>
+									{event.title}
+								</a>
 								<span class="muted">(加えた予定)</span>
 							{:else}
-								<a href={resolve('/app/events/[id]', { id: String(event.eventId) })}
-									>{event.title}</a
-								>
+								<a href={resolve('/app/events/[id]', { id: String(event.eventId) })}>
+									{event.title}
+								</a>
 							{/if}
 							{#if event.continued}<span class="muted">(続き)</span>{/if}
 							{#if event.location}<span class="muted">{event.location}</span>{/if}
@@ -213,9 +213,9 @@
 			<IconCalendar aria-hidden="true" class="icon" />
 			<span>
 				<span class="suggest-title">授業をカレンダーに入れる</span>
-				<span class="muted"
-					>Google カレンダーや iPhone のカレンダーに、休講を反映した授業の予定が入ります。</span
-				>
+				<span class="muted">
+					Google カレンダーや iPhone のカレンダーに、休講を反映した授業の予定が入ります。
+				</span>
 			</span>
 		</a>
 	{/if}

@@ -71,9 +71,9 @@
 					<li>
 						<p class="meta">
 							{#if submission.subjectPath}
-								<a href={resolve('/app/subjects/[year]/[code]', submission.subjectPath)}
-									>{submission.subjectName}</a
-								>
+								<a href={resolve('/app/subjects/[year]/[code]', submission.subjectPath)}>
+									{submission.subjectName}
+								</a>
 							{:else}
 								{submission.subjectName}
 							{/if}

@@ -45,9 +45,9 @@
 			<fieldset>
 				<legend>許可する範囲</legend>
 				{#each data.scopes ?? [] as option (option.scope)}
-					<CheckboxField name="scope" value={option.scope} checked={!option.write}
-						>{option.label}</CheckboxField
-					>
+					<CheckboxField name="scope" value={option.scope} checked={!option.write}>
+						{option.label}
+					</CheckboxField>
 				{/each}
 			</fieldset>
 			<p class="destination">許可すると、<code>{data.redirectHost}</code> に戻ります。</p>

@@ -48,9 +48,9 @@
 						<Cell>{entry.action}</Cell>
 						<Cell>
 							{#if entry.subjectPath}
-								<a href={resolve('/app/subjects/[year]/[code]', entry.subjectPath)}
-									>{entry.summary}</a
-								>
+								<a href={resolve('/app/subjects/[year]/[code]', entry.subjectPath)}>
+									{entry.summary}
+								</a>
 							{:else}
 								{entry.summary}
 							{/if}

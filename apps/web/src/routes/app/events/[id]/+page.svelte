@@ -82,9 +82,9 @@
 							<span>{email}</span>
 							<form method="POST" action="?/revokeAccess" use:enhance class="inline">
 								<input type="hidden" name="email" value={email} />
-								<Button type="submit" variant="outlined"
-									><Label>外す<span class="visually-hidden">: {email}</span></Label></Button
-								>
+								<Button type="submit" variant="outlined">
+									<Label>外す<span class="visually-hidden">: {email}</span></Label>
+								</Button>
 							</form>
 						</li>
 					{/each}
