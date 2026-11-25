@@ -1,7 +1,7 @@
 // 環境変数ファイル (.env や /etc/funmary/funmary.env) の中身を書き換える処理。ファイルは読み書きしない。
 import { generateKeyPairSync } from 'node:crypto';
 import { generateEncryptionKey, generateToken } from '@funmary/db';
-import { align, diff, parse, prune, stringify, type EntryNode, type EnvDocument } from 'migenv';
+import { align, diff, parse, prune, setValues, type SetResult } from 'migenv';
 
 /** funmary-admin init が作る鍵の名前 */
 export const SECRET_NAMES = [
@@ -41,17 +41,26 @@ export interface FillResult {
 	readonly filled: readonly string[];
 }
 
-function withRawValue(entry: EntryNode, rawValue: string): EntryNode {
-	return {
-		...entry,
-		raw: entry.raw.slice(0, entry.raw.length - entry.rawValue.length) + rawValue,
-		rawValue,
-	};
+function assertNoAmbiguousQuote(result: SetResult): void {
+	if (result.warnings.some(({ code }) => code === 'ambiguous-quote')) {
+		throw new Error(
+			'書き換えると環境変数の値の解釈が変わります。引用符の使い方を確認してください。',
+		);
+	}
 }
 
-function appendEnvLines(document: EnvDocument, lines: readonly string[]): string {
-	const separator = document.nodes.length > 0 && !document.finalNewline ? document.newline : '';
-	return stringify(document) + separator + lines.join(document.newline) + document.newline;
+/** 書き換えを見送った鍵があれば、黙って一部だけ書いたファイルを残さないよう止める */
+function assertAllSet(result: SetResult): void {
+	assertNoAmbiguousQuote(result);
+	if (result.skipped.length > 0) {
+		throw new Error(`次の鍵を書き換えられませんでした: ${result.skipped.join(', ')}`);
+	}
+}
+
+function appendEnvLines(text: string, lines: readonly string[]): string {
+	const { nodes, newline, finalNewline } = parse(text);
+	const separator = nodes.length > 0 && !finalNewline ? newline : '';
+	return text + separator + lines.join(newline) + newline;
 }
 
 /**
@@ -59,31 +68,18 @@ function appendEnvLines(document: EnvDocument, lines: readonly string[]): string
  * 鍵を作り直すと暗号化したデータが読めなくなるので、埋まっている鍵には触れない。
  */
 export function fillSecrets(text: string, generate: () => Secrets): FillResult {
-	const document = parse(text);
+	const alreadySet = new Set<string>();
+	for (const node of parse(text).nodes) {
+		if (node.kind === 'entry' && node.rawValue.trim() !== '') alreadySet.add(node.key);
+	}
 	const secrets = generate();
-	const filled: string[] = [];
-	const seen = new Set<string>();
-
-	const nodes = document.nodes.map((node) => {
-		if (node.kind !== 'entry') return node;
-		const name = SECRET_NAMES.find((secret) => secret === node.key);
-		if (name === undefined) return node;
-		seen.add(name);
-		if (node.rawValue.trim() !== '') return node;
-		filled.push(name);
-		return withRawValue(node, secrets[name]);
-	});
-
-	const updated = { ...document, nodes };
-	const missing = SECRET_NAMES.filter((name) => !seen.has(name));
-	if (missing.length === 0) return { text: stringify(updated), filled };
-	return {
-		text: appendEnvLines(
-			updated,
-			missing.map((name) => `${name}=${secrets[name]}`),
-		),
-		filled: [...filled, ...missing],
-	};
+	const targets = new Map(
+		SECRET_NAMES.filter((name) => !alreadySet.has(name)).map((name) => [name, secrets[name]]),
+	);
+	if (targets.size === 0) return { text, filled: [] };
+	const result = setValues(text, targets);
+	assertAllSet(result);
+	return { text: result.text, filled: [...result.updated, ...result.added] };
 }
 
 /**
@@ -130,22 +126,16 @@ export function removeEnvKeys(text: string, names: readonly string[]) {
  * 行のない鍵は、末尾に見出しを付けて足す (ふつうは先に alignEnvFile で行を用意するが、手元の .env にあって .env.example にまだない鍵を送るとき、黙って捨てないため)
  */
 export function setEnvValues(text: string, overrides: ReadonlyMap<string, string>): string {
-	const document = parse(text);
-	const replaced = new Set<string>();
-	const nodes = document.nodes.map((node) => {
-		if (node.kind !== 'entry') return node;
-		const rawValue = overrides.get(node.key);
-		if (rawValue === undefined) return node;
-		replaced.add(node.key);
-		return withRawValue(node, rawValue);
-	});
-	// 行のない鍵は、黙って捨てずに末尾に足す (.env.example にまだない鍵を、手元の .env から送るとき)
-	const missing = [...overrides].filter(([name]) => !replaced.has(name));
-	const updated = { ...document, nodes };
-	if (missing.length === 0) return stringify(updated);
-	return appendEnvLines(updated, [
+	const existing = setValues(text, overrides, { add: false });
+	assertNoAmbiguousQuote(existing);
+	const updated = new Set(existing.updated);
+	const missing = new Map([...overrides].filter(([name]) => !updated.has(name)));
+	if (missing.size === 0) return existing.text;
+	const withHeading = appendEnvLines(existing.text, [
 		'',
 		'# .env.example にない鍵 (手元の .env から足した)',
-		...missing.map(([name, value]) => `${name}=${value}`),
 	]);
+	const appended = setValues(withHeading, missing);
+	assertAllSet(appended);
+	return appended.text;
 }

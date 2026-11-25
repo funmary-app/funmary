@@ -11,6 +11,6 @@
 		"@funmary/core": "workspace:*",
 		"@funmary/log": "workspace:*",
 		"@funmary/sources": "workspace:*",
-		"croner": "^11.0.0"
+		"croner": "^11.0.1"
 	}
 }

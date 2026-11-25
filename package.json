@@ -8,7 +8,7 @@
 		"type": "git",
 		"url": "git+https://github.com/funmary-app/funmary.git"
 	},
-	"packageManager": "pnpm@12.21.0",
+	"packageManager": "pnpm@12.23.0",
 	"engines": {
 		"node": ">=24"
 	},
@@ -38,10 +38,10 @@
 		"@commitlint/config-conventional": "catalog:",
 		"@eslint/js": "catalog:",
 		"@funmary/api": "workspace:*",
-		"@mizchi/mutator": "^0.4.5",
+		"@mizchi/mutator": "^0.5.5",
 		"@types/node": "catalog:",
 		"@typescript/native": "npm:typescript@^7.0.2",
-		"es-module-lexer": "^3.0.4",
+		"es-module-lexer": "^3.0.5",
 		"eslint": "catalog:",
 		"eslint-config-prettier": "catalog:",
 		"eslint-plugin-svelte": "catalog:",

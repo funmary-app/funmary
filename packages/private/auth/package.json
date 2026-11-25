@@ -9,8 +9,8 @@
 	},
 	"dependencies": {
 		"@funmary/db": "workspace:*",
-		"jose": "^6.2.17",
-		"openid-client": "^6.9.0",
+		"jose": "^6.2.18",
+		"openid-client": "^6.9.1",
 		"valibot": "catalog:"
 	}
 }
