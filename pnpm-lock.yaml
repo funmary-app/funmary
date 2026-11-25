@@ -401,8 +401,8 @@ importers:
         specifier: ^0.2.2
         version: 0.2.2
       migenv:
-        specifier: ^0.2.2
-        version: 0.2.2
+        specifier: ^0.3.0
+        version: 0.3.0
       modern-screenshot:
         specifier: ^4.7.0
         version: 4.7.0
@@ -3249,8 +3249,8 @@ packages:
     resolution: {integrity: sha512-Snk314V5ayFLhp3fkUREub6WtjBfPdCPY1Ln8/8munuLuiYhsABgBVWsozAG+MWMbVEvcdcpbi9R7ww22l9Q3g==}
     engines: {node: '>=18'}
 
-  migenv@0.2.2:
-    resolution: {integrity: sha512-knb6vtfUDdVIWJq8d3IO5ng6jpETpXameiU/5PnN03fPvLV/W1J7F5UomMFieAmMCbxLNy7PqfF3uUIDWljKlw==}
+  migenv@0.3.0:
+    resolution: {integrity: sha512-VcwTShXq2R00uya2365ei4xgi+S2NL3pK4EcO0r+myvQbg53r0uRmfM/KiAfYbgKNfpYVJGVin7wIEJzRXpxbA==}
     engines: {node: '>=18.3'}
     hasBin: true
 
@@ -6322,7 +6322,7 @@ snapshots:
 
   merge-descriptors@2.0.0: {}
 
-  migenv@0.2.2:
+  migenv@0.3.0:
     dependencies:
       '@kiritan/runtime': 0.3.0
       citty: 0.2.2

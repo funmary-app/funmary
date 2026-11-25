@@ -44,9 +44,10 @@ allowBuilds:
   simple-git-hooks: true
 
 minimumReleaseAgeExclude:
-  - '@mizchi/mutator@0.4.5'
-  - '@mizchi/mutator-core@0.4.5'
-  - '@mizchi/mutator-jest@0.4.5'
-  - '@mizchi/mutator-playwright@0.4.5'
-  - '@mizchi/mutator-typecheck@0.4.5'
-  - '@mizchi/mutator-vitest@0.4.5'
+  - '@mizchi/mutator'
+  - '@mizchi/mutator-core'
+  - '@mizchi/mutator-jest'
+  - '@mizchi/mutator-playwright'
+  - '@mizchi/mutator-typecheck'
+  - '@mizchi/mutator-vitest'
+  - migenv
